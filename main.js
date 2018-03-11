@@ -695,7 +695,6 @@ function main() {
             adapter.log.debug('Connected');
             connected = true;
             adapter.setState('info.connection', true, true);
-
             hass.getConfig(function (err, config) {
                 if (err) {
                     adapter.log.error('Cannot read config: ' + err);
@@ -735,66 +734,4 @@ function main() {
     });
 
     hass.connect();
-
-    /*const ssocket = new WebSocket('ws://' + adapter.config.host + ':' + adapter.config.port + '/api/websocket');
-    ssocket.addEventListener('message', function (msg) {
-        console.log(JSON.stringify(msg.a));
-    });
-    ssocket.addEventListener('close', function () {
-        console.log('Closed');
-    });
-    ssocket.addEventListener('error', function (err) {
-        console.error(err);
-    });
-
-    hass.createConnection('ws://' + adapter.config.host + ':' + adapter.config.port + '/api/websocket').then(function (conn) {
-        if (!connected) {
-            adapter.log.debug('Connected');
-            connected = true;
-            adapter.setState('info.connection', true, true);
-        }
-        socket = conn;
-        hass.subscribeEntities(conn, function (entities) {
-            console.log('New entities!', entities);
-            var attrs = Object.keys(entities);
-            for (var a = 0; a < attrs.length; a++) {
-                console.log(attrs[a] + ': ' + entities[attrs[a]].state);
-            }
-        });
-        hass.subscribeConfig(conn, function (config) {
-            console.log('New config!', config)
-        });
-        conn.addEventListener('ready', function () {
-            if (!connected) {
-                adapter.log.debug('Connected');
-                connected = true;
-                adapter.setState('info.connection', true, true);
-            }
-        });
-        conn.addEventListener('disconnected', function () {
-            if (connected) {
-                adapter.log.debug('Disconnected');
-                connected = false;
-                adapter.setState('info.connection', false, true);
-            }
-        });
-
-        conn.getStates(function (states) {
-            console.log('getStates: ', states)
-        });
-
-    }).catch(function (err) {
-        if (err === 2) {
-            adapter.log.error('Invalid password!.');
-        } else {
-            adapter.log.error('Connection failed with code', ERRORS[err] || err);
-        }
-        socket = null;
-
-        if (connected) {
-            adapter.log.debug('Disconnected');
-            connected = false;
-            adapter.setState('info.connection', false, true);
-        }
-    });*/
 }
