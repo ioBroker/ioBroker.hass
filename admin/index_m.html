@@ -1,0 +1,76 @@
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="../../lib/css/themes/jquery-ui/redmond/jquery-ui.min.css"/>
+    <link rel="stylesheet" type="text/css" href="../../css/adapter.css"/>
+
+    <script type="text/javascript" src="../../lib/js/jquery-1.11.1.min.js"></script>
+    <script type="text/javascript" src="../../socket.io/socket.io.js"></script>
+    <script type="text/javascript" src="../../lib/js/jquery-ui-1.10.3.full.min.js"></script>
+    <script type="text/javascript" src="../../js/translate.js"></script>
+    <script type="text/javascript" src="../../js/adapter-settings.js"></script>
+    <script type="text/javascript" src="words.js"></script>
+
+    <script type="text/javascript">
+
+        function load(settings, onChange) {
+            if (!settings) return;
+
+            if (settings.password === undefined) settings.password = '';
+            if (settings.prompt === undefined)   settings.prompt = 'hass>';
+
+            $('.value').each(function () {
+                var key = $(this).attr('id');
+                var $value = $('#' + key + '.value');
+                if ($value.attr('type') === 'checkbox') {
+                    $value.prop('checked', settings[key]).change(function() {
+                        onChange();
+                    });
+                } else {
+                    $value.val(settings[key]).change(function() {
+                        onChange();
+                    }).keyup(function() {
+                        onChange();
+                    });
+                }
+            });
+            // Signal to admin, that no changes yet
+            onChange(false);
+        }
+
+        function save(callback) {
+            var obj = {};
+
+            if ($('#password').val() !== $('#passwordRepeat').val()) {
+                showMessage(_('Passwords missmatch!'), _('Warning'), 'alert');
+                return;
+            }
+
+            $('.value').each(function () {
+                var $this = $(this);
+                if ($this.attr('type') === 'checkbox') {
+                    obj[$this.attr('id')] = $this.prop('checked');
+                } else {
+                    obj[$this.attr('id')] = $this.val();
+                }
+            });
+            callback(obj);
+        }
+    </script>
+
+</head>
+<body>
+    <div id="adapter-container">
+        <table><tr>
+            <td><img src="hass.png"/></td>
+            <td><h3 class="translate">FHEM adapter settings</h3></td>
+        </tr></table>
+        <table>
+            <tr><td><label class="translate" for="host">Home assistant IP:</label></td><td class="admin-icon"></td><td><input class="value" id="host" /></td></tr>
+            <tr><td><label class="translate" for="port">Home assistant WS Port:</label></td><td class="admin-icon"></td><td><input class="value" id="port" size="5" maxlength="5"/></td></tr>
+            <tr><td><label class="translate" for="password">Password:</label></td><td class="admin-icon"></td><td><input class="value" id="password" type="password"/></td></tr>
+            <tr><td><label class="translate" for="passwordRepeat">Password repeat:</label></td><td class="admin-icon"></td><td><input type="password" id="passwordRepeat"/></td></tr>
+            <tr><td><label class="translate" for="secure">Secure:</label></td><td class="admin-icon"></td><td><input class="value" id="secure" type="checkbox"/></td></tr>
+        </table>
+    </div>
+</body>
+</html>

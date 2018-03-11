@@ -1,0 +1,45 @@
+{
+  "name": "iobroker.hass",
+  "version": "0.1.0",
+  "description": "Home Assistant",
+  "author": {
+    "name": "bluefox",
+    "email": "dogafox@gmail.com"
+  },
+  "contributors": [
+    {
+      "name": "bluefox",
+      "email": "dogafox@gmail.com"
+    }
+  ],
+  "homepage": "https://github.com/ioBroker/ioBroker.hass",
+  "license": "MIT",
+  "keywords": [
+    "ioBroker",
+    "hass",
+    "REST API",
+    "IoT"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ioBroker/ioBroker.hass"
+  },
+  "dependencies": {
+    "home-assistant-js-websocket": "^1.1.4",
+    "websocket": "^1.0.25",
+    "ws": "^5.0.0"
+  },
+  "devDependencies": {
+    "gulp": "^3.9.1",
+    "mocha": "^4.1.0",
+    "chai": "^4.1.2"
+  },
+  "main": "main.js",
+  "scripts": {
+    "test": "node node_modules/mocha/bin/mocha --exit"
+  },
+  "bugs": {
+    "url": "https://github.com/ioBroker/ioBroker.hass/issues"
+  },
+  "readmeFilename": "README.md"
+}
