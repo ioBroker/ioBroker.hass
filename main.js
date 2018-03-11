@@ -35,14 +35,14 @@ adapter.on('stateChange', function (id, state) {
                 for (var field in fields) {
                     if (!fields.hasOwnProperty(field)) continue;
 
-                    if (fields === 'entity_id') {
+                    if (field === 'entity_id') {
                         serviceData.entity_id = hassObjects[id].native.entity_id
                     } else {
-                        serviceData.entity_id = state.val;
+                        serviceData[field] = state.val;
                     }
                 }
 
-                hass.callService(hassObjects[id].native.type, undefined, serviceData, function (err) {
+                hass.callService(hassObjects[id].native.attr, hassObjects[id].native.domain, serviceData, function (err) {
                     if (err) {
                         adapter.log.error('Cannot control ' + id + ': ' + err);
                     }
@@ -108,19 +108,14 @@ function syncObjects(objects, cb) {
     var obj = objects.shift();
     hassObjects[obj._id] = obj;
 
-    var start = Date.now();
-
     adapter.getForeignObject(obj._id, function (err, oldObj) {
-        console.log('getForeignObject: ' + (Date.now()  - start));
 
         if (err) adapter.log.error(err);
 
         if (!oldObj) {
             adapter.log.debug('Create "' + obj._id + '"');
             hassObjects[obj._id] = obj;
-            start = Date.now();
             adapter.setForeignObject(obj._id, obj, function (err) {
-                console.log('setForeignObject: ' + (Date.now()  - start));
                 if (err) adapter.log.error(err);
 
                 setImmediate(syncObjects, objects, cb);
@@ -131,9 +126,7 @@ function syncObjects(objects, cb) {
                 oldObj.native = obj.native;
 
                 adapter.log.debug('Update "' + obj._id + '"');
-                start = Date.now();
                 adapter.setForeignObject(obj._id, oldObj, function (err) {
-                    console.log('ssetForeignObject: ' + (Date.now()  - start));
                     if (err) adapter.log.error(err);
                     setImmediate(syncObjects, objects, cb);
                 });
@@ -550,7 +543,7 @@ function parseStates(entities, services, callback) {
         var entity = entities[e];
         if (!entity) continue;
 
-        var name = entity.attributes && entity.attributes.friendly_name ? entity.attributes.friendly_name : entity.entity_id;
+        var name = entity.name || (entity.attributes && entity.attributes.friendly_name ? entity.attributes.friendly_name : entity.entity_id);
         var desc = entity.attributes && entity.attributes.attribution   ? entity.attributes.attribution   : undefined;
 
         channel = {
@@ -560,6 +553,7 @@ function parseStates(entities, services, callback) {
             },
             type: 'channel',
             native: {
+                object_id: entity.object_id,
                 entity_id: entity.entity_id
             }
         };
@@ -579,9 +573,14 @@ function parseStates(entities, services, callback) {
                     write: false
                 },
                 native: {
-                    entity_id: entity.entity_id
+                    object_id:  entity.object_id,
+                    domain:     entity.domain,
+                    entity_id:  entity.entity_id
                 }
             };
+            if (entity.attributes && entity.attributes.unit_of_measurement) {
+                obj.common.unit = entity.attributes.unit_of_measurement;
+            }
             objs.push(obj);
             states.push({id: obj._id, lc: lc, ts: ts, val: entity.state, ack: true})
         }
@@ -603,8 +602,10 @@ function parseStates(entities, services, callback) {
                         type: 'state',
                         common: common,
                         native: {
-                            entity_id: entity.entity_id,
-                            attr: attr
+                            object_id:  entity.object_id,
+                            domain:     entity.domain,
+                            entity_id:  entity.entity_id,
+                            attr:       attr
                         }
                     };
                     if (!common.name) {
@@ -636,15 +637,17 @@ function parseStates(entities, services, callback) {
                         _id: adapter.namespace  + '.entities.' + entity.entity_id + '.' + s,
                         type: 'state',
                         common: {
-                            desc: service.description,
+                            desc: service[s].description,
                             read: false,
                             write: true
                         },
                         native: {
-                            field: service.fields,
-                            entity_id: entity.entity_id,
-                            attr: s,
-                            type: serviceType
+                            object_id:  entity.object_id,
+                            domain:     entity.domain,
+                            fields:     service[s].fields,
+                            entity_id:  entity.entity_id,
+                            attr:       s,
+                            type:       serviceType
                         }
                     };
                     objs.push(obj);
