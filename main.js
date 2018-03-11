@@ -42,7 +42,7 @@ adapter.on('stateChange', function (id, state) {
                     }
                 }
 
-                hass.callService(hassObjects[id].native.attr, hassObjects[id].native.domain, serviceData, function (err) {
+                hass.callService(hassObjects[id].native.attr, hassObjects[id].native.domain || hassObjects[id].native.type, serviceData, function (err) {
                     if (err) {
                         adapter.log.error('Cannot control ' + id + ': ' + err);
                     }
@@ -588,7 +588,7 @@ function parseStates(entities, services, callback) {
         if (entity.attributes) {
             for (var attr in entity.attributes) {
                 if (entity.attributes.hasOwnProperty(attr)) {
-                    if (attr === 'friendly_name') continue;
+                    if (attr === 'friendly_name' || attr === 'unit_of_measurement' || attr === 'icon') continue;
 
                     var common;
                     if (knownAttributes[attr]) {
@@ -674,6 +674,20 @@ function main() {
 
     hass.on('error', function (err) {
         adapter.log.error(err);
+    });
+    hass.on('state_changed', function (entity) {
+        var id = adapter.namespace  + '.entities.' + entity.entity_id + '.';
+        var lc = entity.last_changed ? new Date(entity.last_changed).getTime() : undefined;
+        var ts = entity.last_updated ? new Date(entity.last_updated).getTime() : undefined;
+        if (entity.state !== undefined) {
+            adapter.setForeignState(id + 'state', {val: entity.state, ack: true, lc: lc, ts: ts});
+        }
+        if (entity.attributes) {
+            for (var attr in entity.attributes) {
+                if (!entity.attributes.hasOwnProperty(attr) || attr === 'friendly_name' || attr === 'unit_of_measurement' || attr === 'icon') continue;
+                adapter.setForeignState(id + attr, {val: entity.attributes[attr], ack: true, lc: lc, ts: ts});
+            }
+        }
     });
 
     hass.on('connected', function () {
