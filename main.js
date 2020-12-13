@@ -1,73 +1,66 @@
 /* jshint -W097 */
-/* jshint strict:false */
+/* jshint strict: false */
 /* jslint node: true */
 
 'use strict';
 
-var utils = require(__dirname + '/lib/utils');
-var HASS = require(__dirname + '/lib/hass');
+const utils       = require('@iobroker/adapter-core');
+const HASS        = require('./lib/hass');
+const adapterName = require('./package.json').name.split('.').pop();
 
-var adapter = utils.Adapter('hass');
+let connected = false;
+let hass;
+let adapter;
+const hassObjects = {};
 
-var connected = false;
-var hass;
-var hassObjects = {};
+function startAdapter(options) {
+    options = options || {};
+    Object.assign(options, {name: adapterName, unload: stop});
+    adapter = new utils.Adapter(options);
 
-// is called if a subscribed state changes
-adapter.on('stateChange', function (id, state) {
-    // you can use the ack flag to detect if it is status (true) or command (false)
-    if (state && !state.ack) {
-        if (!connected) {
-            adapter.log.warn('Cannot send command to "' + id + '", because not connected');
-            return;
-        }
-        /*if (id === adapter.namespace + '.' + '.info.resync') {
-            queue.push({command: 'resync'});
-            processQueue();
-        } else */
-        if (hassObjects[id]) {
-            if (!hassObjects[id].common.write) {
-                adapter.log.warn('Object ' + id + ' is not writable!');
-            } else {
-                var serviceData = {};
-                var fields = hassObjects[id].native.fields;
+    // is called if a subscribed state changes
+    adapter.on('stateChange', (id, state) => {
+        // you can use the ack flag to detect if it is status (true) or command (false)
+        if (state && !state.ack) {
+            if (!connected) {
+                return adapter.log.warn('Cannot send command to "' + id + '", because not connected');
+            }
+            /*if (id === adapter.namespace + '.' + '.info.resync') {
+                queue.push({command: 'resync'});
+                processQueue();
+            } else */
+            if (hassObjects[id]) {
+                if (!hassObjects[id].common.write) {
+                    adapter.log.warn('Object ' + id + ' is not writable!');
+                } else {
+                    const serviceData = {};
+                    const fields = hassObjects[id].native.fields;
 
-                for (var field in fields) {
-                    if (!fields.hasOwnProperty(field)) continue;
+                    for (const field in fields) {
+                        if (!fields.hasOwnProperty(field)) {
+                            continue;
+                        }
 
-                    if (field === 'entity_id') {
-                        serviceData.entity_id = hassObjects[id].native.entity_id
-                    } else {
-                        serviceData[field] = state.val;
+                        if (field === 'entity_id') {
+                            serviceData.entity_id = hassObjects[id].native.entity_id
+                        } else {
+                            serviceData[field] = state.val;
+                        }
                     }
+
+                    hass.callService(hassObjects[id].native.attr, hassObjects[id].native.domain || hassObjects[id].native.type, serviceData, err =>
+                        err && adapter.log.error('Cannot control ' + id + ': ' + err));
                 }
-
-                hass.callService(hassObjects[id].native.attr, hassObjects[id].native.domain || hassObjects[id].native.type, serviceData, function (err) {
-                    if (err) {
-                        adapter.log.error('Cannot control ' + id + ': ' + err);
-                    }
-                });
             }
         }
-    }
-});
+    });
 
-// Some message was sent to adapter instance over message box. Used by email, pushover, text2speech, ...
-adapter.on('message', function (obj) {
-    if (typeof obj === 'object' && obj.message) {
-        if (obj.command === 'send') {
-            // e.g. send email or pushover or whatever
-            console.log('send command');
+    // is called when databases are connected and adapter received configuration.
+    // start here!
+    adapter.on('ready', main);
 
-            // Send response in callback if required
-            if (obj.callback) adapter.sendTo(obj.from, obj.command, 'Message received', obj.callback);
-        }
-    }
-});
-
-// is called when databases are connected and adapter received configuration.
-// start here!
-adapter.on('ready', main);
+    return adapter;
+}
 
 function getUnit(name) {
     name = name.toLowerCase();
@@ -87,37 +80,34 @@ function getUnit(name) {
 
 function syncStates(states, cb) {
     if (!states || !states.length) {
-        cb();
-        return;
+        return cb();
     }
-    var state = states.shift();
-    var id = state.id;
+    const state = states.shift();
+    const id = state.id;
     delete state.id;
 
-    adapter.setForeignState(id, state, function (err) {
-        if (err) adapter.log.error(err);
+    adapter.setForeignState(id, state, err => {
+        err && adapter.log.error(err);
         setImmediate(syncStates, states, cb);
     });
 }
 
 function syncObjects(objects, cb) {
     if (!objects || !objects.length) {
-        cb();
-        return;
+        return cb();
     }
-    var obj = objects.shift();
+    const obj = objects.shift();
     hassObjects[obj._id] = obj;
 
-    adapter.getForeignObject(obj._id, function (err, oldObj) {
+    adapter.getForeignObject(obj._id, (err, oldObj) => {
 
-        if (err) adapter.log.error(err);
+        err && adapter.log.error(err);
 
         if (!oldObj) {
             adapter.log.debug('Create "' + obj._id + '"');
             hassObjects[obj._id] = obj;
-            adapter.setForeignObject(obj._id, obj, function (err) {
-                if (err) adapter.log.error(err);
-
+            adapter.setForeignObject(obj._id, obj, err => {
+                err && adapter.log.error(err);
                 setImmediate(syncObjects, objects, cb);
             });
         } else {
@@ -126,8 +116,8 @@ function syncObjects(objects, cb) {
                 oldObj.native = obj.native;
 
                 adapter.log.debug('Update "' + obj._id + '"');
-                adapter.setForeignObject(obj._id, oldObj, function (err) {
-                    if (err) adapter.log.error(err);
+                adapter.setForeignObject(obj._id, oldObj, err => {
+                    err => adapter.log.error(err);
                     setImmediate(syncObjects, objects, cb);
                 });
             } else {
@@ -138,7 +128,7 @@ function syncObjects(objects, cb) {
 }
 
 function syncRoom(room, members, cb) {
-    adapter.getForeignObject('enum.rooms.' + room, function (err, obj) {
+    adapter.getForeignObject('enum.rooms.' + room, (err, obj) => {
         if (!obj) {
             obj = {
                 _id: 'enum.rooms.' + room,
@@ -150,15 +140,15 @@ function syncRoom(room, members, cb) {
                 native: {}
             };
             adapter.log.debug('Update "' + obj._id + '"');
-            adapter.setForeignObject(obj._id, obj, function (err) {
-                if (err) adapter.log.error(err);
+            adapter.setForeignObject(obj._id, obj, err => {
+                err && adapter.log.error(err);
                 cb();
             });
         } else {
             obj.common = obj.common || {};
             obj.common.members = obj.common.members || [];
-            var changed = false;
-            for (var m = 0; m < members.length; m++) {
+            let changed = false;
+            for (let m = 0; m < members.length; m++) {
                 if (obj.common.members.indexOf(members[m]) === -1) {
                     changed = true;
                     obj.common.members.push(members[m]);
@@ -166,8 +156,8 @@ function syncRoom(room, members, cb) {
             }
             if (changed) {
                 adapter.log.debug('Update "' + obj._id + '"');
-                adapter.setForeignObject(obj._id, obj, function (err) {
-                    if (err) adapter.log.error(err);
+                adapter.setForeignObject(obj._id, obj, err => {
+                    err && adapter.log.error(err);
                     cb();
                 });
             } else {
@@ -177,41 +167,41 @@ function syncRoom(room, members, cb) {
     });
 }
 
-var knownAttributes = {
-    azimuth: {write: false, read: true, unit: '°'},
+const knownAttributes = {
+    azimuth:   {write: false, read: true, unit: '°'},
     elevation: {write: false, read: true, unit: '°'}
 };
 
 
-var ERRORS = {
+const ERRORS = {
     1: 'ERR_CANNOT_CONNECT',
     2: 'ERR_INVALID_AUTH',
     3: 'ERR_CONNECTION_LOST'
 };
-var mapTypes = {
+const mapTypes = {
     'string': 'string',
     'number': 'number',
     'object': 'mixed',
     'boolean': 'boolean'
 };
-var skipServices = [
+const skipServices = [
     'persistent_notification'
 ];
 
 function parseStates(entities, services, callback) {
-    var objs = [];
-    var states = [];
-    var obj;
-    var channel;
-    for (var e = 0; e < entities.length; e++) {
-        var entity = entities[e];
+    const objs   = [];
+    const states = [];
+    let obj;
+    let channel;
+    for (let e = 0; e < entities.length; e++) {
+        const entity = entities[e];
         if (!entity) continue;
 
-        var name = entity.name || (entity.attributes && entity.attributes.friendly_name ? entity.attributes.friendly_name : entity.entity_id);
-        var desc = entity.attributes && entity.attributes.attribution   ? entity.attributes.attribution   : undefined;
+        const name = entity.name || (entity.attributes && entity.attributes.friendly_name ? entity.attributes.friendly_name : entity.entity_id);
+        const desc = entity.attributes && entity.attributes.attribution   ? entity.attributes.attribution   : undefined;
 
         channel = {
-            _id: adapter.namespace  + '.entities.' + entity.entity_id,
+            _id: `${adapter.namespace}.entities.${entity.entity_id}`,
             common: {
                 name: name
             },
@@ -224,15 +214,15 @@ function parseStates(entities, services, callback) {
         if (desc) channel.common.desc = desc;
         objs.push(channel);
 
-        var lc = entity.last_changed ? new Date(entity.last_changed).getTime() : undefined;
-        var ts = entity.last_updated ? new Date(entity.last_updated).getTime() : undefined;
+        const lc = entity.last_changed ? new Date(entity.last_changed).getTime() : undefined;
+        const ts = entity.last_updated ? new Date(entity.last_updated).getTime() : undefined;
 
         if (entity.state !== undefined) {
             obj = {
-                _id: adapter.namespace  + '.entities.' + entity.entity_id + '.state',
+                _id: `${adapter.namespace}.entities.${entity.entity_id}.state`,
                 type: 'state',
                 common: {
-                    name: name + ' STATE',
+                    name: `${name} STATE`,
                     read: true,
                     write: false
                 },
@@ -250,11 +240,13 @@ function parseStates(entities, services, callback) {
         }
 
         if (entity.attributes) {
-            for (var attr in entity.attributes) {
+            for (const attr in entity.attributes) {
                 if (entity.attributes.hasOwnProperty(attr)) {
-                    if (attr === 'friendly_name' || attr === 'unit_of_measurement' || attr === 'icon') continue;
+                    if (attr === 'friendly_name' || attr === 'unit_of_measurement' || attr === 'icon') {
+                        continue;
+                    }
 
-                    var common;
+                    let common;
                     if (knownAttributes[attr]) {
                         common = Object.assign({}, knownAttributes[attr]);
                     } else {
@@ -262,7 +254,7 @@ function parseStates(entities, services, callback) {
                     }
 
                     obj = {
-                        _id: adapter.namespace  + '.entities.' + entity.entity_id + '.' + attr,
+                        _id: `${adapter.namespace}.entities.${entity.entity_id}.${attr}`,
                         type: 'state',
                         common: common,
                         native: {
@@ -291,14 +283,14 @@ function parseStates(entities, services, callback) {
             }
         }
 
-        var serviceType = entity.entity_id.split('.')[0];
+        const serviceType = entity.entity_id.split('.')[0];
 
-        if (services[serviceType] && skipServices.indexOf(serviceType) === -1) {
-            var service = services[serviceType];
-            for (var s in service) {
+        if (services[serviceType] && !skipServices.includes(serviceType)) {
+            const service = services[serviceType];
+            for (const s in service) {
                 if (service.hasOwnProperty(s)) {
                     obj = {
-                        _id: adapter.namespace  + '.entities.' + entity.entity_id + '.' + s,
+                        _id: `${adapter.namespace}.entities.${entity.entity_id}.${s}`,
                         type: 'state',
                         common: {
                             desc: service[s].description,
@@ -320,9 +312,8 @@ function parseStates(entities, services, callback) {
         }
     }
 
-    syncObjects(objs, function () {
-        syncStates(states, callback);
-    });
+    syncObjects(objs, () =>
+        syncStates(states, callback));
 }
 
 function main() {
@@ -336,60 +327,60 @@ function main() {
 
     hass = new HASS(adapter.config, adapter.log);
 
-    hass.on('error', function (err) {
-        adapter.log.error(err);
-    });
-    hass.on('state_changed', function (entity) {
-        var id = adapter.namespace  + '.entities.' + entity.entity_id + '.';
-        var lc = entity.last_changed ? new Date(entity.last_changed).getTime() : undefined;
-        var ts = entity.last_updated ? new Date(entity.last_updated).getTime() : undefined;
+    hass.on('error', err =>
+        adapter.log.error(err));
+
+    hass.on('state_changed', entity => {
+        const id = adapter.namespace  + '.entities.' + entity.entity_id + '.';
+        const lc = entity.last_changed ? new Date(entity.last_changed).getTime() : undefined;
+        const ts = entity.last_updated ? new Date(entity.last_updated).getTime() : undefined;
         if (entity.state !== undefined) {
             adapter.setForeignState(id + 'state', {val: entity.state, ack: true, lc: lc, ts: ts});
         }
         if (entity.attributes) {
-            for (var attr in entity.attributes) {
-                if (!entity.attributes.hasOwnProperty(attr) || attr === 'friendly_name' || attr === 'unit_of_measurement' || attr === 'icon') continue;
+            for (const attr in entity.attributes) {
+                if (!entity.attributes.hasOwnProperty(attr) || attr === 'friendly_name' || attr === 'unit_of_measurement' || attr === 'icon') {
+                    continue;
+                }
                 adapter.setForeignState(id + attr, {val: entity.attributes[attr], ack: true, lc: lc, ts: ts});
             }
         }
     });
 
-    hass.on('connected', function () {
+    hass.on('connected', () => {
         if (!connected) {
             adapter.log.debug('Connected');
             connected = true;
             adapter.setState('info.connection', true, true);
-            hass.getConfig(function (err, config) {
+            hass.getConfig((err, config) => {
                 if (err) {
                     adapter.log.error('Cannot read config: ' + err);
                     return;
                 }
                 //adapter.log.debug(JSON.stringify(config));
-                setTimeout(function () {
-                    hass.getStates(function (err, states) {
+                setTimeout(() =>
+                    hass.getStates((err, states) => {
                         if (err) {
                             return adapter.log.error('Cannot read states: ' + err);
                         }
                         //adapter.log.debug(JSON.stringify(states));
-                        setTimeout(function () {
-                            hass.getServices(function (err, services) {
+                        setTimeout(() =>
+                            hass.getServices((err, services) => {
                                 if (err) {
                                     adapter.log.error('Cannot read states: ' + err);
                                 } else {
                                     //adapter.log.debug(JSON.stringify(services));
-                                    parseStates(states, services, function () {
+                                    parseStates(states, services, () => {
 
                                     });
                                 }
-                            });
-                        }, 100);
-                    });
-                }, 100);
+                            }), 100);
+                    }), 100);
             });
         }
     });
 
-    hass.on('disconnected', function () {
+    hass.on('disconnected', () => {
         if (connected) {
             adapter.log.debug('Disconnected');
             connected = false;
@@ -398,4 +389,12 @@ function main() {
     });
 
     hass.connect();
+}
+
+// If started as allInOne/compact mode => return function to create instance
+if (module && module.parent) {
+    module.exports = startAdapter;
+} else {
+    // or start the instance directly
+    startAdapter();
 }

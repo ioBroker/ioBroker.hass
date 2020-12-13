@@ -1,58 +1,76 @@
 {
-    "common": {
-        "name":                     "hass",
-        "version":                  "0.1.0",
-        "title":                    "Home Assistant",
-        "desc":                     {
-          "en": "Home Assistant connection for ioBroker",
-          "de": "Home Assistant Verbindung für ioBroker",
-          "ru": "Подключение Home Assistant для ioBroker",
-          "pt": "Conexão do Home Assistant para ioBroker",
-          "nl": "Home Assistant-verbinding voor ioBroker",
-          "fr": "Connexion Home Assistant pour ioBroker",
-          "it": "Connessione Home Assistant per ioBroker",
-          "es": "Conexión de Home Assistant para ioBroker",
-          "pl": "Połączenie Home Assistant dla ioBroker"
-        },
-        "news": {
-          "0.1.0" : {
-            "en": "initial version",
-            "de": "erste Version",
-            "ru": "Первоначальная версия",
-            "pt": "versão inicial",
-            "nl": "eerste versie",
-            "fr": "version initiale",
-            "it": "versione iniziale",
-            "es": "versión inicial",
-            "pl": "początkowa wersja"
-          }
-        },
-		"localLink":                "http://%host%:8123",
-        "platform":                 "Javascript/Node.js",
-        "mode":                     "daemon",
-        "icon":                     "hass.png",
-        "enabled":                  true,
-	    "extIcon":                  "https://raw.githubusercontent.com/ioBroker/ioBroker.hass/master/admin/hass.png",
-	    "keywords":                 ["HASS", "Home", "assistant"],
-        "readme":                   "https://github.com/ioBroker/ioBroker.hass/blob/master/README.md",
-	    "loglevel":                 "info",
-        "type":                     "iot-systems",
-	"authors": [
-            "bluefox <dogafox@gmail.com>"
-        ]
+  "common": {
+    "name": "hass",
+    "version": "1.0.0",
+    "title": "Home Assistant",
+    "desc": {
+      "en": "Home Assistant connection for ioBroker",
+      "de": "Home Assistant Verbindung für ioBroker",
+      "ru": "Подключение Home Assistant для ioBroker",
+      "pt": "Conexão do Home Assistant para ioBroker",
+      "nl": "Home Assistant-verbinding voor ioBroker",
+      "fr": "Connexion Home Assistant pour ioBroker",
+      "it": "Connessione Home Assistant per ioBroker",
+      "es": "Conexión de Home Assistant para ioBroker",
+      "pl": "Połączenie Home Assistant dla ioBroker"
     },
-    "native": {
-      "host":                 "127.0.0.1",
-      "port":                 8123,
-      "password":             "",
-      "secure":               false
+    "news": {
+      "1.0.0": {
+        "en": "added the support of compact mode",
+        "de": "fügte die Unterstützung des Kompaktmodus hinzu",
+        "ru": "добавлена поддержка компактного режима",
+        "pt": "adicionado o suporte do modo compacto",
+        "nl": "de ondersteuning van de compacte modus toegevoegd",
+        "fr": "ajouté le support du mode compact",
+        "it": "aggiunto il supporto della modalità compatta",
+        "es": "agregó el soporte del modo compacto",
+        "pl": "dodano obsługę trybu kompaktowego",
+        "zh-cn": "增加了对紧凑模式的支持"
+      },
+      "0.1.0": {
+        "en": "initial version",
+        "de": "erste Version",
+        "ru": "Первоначальная версия",
+        "pt": "versão inicial",
+        "nl": "eerste versie",
+        "fr": "version initiale",
+        "it": "versione iniziale",
+        "es": "versión inicial",
+        "pl": "początkowa wersja"
+      }
     },
-    "objects": [
-
+    "localLink": "http://%host%:8123",
+    "platform": "Javascript/Node.js",
+    "mode": "daemon",
+    "icon": "hass.png",
+    "enabled": true,
+    "compact": true,
+    "materialize": true,
+    "license": "MIT",
+    "extIcon": "https://raw.githubusercontent.com/ioBroker/ioBroker.hass/master/admin/hass.png",
+    "keywords": [
+      "HASS",
+      "Home",
+      "assistant"
     ],
+    "readme": "https://github.com/ioBroker/ioBroker.hass/blob/master/README.md",
+    "loglevel": "info",
+    "type": "iot-systems",
+    "authors": [
+      "bluefox <dogafox@gmail.com>"
+    ]
+  },
+  "native": {
+    "host": "127.0.0.1",
+    "port": 8123,
+    "password": "",
+    "secure": false
+  },
+  "objects": [
+  ],
   "instanceObjects": [
     {
-      "_id":  "info",
+      "_id": "info",
       "type": "channel",
       "common": {
         "name": "Information"
@@ -60,20 +78,20 @@
       "native": {}
     },
     {
-      "_id":  "info.connection",
+      "_id": "info.connection",
       "type": "state",
       "common": {
-        "role":  "indicator.connected",
-        "name":  "If connected to HASS server",
-        "type":  "boolean",
-        "read":  true,
+        "role": "indicator.connected",
+        "name": "If connected to HASS server",
+        "type": "boolean",
+        "read": true,
         "write": false,
-        "def":   false
+        "def": false
       },
       "native": {}
     },
     {
-      "_id":  "entities",
+      "_id": "entities",
       "type": "channel",
       "common": {
         "name": "HASS entities"
