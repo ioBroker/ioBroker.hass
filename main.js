@@ -62,6 +62,11 @@ function startAdapter(options) {
     return adapter;
 }
 
+function stop(callback) {
+    hass && hass.close();
+    callback && callback();
+}
+
 function getUnit(name) {
     name = name.toLowerCase();
     if (name.indexOf('temperature') !== -1) {
