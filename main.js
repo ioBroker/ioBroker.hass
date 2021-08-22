@@ -228,6 +228,7 @@ function parseStates(entities, services, callback) {
                 type: 'state',
                 common: {
                     name: `${name} STATE`,
+                    type: typeof entity.state,
                     read: true,
                     write: false
                 },
