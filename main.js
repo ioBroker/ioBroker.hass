@@ -48,6 +48,7 @@ function startAdapter(options) {
                         }
                     }
 
+                    adapter.log.debug(`Send to HASS for service ${hassObjects[id].native.attr} with ${hassObjects[id].native.domain || hassObjects[id].native.type} and data ${JSON.stringify(serviceData)}`)
                     hass.callService(hassObjects[id].native.attr, hassObjects[id].native.domain || hassObjects[id].native.type, serviceData, err =>
                         err && adapter.log.error('Cannot control ' + id + ': ' + err));
                 }
@@ -109,7 +110,7 @@ function syncObjects(objects, cb) {
         err && adapter.log.error(err);
 
         if (!oldObj) {
-            adapter.log.debug('Create "' + obj._id + '"');
+            adapter.log.debug('Create "' + obj._id + '": ' + JSON.stringify(obj.common));
             hassObjects[obj._id] = obj;
             adapter.setForeignObject(obj._id, obj, err => {
                 err && adapter.log.error(err);
@@ -120,7 +121,7 @@ function syncObjects(objects, cb) {
             if (JSON.stringify(obj.native) !== JSON.stringify(oldObj.native)) {
                 oldObj.native = obj.native;
 
-                adapter.log.debug('Update "' + obj._id + '"');
+                adapter.log.debug('Update "' + obj._id + '": ' + JSON.stringify(obj.common));
                 adapter.setForeignObject(obj._id, oldObj, err => {
                     err => adapter.log.error(err);
                     setImmediate(syncObjects, objects, cb);
@@ -241,6 +242,7 @@ function parseStates(entities, services, callback) {
             if (entity.attributes && entity.attributes.unit_of_measurement) {
                 obj.common.unit = entity.attributes.unit_of_measurement;
             }
+            adapter.log.debug(`Found Entity state ${obj._id}: ${JSON.stringify(obj.common)} / ${JSON.stringify(obj.native)}`)
             objs.push(obj);
             states.push({id: obj._id, lc: lc, ts: ts, val: entity.state, ack: true})
         }
@@ -283,6 +285,8 @@ function parseStates(entities, services, callback) {
                         common.type = mapTypes[typeof entity.attributes[attr]];
                     }
 
+                    adapter.log.debug(`Found Entity attribute ${obj._id}: ${JSON.stringify(obj.common)} / ${JSON.stringify(obj.native)}`)
+
                     objs.push(obj);
                     states.push({id: obj._id, lc: lc, ts: ts, val: entity.attributes[attr], ack: true});
                 }
@@ -312,6 +316,9 @@ function parseStates(entities, services, callback) {
                             type:       serviceType
                         }
                     };
+
+                    adapter.log.debug(`Found Entity service ${obj._id}: ${JSON.stringify(obj.common)} / ${JSON.stringify(obj.native)}`)
+
                     objs.push(obj);
                 }
             }
@@ -328,15 +335,13 @@ function main() {
 
     adapter.setState('info.connection', false, true);
 
-    // in this template all states changes inside the adapters namespace are subscribed
-    adapter.subscribeStates('*');
-
     hass = new HASS(adapter.config, adapter.log);
 
     hass.on('error', err =>
         adapter.log.error(err));
 
     hass.on('state_changed', entity => {
+        adapter.log.debug(`HASS-Message: State Changed: ${JSON.stringify(entity)}`);
         const id = adapter.namespace  + '.entities.' + entity.entity_id + '.';
         const lc = entity.last_changed ? new Date(entity.last_changed).getTime() : undefined;
         const ts = entity.last_updated ? new Date(entity.last_updated).getTime() : undefined;
@@ -348,7 +353,11 @@ function main() {
                 if (!entity.attributes.hasOwnProperty(attr) || attr === 'friendly_name' || attr === 'unit_of_measurement' || attr === 'icon') {
                     continue;
                 }
-                adapter.setForeignState(id + attr, {val: entity.attributes[attr], ack: true, lc: lc, ts: ts});
+                let val = entity.attributes[attr];
+                if (typeof val === 'object' && val !== null) {
+                    val = JSON.stringify(entity.attributes[attr]);
+                }
+                adapter.setForeignState(id + attr, {val, ack: true, lc, ts});
             }
         }
     });
@@ -377,7 +386,8 @@ function main() {
                                 } else {
                                     //adapter.log.debug(JSON.stringify(services));
                                     parseStates(states, services, () => {
-
+                                        adapter.log.debug('Initial parsing of states done, subscribe to ioBroker states');
+                                        adapter.subscribeStates('*');
                                     });
                                 }
                             }), 100);
