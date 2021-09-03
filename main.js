@@ -244,7 +244,13 @@ function parseStates(entities, services, callback) {
             }
             adapter.log.debug(`Found Entity state ${obj._id}: ${JSON.stringify(obj.common)} / ${JSON.stringify(obj.native)}`)
             objs.push(obj);
-            states.push({id: obj._id, lc: lc, ts: ts, val: entity.state, ack: true})
+
+            let val = entity.state;
+            if ((typeof val === 'object' && val !== null) || Array.isArray(val)) {
+                val = JSON.stringify(val);
+            }
+
+            states.push({id: obj._id, lc, ts, val, ack: true})
         }
 
         if (entity.attributes) {
@@ -288,7 +294,13 @@ function parseStates(entities, services, callback) {
                     adapter.log.debug(`Found Entity attribute ${obj._id}: ${JSON.stringify(obj.common)} / ${JSON.stringify(obj.native)}`)
 
                     objs.push(obj);
-                    states.push({id: obj._id, lc: lc, ts: ts, val: entity.attributes[attr], ack: true});
+
+                    let val = entity.attributes[attr];
+                    if ((typeof val === 'object' && val !== null) || Array.isArray(val)) {
+                        val = JSON.stringify(val);
+                    }
+
+                    states.push({id: obj._id, lc, ts, val, ack: true});
                 }
             }
         }
@@ -355,7 +367,7 @@ function main() {
                 }
                 let val = entity.attributes[attr];
                 if ((typeof val === 'object' && val !== null) || Array.isArray(val)) {
-                    val = JSON.stringify(entity.attributes[attr]);
+                    val = JSON.stringify(val);
                 }
                 adapter.setForeignState(id + attr, {val, ack: true, lc, ts});
             }
