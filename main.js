@@ -354,7 +354,7 @@ function main() {
                     continue;
                 }
                 let val = entity.attributes[attr];
-                if (typeof val === 'object' && val !== null) {
+                if ((typeof val === 'object' && val !== null) || Array.isArray(val)) {
                     val = JSON.stringify(entity.attributes[attr]);
                 }
                 adapter.setForeignState(id + attr, {val, ack: true, lc, ts});
