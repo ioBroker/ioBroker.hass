@@ -3,6 +3,18 @@
     "name": "hass",
     "version": "1.0.0",
     "title": "Home Assistant",
+    "titleLang": {
+      "en": "Home Assistant",
+      "de": "Home-Assistent",
+      "ru": "Домашний помощник",
+      "pt": "Home Assistant",
+      "nl": "Thuisassistent",
+      "fr": "Assistante à domicile",
+      "it": "Assistente domiciliare",
+      "es": "Asistente de hogar",
+      "pl": "Asystent domowy",
+      "zh-cn": "家庭助理"
+    },
     "desc": {
       "en": "Home Assistant connection for ioBroker",
       "de": "Home Assistant Verbindung für ioBroker",
@@ -58,7 +70,15 @@
     "type": "iot-systems",
     "authors": [
       "bluefox <dogafox@gmail.com>"
-    ]
+    ],
+    "dependencies": [
+      {
+        "js-controller": ">=2.0.0"
+      }
+    ],
+    "connectionType": "local",
+    "dataSource": "push",
+    "tier": 2
   },
   "native": {
     "host": "127.0.0.1",
