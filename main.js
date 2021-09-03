@@ -47,6 +47,7 @@ function startAdapter(options) {
                             serviceData[field] = state.val;
                         }
                     }
+                    serviceData.entity_id = hassObjects[id].native.entity_id
 
                     adapter.log.debug(`Send to HASS for service ${hassObjects[id].native.attr} with ${hassObjects[id].native.domain || hassObjects[id].native.type} and data ${JSON.stringify(serviceData)}`)
                     hass.callService(hassObjects[id].native.attr, hassObjects[id].native.domain || hassObjects[id].native.type, serviceData, err =>
