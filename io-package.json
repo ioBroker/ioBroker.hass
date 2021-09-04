@@ -1,122 +1,133 @@
 {
-  "common": {
-    "name": "hass",
-    "version": "1.0.0",
-    "title": "Home Assistant",
-    "titleLang": {
-      "en": "Home Assistant",
-      "de": "Home-Assistent",
-      "ru": "Домашний помощник",
-      "pt": "Home Assistant",
-      "nl": "Thuisassistent",
-      "fr": "Assistante à domicile",
-      "it": "Assistente domiciliare",
-      "es": "Asistente de hogar",
-      "pl": "Asystent domowy",
-      "zh-cn": "家庭助理"
+    "common": {
+        "name": "hass",
+        "version": "1.0.1",
+        "title": "Home Assistant",
+        "titleLang": {
+            "en": "Home Assistant",
+            "de": "Home-Assistent",
+            "ru": "Домашний помощник",
+            "pt": "Home Assistant",
+            "nl": "Thuisassistent",
+            "fr": "Assistante à domicile",
+            "it": "Assistente domiciliare",
+            "es": "Asistente de hogar",
+            "pl": "Asystent domowy",
+            "zh-cn": "家庭助理"
+        },
+        "desc": {
+            "en": "Home Assistant connection for ioBroker",
+            "de": "Home Assistant Verbindung für ioBroker",
+            "ru": "Подключение Home Assistant для ioBroker",
+            "pt": "Conexão do Home Assistant para ioBroker",
+            "nl": "Home Assistant-verbinding voor ioBroker",
+            "fr": "Connexion Home Assistant pour ioBroker",
+            "it": "Connessione Home Assistant per ioBroker",
+            "es": "Conexión de Home Assistant para ioBroker",
+            "pl": "Połączenie Home Assistant dla ioBroker"
+        },
+        "news": {
+            "1.0.1": {
+                "en": "IMPORTANT: js-controller 2.0 is needed st least!\nFix start issue\n(Apollon77/Garfonso) Fix issue where value could not be set in hass",
+                "de": "WICHTIG: js-controller 2.0 wird am wenigsten benötigt!\nStartproblem beheben\n(Apollon77/Garfonso) Problem behoben, bei dem der Wert nicht in Hass festgelegt werden konnte",
+                "ru": "ВАЖНО: js-controller 2.0 нужен как минимум!\nИсправить проблему с запуском\n(Apollon77 / Garfonso) Исправлена ошибка, из-за которой значение не могло быть установлено в hass.",
+                "pt": "IMPORTANTE: o js-controller 2.0 é o mínimo necessário!\nCorrigir problema inicial\n(Apollon77 / Garfonso) Correção do problema em que o valor não podia ser definido em hass",
+                "nl": "BELANGRIJK: js-controller 2.0 is minimaal nodig!\nStartprobleem oplossen\n(Apollon77/Garfonso) Probleem opgelost waarbij de waarde niet kon worden ingesteld in hass",
+                "fr": "IMPORTANT : js-controller 2.0 est au moins nécessaire !\nRésoudre le problème de démarrage\n(Apollon77/Garfonso) Correction d'un problème où la valeur ne pouvait pas être définie dans hass",
+                "it": "IMPORTANTE: come minimo è necessario js-controller 2.0!\nRisolvi il problema di avvio\n(Apollon77/Garfonso) Risolto il problema per cui il valore non poteva essere impostato in hass",
+                "es": "IMPORTANTE: ¡js-controller 2.0 es lo menos necesario!\nSolucionar problema de inicio\n(Apollon77 / Garfonso) Se solucionó el problema por el cual no se podía establecer el valor en hass",
+                "pl": "WAŻNE: js-controller 2.0 jest potrzebny przynajmniej!\nNapraw problem z uruchomieniem\n(Apollon77/Garfonso) Napraw problem, w którym nie można było ustawić wartości w hass",
+                "zh-cn": "重要提示：至少需要 js-controller 2.0！\n修复启动问题\n(Apollon77/Garfonso) 修复无法在 hass 中设置值的问题"
+            },
+            "1.0.0": {
+                "en": "added the support of compact mode",
+                "de": "fügte die Unterstützung des Kompaktmodus hinzu",
+                "ru": "добавлена поддержка компактного режима",
+                "pt": "adicionado o suporte do modo compacto",
+                "nl": "de ondersteuning van de compacte modus toegevoegd",
+                "fr": "ajouté le support du mode compact",
+                "it": "aggiunto il supporto della modalità compatta",
+                "es": "agregó el soporte del modo compacto",
+                "pl": "dodano obsługę trybu kompaktowego",
+                "zh-cn": "增加了对紧凑模式的支持"
+            },
+            "0.1.0": {
+                "en": "initial version",
+                "de": "erste Version",
+                "ru": "Первоначальная версия",
+                "pt": "versão inicial",
+                "nl": "eerste versie",
+                "fr": "version initiale",
+                "it": "versione iniziale",
+                "es": "versión inicial",
+                "pl": "początkowa wersja"
+            }
+        },
+        "localLink": "http://%host%:8123",
+        "platform": "Javascript/Node.js",
+        "mode": "daemon",
+        "icon": "hass.png",
+        "enabled": true,
+        "compact": true,
+        "materialize": true,
+        "license": "MIT",
+        "extIcon": "https://raw.githubusercontent.com/ioBroker/ioBroker.hass/master/admin/hass.png",
+        "keywords": [
+            "HASS",
+            "Home",
+            "assistant"
+        ],
+        "readme": "https://github.com/ioBroker/ioBroker.hass/blob/master/README.md",
+        "loglevel": "info",
+        "type": "iot-systems",
+        "authors": [
+            "bluefox <dogafox@gmail.com>"
+        ],
+        "dependencies": [
+            {
+                "js-controller": ">=2.0.0"
+            }
+        ],
+        "connectionType": "local",
+        "dataSource": "push",
+        "tier": 2
     },
-    "desc": {
-      "en": "Home Assistant connection for ioBroker",
-      "de": "Home Assistant Verbindung für ioBroker",
-      "ru": "Подключение Home Assistant для ioBroker",
-      "pt": "Conexão do Home Assistant para ioBroker",
-      "nl": "Home Assistant-verbinding voor ioBroker",
-      "fr": "Connexion Home Assistant pour ioBroker",
-      "it": "Connessione Home Assistant per ioBroker",
-      "es": "Conexión de Home Assistant para ioBroker",
-      "pl": "Połączenie Home Assistant dla ioBroker"
+    "native": {
+        "host": "127.0.0.1",
+        "port": 8123,
+        "password": "",
+        "secure": false
     },
-    "news": {
-      "1.0.0": {
-        "en": "added the support of compact mode",
-        "de": "fügte die Unterstützung des Kompaktmodus hinzu",
-        "ru": "добавлена поддержка компактного режима",
-        "pt": "adicionado o suporte do modo compacto",
-        "nl": "de ondersteuning van de compacte modus toegevoegd",
-        "fr": "ajouté le support du mode compact",
-        "it": "aggiunto il supporto della modalità compatta",
-        "es": "agregó el soporte del modo compacto",
-        "pl": "dodano obsługę trybu kompaktowego",
-        "zh-cn": "增加了对紧凑模式的支持"
-      },
-      "0.1.0": {
-        "en": "initial version",
-        "de": "erste Version",
-        "ru": "Первоначальная версия",
-        "pt": "versão inicial",
-        "nl": "eerste versie",
-        "fr": "version initiale",
-        "it": "versione iniziale",
-        "es": "versión inicial",
-        "pl": "początkowa wersja"
-      }
-    },
-    "localLink": "http://%host%:8123",
-    "platform": "Javascript/Node.js",
-    "mode": "daemon",
-    "icon": "hass.png",
-    "enabled": true,
-    "compact": true,
-    "materialize": true,
-    "license": "MIT",
-    "extIcon": "https://raw.githubusercontent.com/ioBroker/ioBroker.hass/master/admin/hass.png",
-    "keywords": [
-      "HASS",
-      "Home",
-      "assistant"
-    ],
-    "readme": "https://github.com/ioBroker/ioBroker.hass/blob/master/README.md",
-    "loglevel": "info",
-    "type": "iot-systems",
-    "authors": [
-      "bluefox <dogafox@gmail.com>"
-    ],
-    "dependencies": [
-      {
-        "js-controller": ">=2.0.0"
-      }
-    ],
-    "connectionType": "local",
-    "dataSource": "push",
-    "tier": 2
-  },
-  "native": {
-    "host": "127.0.0.1",
-    "port": 8123,
-    "password": "",
-    "secure": false
-  },
-  "objects": [
-  ],
-  "instanceObjects": [
-    {
-      "_id": "info",
-      "type": "channel",
-      "common": {
-        "name": "Information"
-      },
-      "native": {}
-    },
-    {
-      "_id": "info.connection",
-      "type": "state",
-      "common": {
-        "role": "indicator.connected",
-        "name": "If connected to HASS server",
-        "type": "boolean",
-        "read": true,
-        "write": false,
-        "def": false
-      },
-      "native": {}
-    },
-    {
-      "_id": "entities",
-      "type": "channel",
-      "common": {
-        "name": "HASS entities"
-      },
-      "native": {}
-    }
-  ]
+    "objects": [],
+    "instanceObjects": [
+        {
+            "_id": "info",
+            "type": "channel",
+            "common": {
+                "name": "Information"
+            },
+            "native": {}
+        },
+        {
+            "_id": "info.connection",
+            "type": "state",
+            "common": {
+                "role": "indicator.connected",
+                "name": "If connected to HASS server",
+                "type": "boolean",
+                "read": true,
+                "write": false,
+                "def": false
+            },
+            "native": {}
+        },
+        {
+            "_id": "entities",
+            "type": "channel",
+            "common": {
+                "name": "HASS entities"
+            },
+            "native": {}
+        }
+    ]
 }
