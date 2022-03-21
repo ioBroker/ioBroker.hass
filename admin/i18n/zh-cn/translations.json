@@ -1,0 +1,11 @@
+{
+    "FHEM Telnet IP:": "FHEM 远程登录 IP：",
+    "FHEM Telnet Port:": "FHEM 远程登录端口：",
+    "FHEM adapter settings": "FHEM 适配器设置",
+    "Password repeat:": "密码重复：",
+    "Password:": "密码：",
+    "Passwords missmatch!": "密码不匹配！",
+    "Prompt:": "迅速的：",
+    "tooltip_password": "可选的。",
+    "tooltip_prompt": "您可以将标准提示从“hass>”更改为其他内容。"
+}

@@ -1,0 +1,11 @@
+{
+    "FHEM Telnet IP:": "FHEM Telnet IP:",
+    "FHEM Telnet Port:": "FHEM Telnet порт:",
+    "FHEM adapter settings": "Настройки драйвера FHEM",
+    "Password repeat:": "Подтверждение пароля:",
+    "Password:": "Пароль:",
+    "Passwords missmatch!": "Пароли не совпадают!",
+    "Prompt:": "Промпт:",
+    "tooltip_password": "Не обязательно. Только если настроено в FHEM",
+    "tooltip_prompt": "Можно задать собственный промпт. По умолчанию 'hass>'"
+}

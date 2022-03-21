@@ -1,0 +1,11 @@
+{
+    "FHEM Telnet IP:": "FHEM Telnet-IP:",
+    "FHEM Telnet Port:": "FHEM Telnet-poort:",
+    "FHEM adapter settings": "Instellingen FHEM-adapter",
+    "Password repeat:": "Wachtwoord herhalen:",
+    "Password:": "Wachtwoord:",
+    "Passwords missmatch!": "Wachtwoorden komen niet overeen!",
+    "Prompt:": "Snel:",
+    "tooltip_password": "Optioneel. ",
+    "tooltip_prompt": "U kunt de standaardprompt wijzigen van 'hass>' naar iets anders."
+}

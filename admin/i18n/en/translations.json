@@ -1,0 +1,11 @@
+{
+    "FHEM Telnet IP:": "FHEM Telnet IP:",
+    "FHEM Telnet Port:": "FHEM Telnet Port:",
+    "FHEM adapter settings": "FHEM adapter settings",
+    "Password repeat:": "Password repeat:",
+    "Password:": "Password:",
+    "Passwords missmatch!": "Passwords missmatch!",
+    "Prompt:": "Prompt:",
+    "tooltip_password": "Optional. Only if FHEM requires password.",
+    "tooltip_prompt": "You can change standard prompt from 'hass>' to something else."
+}

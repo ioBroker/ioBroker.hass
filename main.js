@@ -12,6 +12,8 @@ let connected = false;
 let hass;
 let adapter;
 const hassObjects = {};
+let delayTimeout = null;
+let stopped = false;
 
 function startAdapter(options) {
     options = options || {};
@@ -35,6 +37,17 @@ function startAdapter(options) {
                 } else {
                     const serviceData = {};
                     const fields = hassObjects[id].native.fields;
+                    const target = {};
+
+                    let requestFields = {};
+                    if (typeof state.val === 'string') {
+                        try {
+                            requestFields = JSON.parse(state.val);
+                        } catch (err) {
+                            adapter.log.info(`Ignore data for service call ${id} is no valid JSON: ${err.message}`);
+                            requestFields = {};
+                        }
+                    }
 
                     for (const field in fields) {
                         if (!fields.hasOwnProperty(field)) {
@@ -42,15 +55,15 @@ function startAdapter(options) {
                         }
 
                         if (field === 'entity_id') {
-                            serviceData.entity_id = hassObjects[id].native.entity_id
-                        } else {
-                            serviceData[field] = state.val;
+                            target.entity_id = hassObjects[id].native.entity_id
+                        } else if (requestFields[field] !== undefined) {
+                            serviceData[field] = requestFields[field];
                         }
                     }
                     serviceData.entity_id = hassObjects[id].native.entity_id
 
                     adapter.log.debug(`Send to HASS for service ${hassObjects[id].native.attr} with ${hassObjects[id].native.domain || hassObjects[id].native.type} and data ${JSON.stringify(serviceData)}`)
-                    hass.callService(hassObjects[id].native.attr, hassObjects[id].native.domain || hassObjects[id].native.type, serviceData, err =>
+                    hass.callService(hassObjects[id].native.attr, hassObjects[id].native.domain || hassObjects[id].native.type, serviceData, target, err =>
                         err && adapter.log.error('Cannot control ' + id + ': ' + err));
                 }
             }
@@ -65,6 +78,8 @@ function startAdapter(options) {
 }
 
 function stop(callback) {
+    stopped = true;
+    delayTimeout && clearTimeout(delayTimeout);
     hass && hass.close();
     callback && callback();
 }
@@ -318,7 +333,8 @@ function parseStates(entities, services, callback) {
                         common: {
                             desc: service[s].description,
                             read: false,
-                            write: true
+                            write: true,
+                            type: 'mixed'
                         },
                         native: {
                             object_id:  entity.object_id,
@@ -386,14 +402,22 @@ function main() {
                     return;
                 }
                 //adapter.log.debug(JSON.stringify(config));
-                setTimeout(() =>
-                    hass.getStates((err, states) => {
+                delayTimeout = setTimeout(() => {
+                    delayTimeout = null;
+                    !stopped && hass.getStates((err, states) => {
+                        if (stopped) {
+                            return;
+                        }
                         if (err) {
                             return adapter.log.error('Cannot read states: ' + err);
                         }
                         //adapter.log.debug(JSON.stringify(states));
-                        setTimeout(() =>
-                            hass.getServices((err, services) => {
+                        delayTimeout = setTimeout(() => {
+                            delayTimeout = null;
+                            !stopped && hass.getServices((err, services) => {
+                                if (stopped) {
+                                    return;
+                                }
                                 if (err) {
                                     adapter.log.error('Cannot read states: ' + err);
                                 } else {
@@ -403,8 +427,8 @@ function main() {
                                         adapter.subscribeStates('*');
                                     });
                                 }
-                            }), 100);
-                    }), 100);
+                            })}, 100);
+                    })}, 100);
             });
         }
     });

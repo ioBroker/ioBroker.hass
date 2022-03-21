@@ -24,7 +24,8 @@
             "fr": "Connexion Home Assistant pour ioBroker",
             "it": "Connessione Home Assistant per ioBroker",
             "es": "Conexión de Home Assistant para ioBroker",
-            "pl": "Połączenie Home Assistant dla ioBroker"
+            "pl": "Połączenie Home Assistant dla ioBroker",
+            "zh-cn": "ioBroker 的家庭助理连接"
         },
         "news": {
             "1.0.1": {
@@ -60,7 +61,8 @@
                 "fr": "version initiale",
                 "it": "versione iniziale",
                 "es": "versión inicial",
-                "pl": "początkowa wersja"
+                "pl": "początkowa wersja",
+                "zh-cn": "初始版本"
             }
         },
         "localLink": "http://%host%:8123",
@@ -88,6 +90,11 @@
                 "js-controller": ">=2.0.0"
             }
         ],
+        "plugins": {
+            "sentry": {
+                "dsn": "https://1b2a1e8335f84cc49a67dd5ac2b07573@sentry.iobroker.net/182"
+            }
+        },
         "connectionType": "local",
         "dataSource": "push",
         "tier": 2

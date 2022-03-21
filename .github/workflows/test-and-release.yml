@@ -28,7 +28,7 @@ jobs:
         node-version: [12.x]
 
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v3
         with:
@@ -60,7 +60,7 @@ jobs:
         os: [ubuntu-latest, windows-latest, macos-latest]
 
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v3
         with:
@@ -140,19 +140,17 @@ jobs:
           prerelease: ${{ contains(steps.extract_release.outputs.VERSION, '-') }}
           body: ${{ steps.extract_release.outputs.BODY }}
 
-      #- name: Notify Sentry.io about the release
-      #  run: |
-      #    npm i -g @sentry/cli
-      #    export SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_AUTH_TOKEN }}
-      #    export SENTRY_URL=https://sentry.iobroker.net
-      #    export SENTRY_ORG=iobroker
-      #    export SENTRY_PROJECT=iobroker-hass
-      #    export SENTRY_VERSION=iobroker.hass@${{ steps.extract_release.outputs.VERSION }}
-      #    sentry-cli releases new $SENTRY_VERSION
-      #    sentry-cli releases finalize $SENTRY_VERSION
-
-        # Add the following line BEFORE finalize if repositories are connected in Sentry
-        # sentry-cli releases set-commits $SENTRY_VERSION --auto
+      - name: Notify Sentry.io about the release
+        run: |
+          npm i -g @sentry/cli
+          export SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_AUTH_TOKEN }}
+          export SENTRY_URL=https://sentry.iobroker.net
+          export SENTRY_ORG=iobroker
+          export SENTRY_PROJECT=iobroker-hass
+          export SENTRY_VERSION=iobroker.hass@${{ steps.extract_release.outputs.VERSION }}
+          sentry-cli releases new $SENTRY_VERSION
+          sentry-cli releases set-commits $SENTRY_VERSION --auto
+          sentry-cli releases finalize $SENTRY_VERSION
 
         # Add the following line BEFORE finalize if sourcemap uploads are needed
         # sentry-cli releases files $SENTRY_VERSION upload-sourcemaps build/
