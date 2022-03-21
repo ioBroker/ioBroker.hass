@@ -371,6 +371,9 @@ function main() {
 
     hass.on('state_changed', entity => {
         adapter.log.debug(`HASS-Message: State Changed: ${JSON.stringify(entity)}`);
+        if (!entity) {
+            return;
+        }
         const id = adapter.namespace  + '.entities.' + entity.entity_id + '.';
         const lc = entity.last_changed ? new Date(entity.last_changed).getTime() : undefined;
         const ts = entity.last_updated ? new Date(entity.last_updated).getTime() : undefined;
