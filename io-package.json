@@ -87,7 +87,12 @@
         ],
         "dependencies": [
             {
-                "js-controller": ">=2.0.0"
+                "js-controller": ">=3.0.0"
+            }
+        ],
+        "globalDependencies": [
+            {
+                "admin": ">=4.0.19"
             }
         ],
         "plugins": {
@@ -105,6 +110,12 @@
         "password": "",
         "secure": false
     },
+    "protectedNative": [
+        "password"
+    ],
+    "encryptedNative": [
+        "password"
+    ],
     "objects": [],
     "instanceObjects": [
         {

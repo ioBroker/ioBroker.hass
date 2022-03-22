@@ -1,12 +1,15 @@
 <html>
 <head>
-    <link rel="stylesheet" type="text/css" href="../../lib/css/themes/jquery-ui/redmond/jquery-ui.min.css"/>
+    <meta charset="UTF-8">
+    <!-- Materialze style -->
     <link rel="stylesheet" type="text/css" href="../../css/adapter.css"/>
+    <link rel="stylesheet" type="text/css" href="../../lib/css/materialize.css">
 
-    <script type="text/javascript" src="../../lib/js/jquery-1.11.1.min.js"></script>
+    <script type="text/javascript" src="../../lib/js/jquery-3.2.1.min.js"></script>
     <script type="text/javascript" src="../../socket.io/socket.io.js"></script>
-    <script type="text/javascript" src="../../lib/js/jquery-ui-1.10.3.full.min.js"></script>
+
     <script type="text/javascript" src="../../js/translate.js"></script>
+    <script type="text/javascript" src="../../lib/js/materialize.js"></script>
     <script type="text/javascript" src="../../js/adapter-settings.js"></script>
     <script type="text/javascript" src="words.js"></script>
 
@@ -17,6 +20,7 @@
 
             if (settings.password === undefined) settings.password = '';
             if (settings.prompt === undefined)   settings.prompt = 'hass>';
+            settings.passwordRepeat = settings.password;
 
             $('.value').each(function () {
                 var key = $(this).attr('id');
@@ -53,23 +57,54 @@
                     obj[$this.attr('id')] = $this.val();
                 }
             });
+            delete obj.passwordRepeat;
+
             callback(obj);
         }
     </script>
 </head>
 <body>
-    <div id="adapter-container">
-        <table><tr>
-            <td><img src="hass.png" alt="logo"/></td>
-            <td><h3 class="translate">Home assistant adapter settings</h3></td>
-        </tr></table>
-        <table>
-            <tr><td><label class="translate" for="host">Home assistant IP:</label></td><td class="admin-icon"></td><td><input class="value" id="host" /></td></tr>
-            <tr><td><label class="translate" for="port">Home assistant WS Port:</label></td><td class="admin-icon"></td><td><input class="value" id="port" size="5" maxlength="5"/></td></tr>
-            <tr><td><label class="translate" for="password">Password:</label></td><td class="admin-icon"></td><td><input class="value" id="password" type="password"/></td></tr>
-            <tr><td><label class="translate" for="passwordRepeat">Password repeat:</label></td><td class="admin-icon"></td><td><input type="password" id="passwordRepeat"/></td></tr>
-            <tr><td><label class="translate" for="secure">Secure:</label></td><td class="admin-icon"></td><td><input class="value" id="secure" type="checkbox"/></td></tr>
-        </table>
+    <div id="m adapter-container">
+        <div class="row">
+            <div class="col s12 m4 l2">
+                <img src="hass.png" class="logo">
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col s6 m4 input-field">
+                <input type="text" class="value" id="host" />
+                <label for="host" class="translate">Home assistant IP:</label>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col s6 m4 input-field">
+                <input type="text" class="value" id="port" size="5" maxlength="5"/>
+                <label for="port" class="translate">Home assistant WS Port:</label>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col s6 m4 input-field">
+                <input type="text" class="value" id="password" />
+                <label for="password" class="translate">Password:</label>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col s6 m4 input-field">
+                <input type="text" class="value" id="passwordRepeat" />
+                <label for="passwordRepeat" class="translate">Password repeat:</label>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col s6 m4 input-field">
+                <input id="secure" type="checkbox" class="value" />
+                <span for="secure" class="translate">Secure:</span>
+            </div>
+        </div>
     </div>
 </body>
 </html>

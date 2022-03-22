@@ -32,6 +32,7 @@ Please check it https://www.smarthomejetzt.de/mit-iobroker-auf-eine-home-assista
 ## Changelog
 
 ### __WORK IN PROGRESS__
+* IMPORTANT: You need to re-enter the password once after installing this version!
 * (Apollon77) Implement Service triggers to use any value to trigger or stringified JSON to call with fields
 * (Apollon77) Optimize unload handling
 * (Apollon7) Add Sentry for crash reporting
