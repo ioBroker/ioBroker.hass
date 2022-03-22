@@ -371,7 +371,12 @@ function main() {
 
     hass.on('state_changed', entity => {
         adapter.log.debug(`HASS-Message: State Changed: ${JSON.stringify(entity)}`);
-        if (!entity) {
+        if (!entity || typeof entity.entity_id !== 'string') {
+            return;
+        }
+        const serviceType = entity.entity_id.split('.')[0];
+
+        if (skipServices.includes(serviceType)) {
             return;
         }
         const id = adapter.namespace  + '.entities.' + entity.entity_id + '.';
