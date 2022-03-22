@@ -374,11 +374,7 @@ function main() {
         if (!entity || typeof entity.entity_id !== 'string') {
             return;
         }
-        const serviceType = entity.entity_id.split('.')[0];
 
-        if (skipServices.includes(serviceType)) {
-            return;
-        }
         const id = adapter.namespace  + '.entities.' + entity.entity_id + '.';
         const lc = entity.last_changed ? new Date(entity.last_changed).getTime() : undefined;
         const ts = entity.last_updated ? new Date(entity.last_updated).getTime() : undefined;
