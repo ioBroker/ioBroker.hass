@@ -1,11 +1,8 @@
 {
-    "FHEM Telnet IP:": "FHEM Telnet IP:",
-    "FHEM Telnet Port:": "FHEM Telnet Port:",
-    "FHEM adapter settings": "FHEM Adapter Einstellungen",
-    "Password repeat:": "Kennwort-Woederholung:",
-    "Password:": "Kennwort:",
-    "Passwords missmatch!": "Kennworte sind unterschiedlich!",
-    "Prompt:": "Prompt:",
-    "tooltip_password": "Optional. Nur falls in FHEM konfiguriert",
-    "tooltip_prompt": "Man kann hier ein eigenes Prompt setzen. Default ist 'hass>'"
+    "Home assistant IP:": "IP-Adresse des Heimassistenten:",
+    "Home assistant WS Port:": "Home Assistant WS-Port:",
+    "Password repeat:": "Passwort wiederholen:",
+    "Password:": "Passwort:",
+    "Passwords missmatch!": "Passwörter stimmen nicht überein!",
+    "Secure:": "HTTPS?:"
 }
