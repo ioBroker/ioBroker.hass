@@ -1,11 +1,8 @@
 {
-    "FHEM Telnet IP:": "IP Telnet FHEM:",
-    "FHEM Telnet Port:": "Porta Telnet FHEM:",
-    "FHEM adapter settings": "Impostazioni dell'adattatore FHEM",
+    "Home assistant IP:": "IP assistente domestico:",
+    "Home assistant WS Port:": "Porta WS dell'assistente domestico:",
     "Password repeat:": "Ripeti password:",
     "Password:": "Parola d'ordine:",
     "Passwords missmatch!": "Le password non corrispondono!",
-    "Prompt:": "Richiesta:",
-    "tooltip_password": "Opzionale. ",
-    "tooltip_prompt": "Puoi cambiare il prompt standard da 'hass>' a qualcos'altro."
+    "Secure:": "HTTPS?:"
 }
