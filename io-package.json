@@ -92,7 +92,7 @@
         ],
         "globalDependencies": [
             {
-                "admin": ">=4.0.19"
+                "admin": ">=5.1.28"
             }
         ],
         "plugins": {
@@ -102,7 +102,47 @@
         },
         "connectionType": "local",
         "dataSource": "push",
-        "tier": 2
+        "tier": 2,
+        "messages": [
+            {
+                "condition": {
+                    "operand": "and",
+                    "rules": [
+                        "oldVersion<1.1.0",
+                        "newVersion>=1.1.0"
+                    ]
+                },
+                "title": {
+                    "en": "Re-enter the password after Update!",
+                    "de": "Passwort muss nach dem Update erneut eingegeben werden!",
+                    "ru": "Повторно введите пароль после обновления!",
+                    "pt": "Digite novamente a senha após Atualizar!",
+                    "nl": "Voer het wachtwoord opnieuw in na Update!",
+                    "fr": "Entrez à nouveau le mot de passe après la mise à jour !",
+                    "it": "Reinserire la password dopo l'aggiornamento!",
+                    "es": "Vuelva a ingresar la contraseña después de ¡Actualizar!",
+                    "pl": "Wprowadź hasło ponownie po aktualizacji!",
+                    "zh-cn": "更新后重新输入密码！"
+                },
+                "text": {
+                    "en": "After installing this update the password/token used to access the HASS installation needs to be re-entered in the Instance-Settings!",
+                    "de": "Nach der Installation dieses Updates muss das Passwort/Token für den Zugriff auf die HASS-Installation in den Instanz-Einstellungen erneut eingegeben werden!",
+                    "ru": "После установки этого обновления пароль/токен, используемый для доступа к установке HASS, необходимо повторно ввести в настройках экземпляра!",
+                    "pt": "Depois de instalar esta atualização, a senha/token usado para acessar a instalação do HASS precisa ser reinserido nas configurações da instância!",
+                    "nl": "Na het installeren van deze update moet het wachtwoord/token dat wordt gebruikt om toegang te krijgen tot de HASS-installatie opnieuw worden ingevoerd in de Instance-Settings!",
+                    "fr": "Après l'installation de cette mise à jour, le mot de passe/jeton utilisé pour accéder à l'installation HASS doit être ressaisi dans les paramètres d'instance !",
+                    "it": "Dopo aver installato questo aggiornamento, la password/token utilizzato per accedere all'installazione HASS deve essere reinserito nelle impostazioni dell'istanza!",
+                    "es": "¡Después de instalar esta actualización, la contraseña/token utilizada para acceder a la instalación de HASS debe volver a ingresarse en la configuración de la instancia!",
+                    "pl": "Po zainstalowaniu tej aktualizacji hasło/token używane do uzyskania dostępu do instalacji HASS należy ponownie wprowadzić w ustawieniach instancji!",
+                    "zh-cn": "安装此更新后，用于访问 HASS 安装的密码/令牌需要在实例设置中重新输入！"
+                },
+                "level": "warn",
+                "buttons": [
+                    "agree",
+                    "cancel"
+                ]
+            }
+        ]
     },
     "native": {
         "host": "127.0.0.1",
