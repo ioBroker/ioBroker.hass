@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "hass",
-    "version": "1.1.0",
+    "version": "1.1.1",
     "title": "Home Assistant",
     "titleLang": {
       "en": "Home Assistant",
@@ -28,6 +28,18 @@
       "zh-cn": "ioBroker 的家庭助理连接"
     },
     "news": {
+      "1.1.1": {
+        "en": "Show password fields masked again in config",
+        "de": "Passwortfelder in config wieder maskiert anzeigen",
+        "ru": "Показать поля пароля снова замаскированные в конфигурации",
+        "pt": "Mostrar campos de senha mascarados novamente na configuração",
+        "nl": "Toon wachtwoordvelden opnieuw gemaskeerd in config",
+        "fr": "Afficher à nouveau les champs de mot de passe masqués dans la configuration",
+        "it": "Mostra i campi password mascherati di nuovo in config",
+        "es": "Mostrar campos de contraseña enmascarados nuevamente en la configuración",
+        "pl": "Pokaż ponownie zamaskowane pola haseł w konfiguracji",
+        "zh-cn": "在配置中再次显示被屏蔽的密码字段"
+      },
       "1.1.0": {
         "en": "IMPORTANT: You need to re-enter the password once after installing this version!\nImplement Service triggers to use any value to trigger or stringified JSON to call with fields\nOptimize unload handling\nAdd Sentry for crash reporting",
         "de": "WICHTIG: Nach der Installation dieser Version müssen Sie das Passwort einmalig neu eingeben!\nImplementieren Sie Dienstauslöser, um einen beliebigen Wert zum Auslösen oder stringifiziertes JSON zum Aufrufen mit Feldern zu verwenden\nEntladehandling optimieren\nFügen Sie Sentry für Absturzberichte hinzu",
