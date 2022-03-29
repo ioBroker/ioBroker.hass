@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "hass",
-    "version": "1.1.1",
+    "version": "1.1.2",
     "title": "Home Assistant",
     "titleLang": {
       "en": "Home Assistant",
@@ -28,6 +28,18 @@
       "zh-cn": "ioBroker 的家庭助理连接"
     },
     "news": {
+      "1.1.2": {
+        "en": "Fix crash cases reported by Sentry",
+        "de": "Von Sentry gemeldete Absturzfälle beheben",
+        "ru": "Исправить случаи сбоев, о которых сообщил Sentry",
+        "pt": "Corrigir casos de travamento relatados pelo Sentinela",
+        "nl": "Herstel crashgevallen gemeld door Sentry",
+        "fr": "Correction des cas de plantage signalés par Sentry",
+        "it": "Risolvi i casi di crash segnalati da Sentry",
+        "es": "Solucionar casos de fallas informados por Sentry",
+        "pl": "Napraw przypadki awarii zgłoszone przez Sentry",
+        "zh-cn": "修复 Sentry 报告的崩溃案例"
+      },
       "1.1.1": {
         "en": "Show password fields masked again in config",
         "de": "Passwortfelder in config wieder maskiert anzeigen",

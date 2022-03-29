@@ -93,8 +93,7 @@ Please check it https://www.smarthomejetzt.de/mit-iobroker-auf-eine-home-assista
 -->
 
 ## Changelog
-
-### __WORK IN PROGRESS__
+### 1.1.2 (2022-03-29)
 * (Apollon77) Fix crash cases reported by Sentry
 
 ### 1.1.1 (2022-03-25)
