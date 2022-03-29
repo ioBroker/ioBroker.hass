@@ -383,7 +383,7 @@ function main() {
         }
         if (entity.attributes) {
             for (const attr in entity.attributes) {
-                if (!entity.attributes.hasOwnProperty(attr) || attr === 'friendly_name' || attr === 'unit_of_measurement' || attr === 'icon') {
+                if (!entity.attributes.hasOwnProperty(attr) || attr === 'friendly_name' || attr === 'unit_of_measurement' || attr === 'icon'|| !attr.length) {
                     continue;
                 }
                 let val = entity.attributes[attr];
