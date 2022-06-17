@@ -177,6 +177,44 @@
           "agree",
           "cancel"
         ]
+      },
+      {
+        "condition": {
+          "operand": "and",
+          "rules": [
+            "oldVersion<1.2.0",
+            "newVersion>=1.2.0"
+          ]
+        },
+        "title": {
+          "en": "Important notice!",
+          "de": "Wichtiger Hinweis!",
+          "ru": "Важное замечание!",
+          "pt": "Notícia importante!",
+          "nl": "Belangrijke mededeling!",
+          "fr": "Avis important!",
+          "it": "Avviso IMPORTANTE!",
+          "es": "Noticia importante!",
+          "pl": "Ważna uwaga!",
+          "zh-cn": "重要通知!"
+        },
+        "text": {
+          "en": "The new version 1.2.x will potentially change the Names of Objects when special characters like \".\", \"-\" or spaces were used in entity attributes! Please delete the old objects manually if needed.",
+          "de": "Die neue Version 1.2.x wird die Namen von Objekten möglicherweise ändern, wenn spezielle Zeichen wie \".\", \"-\" oder Leerzeichen in Entity-Attributen verwendet wurden! Alten Objekte bitte bei Bedarf manuell löschen.",
+          "ru": "Новая версия 1.2.x будет потенциально менять имена объектов, когда специальные символы типа \".\", \"-\" или пространства были использованы в атрибутах лица! Пожалуйста, удалите старые объекты вручную, если это необходимо.",
+          "pt": "A nova versão 1.2.x irá potencialmente alterar os Nomes de Objetos quando caracteres especiais como \".\", \"-\" ou espaços foram usados em atributos de entidade! Por favor, exclua os objetos antigos manualmente, se necessário.",
+          "nl": "De nieuwe versie 1.2.x zal de Namen van Objects veranderen als speciale personages zoals \", \" of ruimtes werden gebruikt in entiteitsaanklachten! Verwijder de oude objecten handmatig als het nodig is.",
+          "fr": "La nouvelle version 1.2.x modifiera potentiellement les Noms des Objets lorsque des caractères spéciaux comme \", \"-\" ou des espaces ont été utilisés dans des attributs d'entité ! Veuillez supprimer les anciens objets manuellement si nécessaire.",
+          "it": "La nuova versione 1.2.x cambierà potenzialmente i nomi degli oggetti quando caratteri speciali come \".\", \"-\" o spazi sono stati utilizzati negli attributi dell'entità! Si prega di eliminare i vecchi oggetti manualmente se necessario.",
+          "es": "La nueva versión 1.2.x potencialmente cambiará los Nombres de Objetos cuando caracteres especiales como \"., \"-\" o espacios fueron utilizados en atributos de entidad! Por favor, borre los viejos objetos manualmente si es necesario.",
+          "pl": "Nowa wersja 1.2.x będzie potencjalnie zmieniać nazwy obiektów, kiedy szczególne postacie takie jak „.”, „-” lub przestrzenie były używane w atrybutach. Okazuje się, że stare obiekty ręcznie będą potrzebne.",
+          "zh-cn": "新版本1.2.x将可能改变物体的名称,如“......”、“-”或空间在实体的属性中使用。 请在必要时删除旧物体。."
+        },
+        "level": "warn",
+        "buttons": [
+          "agree",
+          "cancel"
+        ]
       }
     ]
   },

@@ -93,6 +93,11 @@ Please check it https://www.smarthomejetzt.de/mit-iobroker-auf-eine-home-assista
 -->
 
 ## Changelog
+
+### __WORK IN PROGRESS__
+* (Apollon77) IMPORTANT: Replace special characters in entity attribute names with an underscore! Object IDs might change!
+* (Apollon77) make sure a "null" value in state changes is not crashing
+
 ### 1.1.2 (2022-03-29)
 * (Apollon77) Fix crash cases reported by Sentry
 

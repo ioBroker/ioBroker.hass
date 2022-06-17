@@ -42,7 +42,7 @@ function startAdapter(options) {
                     let requestFields = {};
                     if (typeof state.val === 'string') {
                         try {
-                            requestFields = JSON.parse(state.val);
+                            requestFields = JSON.parse(state.val) || {};
                         } catch (err) {
                             adapter.log.info(`Ignore data for service call ${id} is no valid JSON: ${err.message}`);
                             requestFields = {};
@@ -284,7 +284,7 @@ function parseStates(entities, services, callback) {
                     }
 
                     obj = {
-                        _id: `${adapter.namespace}.entities.${entity.entity_id}.${attr}`,
+                        _id: `${adapter.namespace}.entities.${entity.entity_id}.${attr.replace(adapter.FORBIDDEN_CHARS, '_')}`,
                         type: 'state',
                         common: common,
                         native: {
@@ -390,7 +390,7 @@ function main() {
                 if ((typeof val === 'object' && val !== null) || Array.isArray(val)) {
                     val = JSON.stringify(val);
                 }
-                adapter.setForeignState(id + attr, {val, ack: true, lc, ts});
+                adapter.setForeignState(id + attr.replace(adapter.FORBIDDEN_CHARS, '_'), {val, ack: true, lc, ts});
             }
         }
     });
