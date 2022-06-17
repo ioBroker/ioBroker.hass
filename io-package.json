@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "hass",
-    "version": "1.1.2",
+    "version": "1.2.0",
     "title": "Home Assistant",
     "titleLang": {
       "en": "Home Assistant",
@@ -28,6 +28,18 @@
       "zh-cn": "ioBroker 的家庭助理连接"
     },
     "news": {
+      "1.2.0": {
+        "en": "IMPORTANT: Replace special characters in entity attribute names with an underscore! Object IDs might change!\nmake sure a \"null\" value in state changes is not crashing",
+        "de": "WICHTIG: Ersetzen Sie Sonderzeichen in Namen des Attributes der Einheit mit einem Unterpunkt! Objekt-IDs können sich ändern!\nsicherstellen, dass ein nullwert bei zustandsänderungen nicht abstürzt",
+        "ru": "ВАЖНО: Замените специальные символы в имени сущности с подчеркиванием! ID объекта может измениться!\nубедитесь, что значение null в государственных изменениях не падает",
+        "pt": "IMPORTANTE: Substitua caracteres especiais em nomes de atributos de entidade com um sublinhado! IDs de objeto podem mudar!\ncertifique-se de que um valor nulo em mudanças de estado não está caindo",
+        "nl": "Vervang speciale personages in entiteitsadvocaten met een onderscore! ID's kunnen veranderen!\nzorg ervoor dat een waarde van de staat niet crasht",
+        "fr": "IMPORTANT: Remplacer les caractères spéciaux dans les noms d'attributs d'entité par un accent! Les identifiants d'objet peuvent changer !\ns'assurer qu'une valeur nulle dans les changements d'état ne s'écrase pas",
+        "it": "IMPORTANTE: Sostituisci caratteri speciali in nomi attributo entità con un underscore! Gli ID degli Oggetti potrebbero cambiare!\nassicurarsi che un valore nullo nei cambiamenti di stato non è crash",
+        "es": "IMPORTANTE: Reemplazar caracteres especiales en nombres de atributos de entidad con un subrayado! ¡Las identificaciones de objetos pueden cambiar!\nasegúrese de que un valor nulo en los cambios estatales no se estrella",
+        "pl": "IMPORTANT: Replace special characters in identity attribution names with an underscore! (ang.). Zmiany obiektów mogą się zmieniać!\nniewątpliwą wartością w zmianach stanowych nie jest rozbicie się",
+        "zh-cn": "IMPORTANT:将实体的特色性改为强调的! 目标国际组织可能改变!\n确保在国家变化中确保无效不失"
+      },
       "1.1.2": {
         "en": "Fix crash cases reported by Sentry",
         "de": "Von Sentry gemeldete Absturzfälle beheben",
