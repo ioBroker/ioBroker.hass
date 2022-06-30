@@ -40,12 +40,22 @@ function startAdapter(options) {
                     const target = {};
 
                     let requestFields = {};
-                    if (typeof state.val === 'string') {
+                    if (typeof state.val === 'string' && state.val.startsWith('{') && state.val.endsWith('}')) {
                         try {
                             requestFields = JSON.parse(state.val) || {};
                         } catch (err) {
                             adapter.log.info(`Ignore data for service call ${id} is no valid JSON: ${err.message}`);
                             requestFields = {};
+                        }
+                    }
+
+                    // If a non-JSON value was set and we only have one relevant field, use this field as value
+                    if (Object.keys(requestFields).length === 0) {
+                        const fieldList = Object.keys(fields);
+                        if (fieldList.length === 1 && fieldList[0] !== 'entity_id') {
+                            requestFields[fieldList[0]] = state.val;
+                        } else if (fieldList.length === 2 && fields.entity_id) {
+                            requestFields[fieldList[1 - fields.indexOf('entity_id')]] = state.val;
                         }
                     }
 

@@ -93,6 +93,10 @@ Please check it https://www.smarthomejetzt.de/mit-iobroker-auf-eine-home-assista
 -->
 
 ## Changelog
+
+### __WORK IN PROGRESS__
+* (Apollon77) Further optimize sending data to HASS and allow to set values like numbers as normal states if the service has one attribute and it can be mapped
+
 ### 1.2.0 (2022-06-17)
 * (Apollon77) IMPORTANT: Replace special characters in entity attribute names with an underscore! Object IDs might change!
 * (Apollon77) make sure a "null" value in state changes is not crashing
