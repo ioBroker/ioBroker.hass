@@ -59,6 +59,7 @@ function startAdapter(options) {
                         }
                     }
 
+                    adapter.log.debug('Prepare service call for ' + id + ' with (mapped) request parameters ' + JSON.stringify(requestFields));
                     for (const field in fields) {
                         if (!fields.hasOwnProperty(field)) {
                             continue;
