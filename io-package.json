@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "hass",
-    "version": "1.2.0",
+    "version": "1.3.0",
     "title": "Home Assistant",
     "titleLang": {
       "en": "Home Assistant",
@@ -28,6 +28,18 @@
       "zh-cn": "ioBroker 的家庭助理连接"
     },
     "news": {
+      "1.3.0": {
+        "en": "Further optimize sending data to HASS and allow to set values like numbers as normal states if the service has one attribute and it can be mapped",
+        "de": "Weitere optimieren Sie das Senden von Daten an HASS und ermöglichen es, Werte wie Zahlen als normale Zustände festzulegen, wenn der Dienst ein Attribut hat und es abgebildet werden kann",
+        "ru": "Далее оптимизируйте отправку данных в HASS и позвольте установить значения, такие как цифры, как нормальные состояния, если услуга имеет один атрибут, и она может быть загружена",
+        "pt": "Além disso otimizar o envio de dados para HASS e permitir definir valores como números como estados normais se o serviço tem um atributo e pode ser mapeado",
+        "nl": "Verder optimiliseer het sturen van gegevens naar HASS en sta toe om waarden als normale staten te plaatsen als de dienst een Attribuut heeft en het kan worden in kaart gebracht",
+        "fr": "Optimiser l'envoi de données à HASS et permettre de définir des valeurs comme des nombres comme des états normaux si le service a un attribut et il peut être mappé",
+        "it": "Ottimizzare ulteriormente l'invio di dati a HASS e consentire di impostare valori come numeri come stati normali se il servizio ha un attributo e può essere mappato",
+        "es": "Optimizar aún más el envío de datos a HASS y permitir establecer valores como números como estados normales si el servicio tiene un atributo y puede ser mapeado",
+        "pl": "Dalsze optymalizowanie danych do HASS i umożliwienie ustalenie wartości takich jak stany normalne, jeśli usługa ma jeden atrybut i może być zmapowana",
+        "zh-cn": "进一步优化向人道协调厅系统传送数据,如果该服务具有属性,它可以绘制图表,从而能够将数字象正常国家一样。"
+      },
       "1.2.0": {
         "en": "IMPORTANT: Replace special characters in entity attribute names with an underscore! Object IDs might change!\nmake sure a \"null\" value in state changes is not crashing",
         "de": "WICHTIG: Ersetzen Sie Sonderzeichen in Namen des Attributes der Einheit mit einem Unterpunkt! Objekt-IDs können sich ändern!\nsicherstellen, dass ein nullwert bei zustandsänderungen nicht abstürzt",
@@ -99,18 +111,6 @@
         "es": "agregó el soporte del modo compacto",
         "pl": "dodano obsługę trybu kompaktowego",
         "zh-cn": "增加了对紧凑模式的支持"
-      },
-      "0.1.0": {
-        "en": "initial version",
-        "de": "erste Version",
-        "ru": "Первоначальная версия",
-        "pt": "versão inicial",
-        "nl": "eerste versie",
-        "fr": "version initiale",
-        "it": "versione iniziale",
-        "es": "versión inicial",
-        "pl": "początkowa wersja",
-        "zh-cn": "初始版本"
       }
     },
     "localLink": "http://%host%:8123",

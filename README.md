@@ -93,8 +93,7 @@ Please check it https://www.smarthomejetzt.de/mit-iobroker-auf-eine-home-assista
 -->
 
 ## Changelog
-
-### __WORK IN PROGRESS__
+### 1.3.0 (2022-07-01)
 * (Apollon77) Further optimize sending data to HASS and allow to set values like numbers as normal states if the service has one attribute and it can be mapped
 
 ### 1.2.0 (2022-06-17)
