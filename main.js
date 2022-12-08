@@ -59,7 +59,7 @@ function startAdapter(options) {
                         }
                     }
 
-                    adapter.log.debug('Prepare service call for ' + id + ' with (mapped) request parameters ' + JSON.stringify(requestFields));
+                    adapter.log.debug('Prepare service call for ' + id + ' with (mapped) request parameters ' + JSON.stringify(requestFields) + ' from value: ' + JSON.stringify(state.val));
                     for (const field in fields) {
                         if (!fields.hasOwnProperty(field)) {
                             continue;
@@ -71,11 +71,16 @@ function startAdapter(options) {
                             serviceData[field] = requestFields[field];
                         }
                     }
+                    const noFields = Object.keys(serviceData).length === 0;
                     serviceData.entity_id = hassObjects[id].native.entity_id
 
                     adapter.log.debug(`Send to HASS for service ${hassObjects[id].native.attr} with ${hassObjects[id].native.domain || hassObjects[id].native.type} and data ${JSON.stringify(serviceData)}`)
-                    hass.callService(hassObjects[id].native.attr, hassObjects[id].native.domain || hassObjects[id].native.type, serviceData, target, err =>
-                        err && adapter.log.error('Cannot control ' + id + ': ' + err));
+                    hass.callService(hassObjects[id].native.attr, hassObjects[id].native.domain || hassObjects[id].native.type, serviceData, target, err => {
+                        err && adapter.log.error('Cannot control ' + id + ': ' + err);
+                        if (err && noFields) {
+                            adapter.log.warn(`Please make sure to provide a stringified JSON as value to set relevant fields! Please refer to the Readme for details!`);
+                        }
+                    });
                 }
             }
         }
