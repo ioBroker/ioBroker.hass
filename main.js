@@ -79,6 +79,7 @@ function startAdapter(options) {
                         err && adapter.log.error('Cannot control ' + id + ': ' + err);
                         if (err && noFields) {
                             adapter.log.warn(`Please make sure to provide a stringified JSON as value to set relevant fields! Please refer to the Readme for details!`);
+                            adapter.log.warn(`Allowed field keys are: ${Object.keys(fields).join(', ')}`);
                         }
                     });
                 }
