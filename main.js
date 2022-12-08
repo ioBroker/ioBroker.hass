@@ -50,7 +50,7 @@ function startAdapter(options) {
                     }
 
                     // If a non-JSON value was set and we only have one relevant field, use this field as value
-                    if (Object.keys(requestFields).length === 0) {
+                    if (fields && Object.keys(requestFields).length === 0) {
                         const fieldList = Object.keys(fields);
                         if (fieldList.length === 1 && fieldList[0] !== 'entity_id') {
                             requestFields[fieldList[0]] = state.val;
@@ -60,15 +60,17 @@ function startAdapter(options) {
                     }
 
                     adapter.log.debug('Prepare service call for ' + id + ' with (mapped) request parameters ' + JSON.stringify(requestFields) + ' from value: ' + JSON.stringify(state.val));
-                    for (const field in fields) {
-                        if (!fields.hasOwnProperty(field)) {
-                            continue;
-                        }
+                    if (fields) {
+                        for (const field in fields) {
+                            if (!fields.hasOwnProperty(field)) {
+                                continue;
+                            }
 
-                        if (field === 'entity_id') {
-                            target.entity_id = hassObjects[id].native.entity_id
-                        } else if (requestFields[field] !== undefined) {
-                            serviceData[field] = requestFields[field];
+                            if (field === 'entity_id') {
+                                target.entity_id = hassObjects[id].native.entity_id
+                            } else if (requestFields[field] !== undefined) {
+                                serviceData[field] = requestFields[field];
+                            }
                         }
                     }
                     const noFields = Object.keys(serviceData).length === 0;
@@ -77,7 +79,7 @@ function startAdapter(options) {
                     adapter.log.debug(`Send to HASS for service ${hassObjects[id].native.attr} with ${hassObjects[id].native.domain || hassObjects[id].native.type} and data ${JSON.stringify(serviceData)}`)
                     hass.callService(hassObjects[id].native.attr, hassObjects[id].native.domain || hassObjects[id].native.type, serviceData, target, err => {
                         err && adapter.log.error('Cannot control ' + id + ': ' + err);
-                        if (err && noFields) {
+                        if (err && fields && noFields) {
                             adapter.log.warn(`Please make sure to provide a stringified JSON as value to set relevant fields! Please refer to the Readme for details!`);
                             adapter.log.warn(`Allowed field keys are: ${Object.keys(fields).join(', ')}`);
                         }
@@ -300,8 +302,9 @@ function parseStates(entities, services, callback) {
                         common = {};
                     }
 
+                    const attrId = attr.replace(adapter.FORBIDDEN_CHARS, '_').replace(/\.+$/, '_');
                     obj = {
-                        _id: `${adapter.namespace}.entities.${entity.entity_id}.${attr.replace(adapter.FORBIDDEN_CHARS, '_')}`,
+                        _id: `${adapter.namespace}.entities.${entity.entity_id}.${attrId}`,
                         type: 'state',
                         common: common,
                         native: {
@@ -392,11 +395,15 @@ function main() {
             return;
         }
 
-        const id = adapter.namespace  + '.entities.' + entity.entity_id + '.';
+        const id = 'entities.' + entity.entity_id + '.';
         const lc = entity.last_changed ? new Date(entity.last_changed).getTime() : undefined;
         const ts = entity.last_updated ? new Date(entity.last_updated).getTime() : undefined;
         if (entity.state !== undefined) {
-            adapter.setForeignState(id + 'state', {val: entity.state, ack: true, lc: lc, ts: ts});
+            if (hassObjects[id + 'state']) {
+                adapter.setState(id + 'state', {val: entity.state, ack: true, lc: lc, ts: ts});
+            } else {
+                adapter.log.info(`State changed for unknown object ${id + 'state'}. Please restart the adapter to resync the objects.`);
+            }
         }
         if (entity.attributes) {
             for (const attr in entity.attributes) {
@@ -407,7 +414,12 @@ function main() {
                 if ((typeof val === 'object' && val !== null) || Array.isArray(val)) {
                     val = JSON.stringify(val);
                 }
-                adapter.setForeignState(id + attr.replace(adapter.FORBIDDEN_CHARS, '_'), {val, ack: true, lc, ts});
+                const attrId = attr.replace(adapter.FORBIDDEN_CHARS, '_').replace(/\.+$/, '_');
+                if (hassObjects[id + attrId]) {
+                    adapter.setState(id + attrId, {val, ack: true, lc, ts});
+                } else {
+                    adapter.log.info(`State changed for unknown object ${id + attrId}. Please restart the adapter to resync the objects.`);
+                }
             }
         }
     });
