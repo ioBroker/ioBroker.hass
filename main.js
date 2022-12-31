@@ -25,7 +25,7 @@ function startAdapter(options) {
         // you can use the ack flag to detect if it is status (true) or command (false)
         if (state && !state.ack) {
             if (!connected) {
-                return adapter.log.warn('Cannot send command to "' + id + '", because not connected');
+                return adapter.log.warn(`Cannot send command to "${id}", because not connected`);
             }
             /*if (id === adapter.namespace + '.' + '.info.resync') {
                 queue.push({command: 'resync'});
@@ -33,7 +33,7 @@ function startAdapter(options) {
             } else */
             if (hassObjects[id]) {
                 if (!hassObjects[id].common.write) {
-                    adapter.log.warn('Object ' + id + ' is not writable!');
+                    adapter.log.warn(`Object ${id} is not writable!`);
                 } else {
                     const serviceData = {};
                     const fields = hassObjects[id].native.fields;
@@ -59,7 +59,7 @@ function startAdapter(options) {
                         }
                     }
 
-                    adapter.log.debug('Prepare service call for ' + id + ' with (mapped) request parameters ' + JSON.stringify(requestFields) + ' from value: ' + JSON.stringify(state.val));
+                    adapter.log.debug(`Prepare service call for ${id} with (mapped) request parameters ${JSON.stringify(requestFields)} from value: ${JSON.stringify(state.val)}`);
                     if (fields) {
                         for (const field in fields) {
                             if (!fields.hasOwnProperty(field)) {
@@ -78,7 +78,7 @@ function startAdapter(options) {
 
                     adapter.log.debug(`Send to HASS for service ${hassObjects[id].native.attr} with ${hassObjects[id].native.domain || hassObjects[id].native.type} and data ${JSON.stringify(serviceData)}`)
                     hass.callService(hassObjects[id].native.attr, hassObjects[id].native.domain || hassObjects[id].native.type, serviceData, target, err => {
-                        err && adapter.log.error('Cannot control ' + id + ': ' + err);
+                        err && adapter.log.error(`Cannot control ${id}: ${err}`);
                         if (err && fields && noFields) {
                             adapter.log.warn(`Please make sure to provide a stringified JSON as value to set relevant fields! Please refer to the Readme for details!`);
                             adapter.log.warn(`Allowed field keys are: ${Object.keys(fields).join(', ')}`);
@@ -145,7 +145,7 @@ function syncObjects(objects, cb) {
         err && adapter.log.error(err);
 
         if (!oldObj) {
-            adapter.log.debug('Create "' + obj._id + '": ' + JSON.stringify(obj.common));
+            adapter.log.debug(`Create "${obj._id}": ${JSON.stringify(obj.common)}`);
             hassObjects[obj._id] = obj;
             adapter.setForeignObject(obj._id, obj, err => {
                 err && adapter.log.error(err);
@@ -156,7 +156,7 @@ function syncObjects(objects, cb) {
             if (JSON.stringify(obj.native) !== JSON.stringify(oldObj.native)) {
                 oldObj.native = obj.native;
 
-                adapter.log.debug('Update "' + obj._id + '": ' + JSON.stringify(obj.common));
+                adapter.log.debug(`Update "${obj._id}": ${JSON.stringify(obj.common)}`);
                 adapter.setForeignObject(obj._id, oldObj, err => {
                     err => adapter.log.error(err);
                     setImmediate(syncObjects, objects, cb);
@@ -169,10 +169,10 @@ function syncObjects(objects, cb) {
 }
 
 function syncRoom(room, members, cb) {
-    adapter.getForeignObject('enum.rooms.' + room, (err, obj) => {
+    adapter.getForeignObject(`enum.rooms.${room}`, (err, obj) => {
         if (!obj) {
             obj = {
-                _id: 'enum.rooms.' + room,
+                _id: `enum.rooms.${room}`,
                 type: 'enum',
                 common: {
                     name: room,
@@ -180,7 +180,7 @@ function syncRoom(room, members, cb) {
                 },
                 native: {}
             };
-            adapter.log.debug('Update "' + obj._id + '"');
+            adapter.log.debug(`Update "${obj._id}"`);
             adapter.setForeignObject(obj._id, obj, err => {
                 err && adapter.log.error(err);
                 cb();
@@ -196,7 +196,7 @@ function syncRoom(room, members, cb) {
                 }
             }
             if (changed) {
-                adapter.log.debug('Update "' + obj._id + '"');
+                adapter.log.debug(`Update "${obj._id}"`);
                 adapter.setForeignObject(obj._id, obj, err => {
                     err && adapter.log.error(err);
                     cb();
@@ -315,7 +315,7 @@ function parseStates(entities, services, callback) {
                         }
                     };
                     if (!common.name) {
-                        common.name = name + ' ' + attr.replace(/_/g, ' ');
+                        common.name = `${name} ${attr.replace(/_/g, ' ')}`;
                     }
                     if (common.read === undefined) {
                         common.read = true;
@@ -395,14 +395,14 @@ function main() {
             return;
         }
 
-        const id = 'entities.' + entity.entity_id + '.';
+        const id = `entities.${entity.entity_id}.`;
         const lc = entity.last_changed ? new Date(entity.last_changed).getTime() : undefined;
         const ts = entity.last_updated ? new Date(entity.last_updated).getTime() : undefined;
         if (entity.state !== undefined) {
-            if (hassObjects[id + 'state']) {
-                adapter.setState(id + 'state', {val: entity.state, ack: true, lc: lc, ts: ts});
+            if (hassObjects[`${adapter.namespace}.${id}state`]) {
+                adapter.setState(`${id}state`, {val: entity.state, ack: true, lc: lc, ts: ts});
             } else {
-                adapter.log.info(`State changed for unknown object ${id + 'state'}. Please restart the adapter to resync the objects.`);
+                adapter.log.info(`State changed for unknown object ${`${id}state`}. Please restart the adapter to resync the objects.`);
             }
         }
         if (entity.attributes) {
@@ -415,7 +415,7 @@ function main() {
                     val = JSON.stringify(val);
                 }
                 const attrId = attr.replace(adapter.FORBIDDEN_CHARS, '_').replace(/\.+$/, '_');
-                if (hassObjects[id + attrId]) {
+                if (hassObjects[`${adapter.namespace}.${id}state`]) {
                     adapter.setState(id + attrId, {val, ack: true, lc, ts});
                 } else {
                     adapter.log.info(`State changed for unknown object ${id + attrId}. Please restart the adapter to resync the objects.`);
@@ -431,7 +431,7 @@ function main() {
             adapter.setState('info.connection', true, true);
             hass.getConfig((err, config) => {
                 if (err) {
-                    adapter.log.error('Cannot read config: ' + err);
+                    adapter.log.error(`Cannot read config: ${err}`);
                     return;
                 }
                 //adapter.log.debug(JSON.stringify(config));
@@ -442,7 +442,7 @@ function main() {
                             return;
                         }
                         if (err) {
-                            return adapter.log.error('Cannot read states: ' + err);
+                            return adapter.log.error(`Cannot read states: ${err}`);
                         }
                         //adapter.log.debug(JSON.stringify(states));
                         delayTimeout = setTimeout(() => {
@@ -452,7 +452,7 @@ function main() {
                                     return;
                                 }
                                 if (err) {
-                                    adapter.log.error('Cannot read states: ' + err);
+                                    adapter.log.error(`Cannot read states: ${err}`);
                                 } else {
                                     //adapter.log.debug(JSON.stringify(services));
                                     parseStates(states, services, () => {
