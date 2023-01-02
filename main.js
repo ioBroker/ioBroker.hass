@@ -40,16 +40,19 @@ function startAdapter(options) {
                     const target = {};
 
                     let requestFields = {};
-                    if (typeof state.val === 'string' && state.val.startsWith('{') && state.val.endsWith('}')) {
-                        try {
-                            requestFields = JSON.parse(state.val) || {};
-                        } catch (err) {
-                            adapter.log.info(`Ignore data for service call ${id} is no valid JSON: ${err.message}`);
-                            requestFields = {};
+                    if (typeof state.val === 'string') {
+                        state.val = state.val.trim();
+                        if (state.val.startsWith('{') && state.val.endsWith('}')) {
+                            try {
+                                requestFields = JSON.parse(state.val) || {};
+                            } catch (err) {
+                                adapter.log.info(`Ignore data for service call ${id} is no valid JSON: ${err.message}`);
+                                requestFields = {};
+                            }
                         }
                     }
 
-                    // If a non-JSON value was set and we only have one relevant field, use this field as value
+                    // If a non-JSON value was set, and we only have one relevant field, use this field as value
                     if (fields && Object.keys(requestFields).length === 0) {
                         const fieldList = Object.keys(fields);
                         if (fieldList.length === 1 && fieldList[0] !== 'entity_id') {
