@@ -102,8 +102,7 @@ Please check it https://www.smarthomejetzt.de/mit-iobroker-auf-eine-home-assista
 -->
 
 ## Changelog
-
-### __WORK IN PROGRESS__
+### 1.4.0 (2023-01-03)
 * (Apollon77) Added more guidance logging when setting services incorrectly
 * (Apollon77) Prevent crashes when attributes contain "." at the end of their names
 * (Apollon77) Added logging for state updates for unknown objects

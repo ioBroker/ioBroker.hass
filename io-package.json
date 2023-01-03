@@ -1,290 +1,290 @@
 {
-    "common": {
-        "name": "hass",
-        "version": "1.3.0",
-        "title": "Home Assistant",
-        "titleLang": {
-            "en": "Home Assistant",
-            "de": "Home-Assistent",
-            "ru": "Домашний помощник",
-            "pt": "Home Assistant",
-            "nl": "Thuisassistent",
-            "fr": "Assistante à domicile",
-            "it": "Assistente domiciliare",
-            "es": "Asistente de hogar",
-            "pl": "Asystent domowy",
-            "zh-cn": "家庭助理",
-            "uk": "Домашній помічник"
+  "common": {
+    "name": "hass",
+    "version": "1.4.0",
+    "title": "Home Assistant",
+    "titleLang": {
+      "en": "Home Assistant",
+      "de": "Home-Assistent",
+      "ru": "Домашний помощник",
+      "pt": "Home Assistant",
+      "nl": "Thuisassistent",
+      "fr": "Assistante à domicile",
+      "it": "Assistente domiciliare",
+      "es": "Asistente de hogar",
+      "pl": "Asystent domowy",
+      "zh-cn": "家庭助理",
+      "uk": "Домашній помічник"
+    },
+    "desc": {
+      "en": "Home Assistant connection for ioBroker",
+      "de": "Home Assistant Verbindung für ioBroker",
+      "ru": "Подключение Home Assistant для ioBroker",
+      "pt": "Conexão do Home Assistant para ioBroker",
+      "nl": "Home Assistant-verbinding voor ioBroker",
+      "fr": "Connexion Home Assistant pour ioBroker",
+      "it": "Connessione Home Assistant per ioBroker",
+      "es": "Conexión de Home Assistant para ioBroker",
+      "pl": "Połączenie Home Assistant dla ioBroker",
+      "zh-cn": "ioBroker 的家庭助理连接",
+      "uk": "Підключення Home Assistant для ioBroker"
+    },
+    "news": {
+      "1.4.0": {
+        "en": "Added more guidance logging when setting services incorrectly\nPrevent crashes when attributes contain \".\" at the end of their names\nAdded logging for state updates for unknown objects",
+        "de": "Mehr Anleitungsprotokollierung hinzugefügt, wenn Dienste falsch eingestellt werden\nVerhindern Sie Abstürzen, wenn Attribute \" enthalten.\" am Ende ihrer Namen\nHinzugefügt Protokollierung für Zustandsaktualisierungen für unbekannte Objekte",
+        "ru": "Добавили больше руководства, когда установка услуг неправильно\nПредотвратить сбои, когда атрибуты содержат \".\" в конце их имен\nДобавлен вход для государственных обновлений для неизвестных объектов",
+        "pt": "Adicionado mais registro de orientação ao definir serviços incorretamente\nImpedir falhas quando os atributos contêm \". no final de seus nomes\nRegisto adicionado para atualizações de estado para objetos desconhecidos",
+        "nl": "Voeg meer begeleiding toe als ze onjuiste diensten indienen\nVertaling:\nVermeld inloggen op staatsinformatie voor onbekende objecten",
+        "fr": "Ajout d'autres lignes directrices lorsqu'on établit des services incorrectement\nPrévenir les crashes lorsque les attributs contiennent \".\" à la fin de leurs noms\nAjout de logging pour les mises à jour de l'état des objets inconnus",
+        "it": "Aggiunto più guida logging quando imposta i servizi in modo errato\nPrevenire crash quando gli attributi contengono \". alla fine dei loro nomi\nAggiunto logging per aggiornamenti di stato per oggetti sconosciuti",
+        "es": "Se agregó más registro de guía cuando se establecen los servicios incorrectamente\nEvitar fallos cuando los atributos contienen \".\" al final de sus nombres\nRegistro añadido para actualizaciones estatales para objetos desconocidos",
+        "pl": "Wprowadzone są bardziej wytyczne, gdy ustawienie usług nieprawidłowo błędnie\nPrevent rozbija się, gdy atrybuty zawierają „”\nWprowadzone logowanie dla aktualizacji stanów nieznanych obiektów",
+        "uk": "Додайте більше звітів при установці послуг неправильно\nПрофілактика аварійних випадків, коли атрибути містять \".\" в кінці їх імен\nДодана записка для державних оновлень для невідомих об'єктів",
+        "zh-cn": "在不正确地建立服务时增加指导标志\n在名称末尾含有“第2款”的预防事故\n增加用于不明物品的国家更新的伐木"
+      },
+      "1.3.0": {
+        "en": "Further optimize sending data to HASS and allow to set values like numbers as normal states if the service has one attribute and it can be mapped",
+        "de": "Weitere optimieren Sie das Senden von Daten an HASS und ermöglichen es, Werte wie Zahlen als normale Zustände festzulegen, wenn der Dienst ein Attribut hat und es abgebildet werden kann",
+        "ru": "Далее оптимизируйте отправку данных в HASS и позвольте установить значения, такие как цифры, как нормальные состояния, если услуга имеет один атрибут, и она может быть загружена",
+        "pt": "Além disso otimizar o envio de dados para HASS e permitir definir valores como números como estados normais se o serviço tem um atributo e pode ser mapeado",
+        "nl": "Verder optimiliseer het sturen van gegevens naar HASS en sta toe om waarden als normale staten te plaatsen als de dienst een Attribuut heeft en het kan worden in kaart gebracht",
+        "fr": "Optimiser l'envoi de données à HASS et permettre de définir des valeurs comme des nombres comme des états normaux si le service a un attribut et il peut être mappé",
+        "it": "Ottimizzare ulteriormente l'invio di dati a HASS e consentire di impostare valori come numeri come stati normali se il servizio ha un attributo e può essere mappato",
+        "es": "Optimizar aún más el envío de datos a HASS y permitir establecer valores como números como estados normales si el servicio tiene un atributo y puede ser mapeado",
+        "pl": "Dalsze optymalizowanie danych do HASS i umożliwienie ustalenie wartości takich jak stany normalne, jeśli usługa ma jeden atrybut i może być zmapowana",
+        "zh-cn": "进一步优化向人道协调厅系统传送数据,如果该服务具有属性,它可以绘制图表,从而能够将数字象正常国家一样。",
+        "uk": "Додатково оптимізуйте надсилання даних до HASS і дозвольте встановлювати такі значення, як числа, як звичайні стани, якщо служба має один атрибут і його можна зіставити"
+      },
+      "1.2.0": {
+        "en": "IMPORTANT: Replace special characters in entity attribute names with an underscore! Object IDs might change!\nmake sure a \"null\" value in state changes is not crashing",
+        "de": "WICHTIG: Ersetzen Sie Sonderzeichen in Namen des Attributes der Einheit mit einem Unterpunkt! Objekt-IDs können sich ändern!\nsicherstellen, dass ein nullwert bei zustandsänderungen nicht abstürzt",
+        "ru": "ВАЖНО: Замените специальные символы в имени сущности с подчеркиванием! ID объекта может измениться!\nубедитесь, что значение null в государственных изменениях не падает",
+        "pt": "IMPORTANTE: Substitua caracteres especiais em nomes de atributos de entidade com um sublinhado! IDs de objeto podem mudar!\ncertifique-se de que um valor nulo em mudanças de estado não está caindo",
+        "nl": "Vervang speciale personages in entiteitsadvocaten met een onderscore! ID's kunnen veranderen!\nzorg ervoor dat een waarde van de staat niet crasht",
+        "fr": "IMPORTANT: Remplacer les caractères spéciaux dans les noms d'attributs d'entité par un accent! Les identifiants d'objet peuvent changer !\ns'assurer qu'une valeur nulle dans les changements d'état ne s'écrase pas",
+        "it": "IMPORTANTE: Sostituisci caratteri speciali in nomi attributo entità con un underscore! Gli ID degli Oggetti potrebbero cambiare!\nassicurarsi che un valore nullo nei cambiamenti di stato non è crash",
+        "es": "IMPORTANTE: Reemplazar caracteres especiales en nombres de atributos de entidad con un subrayado! ¡Las identificaciones de objetos pueden cambiar!\nasegúrese de que un valor nulo en los cambios estatales no se estrella",
+        "pl": "IMPORTANT: Replace special characters in identity attribution names with an underscore! (ang.). Zmiany obiektów mogą się zmieniać!\nniewątpliwą wartością w zmianach stanowych nie jest rozbicie się",
+        "zh-cn": "IMPORTANT:将实体的特色性改为强调的! 目标国际组织可能改变!\n确保在国家变化中确保无效不失",
+        "uk": "ВАЖЛИВО: Замініть спеціальні символи в іменах атрибутів сутності на підкреслення! Ідентифікатори об'єктів можуть змінитися!\nпереконайтеся, що \"нульове\" значення в змінах стану не аварійно завершує роботу"
+      },
+      "1.1.2": {
+        "en": "Fix crash cases reported by Sentry",
+        "de": "Von Sentry gemeldete Absturzfälle beheben",
+        "ru": "Исправить случаи сбоев, о которых сообщил Sentry",
+        "pt": "Corrigir casos de travamento relatados pelo Sentinela",
+        "nl": "Herstel crashgevallen gemeld door Sentry",
+        "fr": "Correction des cas de plantage signalés par Sentry",
+        "it": "Risolvi i casi di crash segnalati da Sentry",
+        "es": "Solucionar casos de fallas informados por Sentry",
+        "pl": "Napraw przypadki awarii zgłoszone przez Sentry",
+        "zh-cn": "修复 Sentry 报告的崩溃案例",
+        "uk": "Виправте випадки збоїв, про які повідомляє Sentry"
+      },
+      "1.1.1": {
+        "en": "Show password fields masked again in config",
+        "de": "Passwortfelder in config wieder maskiert anzeigen",
+        "ru": "Показать поля пароля снова замаскированные в конфигурации",
+        "pt": "Mostrar campos de senha mascarados novamente na configuração",
+        "nl": "Toon wachtwoordvelden opnieuw gemaskeerd in config",
+        "fr": "Afficher à nouveau les champs de mot de passe masqués dans la configuration",
+        "it": "Mostra i campi password mascherati di nuovo in config",
+        "es": "Mostrar campos de contraseña enmascarados nuevamente en la configuración",
+        "pl": "Pokaż ponownie zamaskowane pola haseł w konfiguracji",
+        "zh-cn": "在配置中再次显示被屏蔽的密码字段",
+        "uk": "Знову показати замасковані поля пароля в конфігурації"
+      },
+      "1.1.0": {
+        "en": "IMPORTANT: You need to re-enter the password once after installing this version!\nImplement Service triggers to use any value to trigger or stringified JSON to call with fields\nOptimize unload handling\nAdd Sentry for crash reporting",
+        "de": "WICHTIG: Nach der Installation dieser Version müssen Sie das Passwort einmalig neu eingeben!\nImplementieren Sie Dienstauslöser, um einen beliebigen Wert zum Auslösen oder stringifiziertes JSON zum Aufrufen mit Feldern zu verwenden\nEntladehandling optimieren\nFügen Sie Sentry für Absturzberichte hinzu",
+        "ru": "ВАЖНО: Вам необходимо повторно ввести пароль один раз после установки этой версии!\nРеализовать триггеры службы, чтобы использовать любое значение для запуска или строкового JSON для вызова с полями.\nОптимизация обработки разгрузки\nДобавьте Sentry для отчетов о сбоях",
+        "pt": "IMPORTANTE: Você precisa redigitar a senha uma vez depois de instalar esta versão!\nImplemente gatilhos de serviço para usar qualquer valor para acionar ou JSON stringified para chamar com campos\nOtimize o manuseio de descarga\nAdicionar Sentinela para relatórios de falhas",
+        "nl": "BELANGRIJK: u moet het wachtwoord één keer opnieuw invoeren na het installeren van deze versie!\nImplementeer servicetriggers om elke waarde te gebruiken om te activeren of stringified JSON om met velden aan te roepen\nOptimaliseer de losverwerking\nSentry toevoegen voor crashrapportage",
+        "fr": "IMPORTANT : Vous devez ressaisir le mot de passe une fois après l'installation de cette version !\nImplémentez des déclencheurs de service pour utiliser n'importe quelle valeur pour déclencher ou JSON stringifié pour appeler avec des champs\nOptimiser la gestion des déchargements\nAjouter Sentry pour les rapports de plantage",
+        "it": "IMPORTANTE: è necessario reinserire la password una volta dopo aver installato questa versione!\nImplementa i trigger del servizio per utilizzare qualsiasi valore per attivare o JSON in formato stringa per chiamare con i campi\nOttimizza la gestione dello scarico\nAggiungi Sentinella per la segnalazione degli arresti anomali",
+        "es": "IMPORTANTE: ¡Debe volver a ingresar la contraseña una vez después de instalar esta versión!\nImplementar disparadores de servicio para usar cualquier valor para disparar o JSON en cadena para llamar con campos\nOptimizar el manejo de descarga\nAgregar Sentry para informes de fallas",
+        "pl": "WAŻNE: Po zainstalowaniu tej wersji należy raz ponownie wprowadzić hasło!\nZaimplementuj wyzwalacze usługi, aby używać dowolnej wartości do wyzwalania lub skróconego JSON do wywołania z polami\nZoptymalizuj obsługę rozładunku\nDodaj Sentry do zgłaszania awarii",
+        "zh-cn": "重要提示：安装此版本后需要重新输入一次密码！\n实现服务触发器以使用任何值触发或字符串化 JSON 以使用字段调用\n优化卸载处理\n添加 Sentry 以进行崩溃报告",
+        "uk": "ВАЖЛИВО: після встановлення цієї версії потрібно повторно ввести пароль!\nРеалізуйте тригери служби, щоб використовувати будь-яке значення для запуску або рядковий JSON для виклику з полями\nОптимізуйте роботу з розвантаженням\nДодайте Sentry для звітування про збої"
+      },
+      "1.0.1": {
+        "en": "IMPORTANT: js-controller 2.0 is needed st least!\nFix start issue\n(Apollon77/Garfonso) Fix issue where value could not be set in hass",
+        "de": "WICHTIG: js-controller 2.0 wird am wenigsten benötigt!\nStartproblem beheben\n(Apollon77/Garfonso) Problem behoben, bei dem der Wert nicht in Hass festgelegt werden konnte",
+        "ru": "ВАЖНО: js-controller 2.0 нужен как минимум!\nИсправить проблему с запуском\n(Apollon77 / Garfonso) Исправлена ошибка, из-за которой значение не могло быть установлено в hass.",
+        "pt": "IMPORTANTE: o js-controller 2.0 é o mínimo necessário!\nCorrigir problema inicial\n(Apollon77 / Garfonso) Correção do problema em que o valor não podia ser definido em hass",
+        "nl": "BELANGRIJK: js-controller 2.0 is minimaal nodig!\nStartprobleem oplossen\n(Apollon77/Garfonso) Probleem opgelost waarbij de waarde niet kon worden ingesteld in hass",
+        "fr": "IMPORTANT : js-controller 2.0 est au moins nécessaire !\nRésoudre le problème de démarrage\n(Apollon77/Garfonso) Correction d'un problème où la valeur ne pouvait pas être définie dans hass",
+        "it": "IMPORTANTE: come minimo è necessario js-controller 2.0!\nRisolvi il problema di avvio\n(Apollon77/Garfonso) Risolto il problema per cui il valore non poteva essere impostato in hass",
+        "es": "IMPORTANTE: ¡js-controller 2.0 es lo menos necesario!\nSolucionar problema de inicio\n(Apollon77 / Garfonso) Se solucionó el problema por el cual no se podía establecer el valor en hass",
+        "pl": "WAŻNE: js-controller 2.0 jest potrzebny przynajmniej!\nNapraw problem z uruchomieniem\n(Apollon77/Garfonso) Napraw problem, w którym nie można było ustawić wartości w hass",
+        "zh-cn": "重要提示：至少需要 js-controller 2.0！\n修复启动问题\n(Apollon77/Garfonso) 修复无法在 hass 中设置值的问题",
+        "uk": "ВАЖЛИВО: як мінімум потрібен js-контроллер 2.0!\nВиправити проблему запуску\n(Apollon77/Garfonso) Виправлено проблему, через яку значення не можна було встановити в hass"
+      }
+    },
+    "localLink": "http://%host%:8123",
+    "platform": "Javascript/Node.js",
+    "mode": "daemon",
+    "icon": "hass.png",
+    "enabled": true,
+    "compact": true,
+    "materialize": true,
+    "license": "MIT",
+    "extIcon": "https://raw.githubusercontent.com/ioBroker/ioBroker.hass/master/admin/hass.png",
+    "keywords": [
+      "HASS",
+      "Home",
+      "assistant"
+    ],
+    "readme": "https://github.com/ioBroker/ioBroker.hass/blob/master/README.md",
+    "loglevel": "info",
+    "type": "iot-systems",
+    "authors": [
+      "bluefox <dogafox@gmail.com>"
+    ],
+    "dependencies": [
+      {
+        "js-controller": ">=3.0.0"
+      }
+    ],
+    "globalDependencies": [
+      {
+        "admin": ">=5.1.28"
+      }
+    ],
+    "plugins": {
+      "sentry": {
+        "dsn": "https://1b2a1e8335f84cc49a67dd5ac2b07573@sentry.iobroker.net/182"
+      }
+    },
+    "connectionType": "local",
+    "dataSource": "push",
+    "tier": 2,
+    "messages": [
+      {
+        "condition": {
+          "operand": "and",
+          "rules": [
+            "oldVersion<1.1.0",
+            "newVersion>=1.1.0"
+          ]
         },
-        "desc": {
-            "en": "Home Assistant connection for ioBroker",
-            "de": "Home Assistant Verbindung für ioBroker",
-            "ru": "Подключение Home Assistant для ioBroker",
-            "pt": "Conexão do Home Assistant para ioBroker",
-            "nl": "Home Assistant-verbinding voor ioBroker",
-            "fr": "Connexion Home Assistant pour ioBroker",
-            "it": "Connessione Home Assistant per ioBroker",
-            "es": "Conexión de Home Assistant para ioBroker",
-            "pl": "Połączenie Home Assistant dla ioBroker",
-            "zh-cn": "ioBroker 的家庭助理连接",
-            "uk": "Підключення Home Assistant для ioBroker"
+        "title": {
+          "en": "Re-enter the password after Update!",
+          "de": "Passwort muss nach dem Update erneut eingegeben werden!",
+          "ru": "Повторно введите пароль после обновления!",
+          "pt": "Digite novamente a senha após Atualizar!",
+          "nl": "Voer het wachtwoord opnieuw in na Update!",
+          "fr": "Entrez à nouveau le mot de passe après la mise à jour !",
+          "it": "Reinserire la password dopo l'aggiornamento!",
+          "es": "Vuelva a ingresar la contraseña después de ¡Actualizar!",
+          "pl": "Wprowadź hasło ponownie po aktualizacji!",
+          "zh-cn": "更新后重新输入密码！",
+          "uk": "Повторно введіть пароль після оновлення!"
         },
-        "news": {
-            "1.3.0": {
-                "en": "Further optimize sending data to HASS and allow to set values like numbers as normal states if the service has one attribute and it can be mapped",
-                "de": "Weitere optimieren Sie das Senden von Daten an HASS und ermöglichen es, Werte wie Zahlen als normale Zustände festzulegen, wenn der Dienst ein Attribut hat und es abgebildet werden kann",
-                "ru": "Далее оптимизируйте отправку данных в HASS и позвольте установить значения, такие как цифры, как нормальные состояния, если услуга имеет один атрибут, и она может быть загружена",
-                "pt": "Além disso otimizar o envio de dados para HASS e permitir definir valores como números como estados normais se o serviço tem um atributo e pode ser mapeado",
-                "nl": "Verder optimiliseer het sturen van gegevens naar HASS en sta toe om waarden als normale staten te plaatsen als de dienst een Attribuut heeft en het kan worden in kaart gebracht",
-                "fr": "Optimiser l'envoi de données à HASS et permettre de définir des valeurs comme des nombres comme des états normaux si le service a un attribut et il peut être mappé",
-                "it": "Ottimizzare ulteriormente l'invio di dati a HASS e consentire di impostare valori come numeri come stati normali se il servizio ha un attributo e può essere mappato",
-                "es": "Optimizar aún más el envío de datos a HASS y permitir establecer valores como números como estados normales si el servicio tiene un atributo y puede ser mapeado",
-                "pl": "Dalsze optymalizowanie danych do HASS i umożliwienie ustalenie wartości takich jak stany normalne, jeśli usługa ma jeden atrybut i może być zmapowana",
-                "zh-cn": "进一步优化向人道协调厅系统传送数据,如果该服务具有属性,它可以绘制图表,从而能够将数字象正常国家一样。",
-                "uk": "Додатково оптимізуйте надсилання даних до HASS і дозвольте встановлювати такі значення, як числа, як звичайні стани, якщо служба має один атрибут і його можна зіставити"
-            },
-            "1.2.0": {
-                "en": "IMPORTANT: Replace special characters in entity attribute names with an underscore! Object IDs might change!\nmake sure a \"null\" value in state changes is not crashing",
-                "de": "WICHTIG: Ersetzen Sie Sonderzeichen in Namen des Attributes der Einheit mit einem Unterpunkt! Objekt-IDs können sich ändern!\nsicherstellen, dass ein nullwert bei zustandsänderungen nicht abstürzt",
-                "ru": "ВАЖНО: Замените специальные символы в имени сущности с подчеркиванием! ID объекта может измениться!\nубедитесь, что значение null в государственных изменениях не падает",
-                "pt": "IMPORTANTE: Substitua caracteres especiais em nomes de atributos de entidade com um sublinhado! IDs de objeto podem mudar!\ncertifique-se de que um valor nulo em mudanças de estado não está caindo",
-                "nl": "Vervang speciale personages in entiteitsadvocaten met een onderscore! ID's kunnen veranderen!\nzorg ervoor dat een waarde van de staat niet crasht",
-                "fr": "IMPORTANT: Remplacer les caractères spéciaux dans les noms d'attributs d'entité par un accent! Les identifiants d'objet peuvent changer !\ns'assurer qu'une valeur nulle dans les changements d'état ne s'écrase pas",
-                "it": "IMPORTANTE: Sostituisci caratteri speciali in nomi attributo entità con un underscore! Gli ID degli Oggetti potrebbero cambiare!\nassicurarsi che un valore nullo nei cambiamenti di stato non è crash",
-                "es": "IMPORTANTE: Reemplazar caracteres especiales en nombres de atributos de entidad con un subrayado! ¡Las identificaciones de objetos pueden cambiar!\nasegúrese de que un valor nulo en los cambios estatales no se estrella",
-                "pl": "IMPORTANT: Replace special characters in identity attribution names with an underscore! (ang.). Zmiany obiektów mogą się zmieniać!\nniewątpliwą wartością w zmianach stanowych nie jest rozbicie się",
-                "zh-cn": "IMPORTANT:将实体的特色性改为强调的! 目标国际组织可能改变!\n确保在国家变化中确保无效不失",
-                "uk": "ВАЖЛИВО: Замініть спеціальні символи в іменах атрибутів сутності на підкреслення! Ідентифікатори об'єктів можуть змінитися!\nпереконайтеся, що \"нульове\" значення в змінах стану не аварійно завершує роботу"
-            },
-            "1.1.2": {
-                "en": "Fix crash cases reported by Sentry",
-                "de": "Von Sentry gemeldete Absturzfälle beheben",
-                "ru": "Исправить случаи сбоев, о которых сообщил Sentry",
-                "pt": "Corrigir casos de travamento relatados pelo Sentinela",
-                "nl": "Herstel crashgevallen gemeld door Sentry",
-                "fr": "Correction des cas de plantage signalés par Sentry",
-                "it": "Risolvi i casi di crash segnalati da Sentry",
-                "es": "Solucionar casos de fallas informados por Sentry",
-                "pl": "Napraw przypadki awarii zgłoszone przez Sentry",
-                "zh-cn": "修复 Sentry 报告的崩溃案例",
-                "uk": "Виправте випадки збоїв, про які повідомляє Sentry"
-            },
-            "1.1.1": {
-                "en": "Show password fields masked again in config",
-                "de": "Passwortfelder in config wieder maskiert anzeigen",
-                "ru": "Показать поля пароля снова замаскированные в конфигурации",
-                "pt": "Mostrar campos de senha mascarados novamente na configuração",
-                "nl": "Toon wachtwoordvelden opnieuw gemaskeerd in config",
-                "fr": "Afficher à nouveau les champs de mot de passe masqués dans la configuration",
-                "it": "Mostra i campi password mascherati di nuovo in config",
-                "es": "Mostrar campos de contraseña enmascarados nuevamente en la configuración",
-                "pl": "Pokaż ponownie zamaskowane pola haseł w konfiguracji",
-                "zh-cn": "在配置中再次显示被屏蔽的密码字段",
-                "uk": "Знову показати замасковані поля пароля в конфігурації"
-            },
-            "1.1.0": {
-                "en": "IMPORTANT: You need to re-enter the password once after installing this version!\nImplement Service triggers to use any value to trigger or stringified JSON to call with fields\nOptimize unload handling\nAdd Sentry for crash reporting",
-                "de": "WICHTIG: Nach der Installation dieser Version müssen Sie das Passwort einmalig neu eingeben!\nImplementieren Sie Dienstauslöser, um einen beliebigen Wert zum Auslösen oder stringifiziertes JSON zum Aufrufen mit Feldern zu verwenden\nEntladehandling optimieren\nFügen Sie Sentry für Absturzberichte hinzu",
-                "ru": "ВАЖНО: Вам необходимо повторно ввести пароль один раз после установки этой версии!\nРеализовать триггеры службы, чтобы использовать любое значение для запуска или строкового JSON для вызова с полями.\nОптимизация обработки разгрузки\nДобавьте Sentry для отчетов о сбоях",
-                "pt": "IMPORTANTE: Você precisa redigitar a senha uma vez depois de instalar esta versão!\nImplemente gatilhos de serviço para usar qualquer valor para acionar ou JSON stringified para chamar com campos\nOtimize o manuseio de descarga\nAdicionar Sentinela para relatórios de falhas",
-                "nl": "BELANGRIJK: u moet het wachtwoord één keer opnieuw invoeren na het installeren van deze versie!\nImplementeer servicetriggers om elke waarde te gebruiken om te activeren of stringified JSON om met velden aan te roepen\nOptimaliseer de losverwerking\nSentry toevoegen voor crashrapportage",
-                "fr": "IMPORTANT : Vous devez ressaisir le mot de passe une fois après l'installation de cette version !\nImplémentez des déclencheurs de service pour utiliser n'importe quelle valeur pour déclencher ou JSON stringifié pour appeler avec des champs\nOptimiser la gestion des déchargements\nAjouter Sentry pour les rapports de plantage",
-                "it": "IMPORTANTE: è necessario reinserire la password una volta dopo aver installato questa versione!\nImplementa i trigger del servizio per utilizzare qualsiasi valore per attivare o JSON in formato stringa per chiamare con i campi\nOttimizza la gestione dello scarico\nAggiungi Sentinella per la segnalazione degli arresti anomali",
-                "es": "IMPORTANTE: ¡Debe volver a ingresar la contraseña una vez después de instalar esta versión!\nImplementar disparadores de servicio para usar cualquier valor para disparar o JSON en cadena para llamar con campos\nOptimizar el manejo de descarga\nAgregar Sentry para informes de fallas",
-                "pl": "WAŻNE: Po zainstalowaniu tej wersji należy raz ponownie wprowadzić hasło!\nZaimplementuj wyzwalacze usługi, aby używać dowolnej wartości do wyzwalania lub skróconego JSON do wywołania z polami\nZoptymalizuj obsługę rozładunku\nDodaj Sentry do zgłaszania awarii",
-                "zh-cn": "重要提示：安装此版本后需要重新输入一次密码！\n实现服务触发器以使用任何值触发或字符串化 JSON 以使用字段调用\n优化卸载处理\n添加 Sentry 以进行崩溃报告",
-                "uk": "ВАЖЛИВО: після встановлення цієї версії потрібно повторно ввести пароль!\nРеалізуйте тригери служби, щоб використовувати будь-яке значення для запуску або рядковий JSON для виклику з полями\nОптимізуйте роботу з розвантаженням\nДодайте Sentry для звітування про збої"
-            },
-            "1.0.1": {
-                "en": "IMPORTANT: js-controller 2.0 is needed st least!\nFix start issue\n(Apollon77/Garfonso) Fix issue where value could not be set in hass",
-                "de": "WICHTIG: js-controller 2.0 wird am wenigsten benötigt!\nStartproblem beheben\n(Apollon77/Garfonso) Problem behoben, bei dem der Wert nicht in Hass festgelegt werden konnte",
-                "ru": "ВАЖНО: js-controller 2.0 нужен как минимум!\nИсправить проблему с запуском\n(Apollon77 / Garfonso) Исправлена ошибка, из-за которой значение не могло быть установлено в hass.",
-                "pt": "IMPORTANTE: o js-controller 2.0 é o mínimo necessário!\nCorrigir problema inicial\n(Apollon77 / Garfonso) Correção do problema em que o valor não podia ser definido em hass",
-                "nl": "BELANGRIJK: js-controller 2.0 is minimaal nodig!\nStartprobleem oplossen\n(Apollon77/Garfonso) Probleem opgelost waarbij de waarde niet kon worden ingesteld in hass",
-                "fr": "IMPORTANT : js-controller 2.0 est au moins nécessaire !\nRésoudre le problème de démarrage\n(Apollon77/Garfonso) Correction d'un problème où la valeur ne pouvait pas être définie dans hass",
-                "it": "IMPORTANTE: come minimo è necessario js-controller 2.0!\nRisolvi il problema di avvio\n(Apollon77/Garfonso) Risolto il problema per cui il valore non poteva essere impostato in hass",
-                "es": "IMPORTANTE: ¡js-controller 2.0 es lo menos necesario!\nSolucionar problema de inicio\n(Apollon77 / Garfonso) Se solucionó el problema por el cual no se podía establecer el valor en hass",
-                "pl": "WAŻNE: js-controller 2.0 jest potrzebny przynajmniej!\nNapraw problem z uruchomieniem\n(Apollon77/Garfonso) Napraw problem, w którym nie można było ustawić wartości w hass",
-                "zh-cn": "重要提示：至少需要 js-controller 2.0！\n修复启动问题\n(Apollon77/Garfonso) 修复无法在 hass 中设置值的问题",
-                "uk": "ВАЖЛИВО: як мінімум потрібен js-контроллер 2.0!\nВиправити проблему запуску\n(Apollon77/Garfonso) Виправлено проблему, через яку значення не можна було встановити в hass"
-            },
-            "1.0.0": {
-                "en": "added the support of compact mode",
-                "de": "fügte die Unterstützung des Kompaktmodus hinzu",
-                "ru": "добавлена поддержка компактного режима",
-                "pt": "adicionado o suporte do modo compacto",
-                "nl": "de ondersteuning van de compacte modus toegevoegd",
-                "fr": "ajouté le support du mode compact",
-                "it": "aggiunto il supporto della modalità compatta",
-                "es": "agregó el soporte del modo compacto",
-                "pl": "dodano obsługę trybu kompaktowego",
-                "zh-cn": "增加了对紧凑模式的支持",
-                "uk": "додана підтримка компактного режиму"
-            }
+        "text": {
+          "en": "After installing this update the password/token used to access the HASS installation needs to be re-entered in the Instance-Settings!",
+          "de": "Nach der Installation dieses Updates muss das Passwort/Token für den Zugriff auf die HASS-Installation in den Instanz-Einstellungen erneut eingegeben werden!",
+          "ru": "После установки этого обновления пароль/токен, используемый для доступа к установке HASS, необходимо повторно ввести в настройках экземпляра!",
+          "pt": "Depois de instalar esta atualização, a senha/token usado para acessar a instalação do HASS precisa ser reinserido nas configurações da instância!",
+          "nl": "Na het installeren van deze update moet het wachtwoord/token dat wordt gebruikt om toegang te krijgen tot de HASS-installatie opnieuw worden ingevoerd in de Instance-Settings!",
+          "fr": "Après l'installation de cette mise à jour, le mot de passe/jeton utilisé pour accéder à l'installation HASS doit être ressaisi dans les paramètres d'instance !",
+          "it": "Dopo aver installato questo aggiornamento, la password/token utilizzato per accedere all'installazione HASS deve essere reinserito nelle impostazioni dell'istanza!",
+          "es": "¡Después de instalar esta actualización, la contraseña/token utilizada para acceder a la instalación de HASS debe volver a ingresarse en la configuración de la instancia!",
+          "pl": "Po zainstalowaniu tej aktualizacji hasło/token używane do uzyskania dostępu do instalacji HASS należy ponownie wprowadzić w ustawieniach instancji!",
+          "zh-cn": "安装此更新后，用于访问 HASS 安装的密码/令牌需要在实例设置中重新输入！",
+          "uk": "Після встановлення цього оновлення пароль/токен, який використовується для доступу до встановлення HASS, потрібно повторно ввести в налаштуваннях екземпляра!"
         },
-        "localLink": "http://%host%:8123",
-        "platform": "Javascript/Node.js",
-        "mode": "daemon",
-        "icon": "hass.png",
-        "enabled": true,
-        "compact": true,
-        "materialize": true,
-        "license": "MIT",
-        "extIcon": "https://raw.githubusercontent.com/ioBroker/ioBroker.hass/master/admin/hass.png",
-        "keywords": [
-            "HASS",
-            "Home",
-            "assistant"
-        ],
-        "readme": "https://github.com/ioBroker/ioBroker.hass/blob/master/README.md",
-        "loglevel": "info",
-        "type": "iot-systems",
-        "authors": [
-            "bluefox <dogafox@gmail.com>"
-        ],
-        "dependencies": [
-            {
-                "js-controller": ">=3.0.0"
-            }
-        ],
-        "globalDependencies": [
-            {
-                "admin": ">=5.1.28"
-            }
-        ],
-        "plugins": {
-            "sentry": {
-                "dsn": "https://1b2a1e8335f84cc49a67dd5ac2b07573@sentry.iobroker.net/182"
-            }
-        },
-        "connectionType": "local",
-        "dataSource": "push",
-        "tier": 2,
-        "messages": [
-            {
-                "condition": {
-                    "operand": "and",
-                    "rules": [
-                        "oldVersion<1.1.0",
-                        "newVersion>=1.1.0"
-                    ]
-                },
-                "title": {
-                    "en": "Re-enter the password after Update!",
-                    "de": "Passwort muss nach dem Update erneut eingegeben werden!",
-                    "ru": "Повторно введите пароль после обновления!",
-                    "pt": "Digite novamente a senha após Atualizar!",
-                    "nl": "Voer het wachtwoord opnieuw in na Update!",
-                    "fr": "Entrez à nouveau le mot de passe après la mise à jour !",
-                    "it": "Reinserire la password dopo l'aggiornamento!",
-                    "es": "Vuelva a ingresar la contraseña después de ¡Actualizar!",
-                    "pl": "Wprowadź hasło ponownie po aktualizacji!",
-                    "zh-cn": "更新后重新输入密码！",
-                    "uk": "Повторно введіть пароль після оновлення!"
-                },
-                "text": {
-                    "en": "After installing this update the password/token used to access the HASS installation needs to be re-entered in the Instance-Settings!",
-                    "de": "Nach der Installation dieses Updates muss das Passwort/Token für den Zugriff auf die HASS-Installation in den Instanz-Einstellungen erneut eingegeben werden!",
-                    "ru": "После установки этого обновления пароль/токен, используемый для доступа к установке HASS, необходимо повторно ввести в настройках экземпляра!",
-                    "pt": "Depois de instalar esta atualização, a senha/token usado para acessar a instalação do HASS precisa ser reinserido nas configurações da instância!",
-                    "nl": "Na het installeren van deze update moet het wachtwoord/token dat wordt gebruikt om toegang te krijgen tot de HASS-installatie opnieuw worden ingevoerd in de Instance-Settings!",
-                    "fr": "Après l'installation de cette mise à jour, le mot de passe/jeton utilisé pour accéder à l'installation HASS doit être ressaisi dans les paramètres d'instance !",
-                    "it": "Dopo aver installato questo aggiornamento, la password/token utilizzato per accedere all'installazione HASS deve essere reinserito nelle impostazioni dell'istanza!",
-                    "es": "¡Después de instalar esta actualización, la contraseña/token utilizada para acceder a la instalación de HASS debe volver a ingresarse en la configuración de la instancia!",
-                    "pl": "Po zainstalowaniu tej aktualizacji hasło/token używane do uzyskania dostępu do instalacji HASS należy ponownie wprowadzić w ustawieniach instancji!",
-                    "zh-cn": "安装此更新后，用于访问 HASS 安装的密码/令牌需要在实例设置中重新输入！",
-                    "uk": "Після встановлення цього оновлення пароль/токен, який використовується для доступу до встановлення HASS, потрібно повторно ввести в налаштуваннях екземпляра!"
-                },
-                "level": "warn",
-                "buttons": [
-                    "agree",
-                    "cancel"
-                ]
-            },
-            {
-                "condition": {
-                    "operand": "and",
-                    "rules": [
-                        "oldVersion<1.2.0",
-                        "newVersion>=1.2.0"
-                    ]
-                },
-                "title": {
-                    "en": "Important notice!",
-                    "de": "Wichtiger Hinweis!",
-                    "ru": "Важное замечание!",
-                    "pt": "Notícia importante!",
-                    "nl": "Belangrijke mededeling!",
-                    "fr": "Avis important!",
-                    "it": "Avviso IMPORTANTE!",
-                    "es": "Noticia importante!",
-                    "pl": "Ważna uwaga!",
-                    "zh-cn": "重要通知!",
-                    "uk": "Важливе повідомлення!"
-                },
-                "text": {
-                    "en": "The new version 1.2.x will potentially change the Names of Objects when special characters like \".\", \"-\" or spaces were used in entity attributes! Please delete the old objects manually if needed.",
-                    "de": "Die neue Version 1.2.x wird die Namen von Objekten möglicherweise ändern, wenn spezielle Zeichen wie \".\", \"-\" oder Leerzeichen in Entity-Attributen verwendet wurden! Alten Objekte bitte bei Bedarf manuell löschen.",
-                    "ru": "Новая версия 1.2.x будет потенциально менять имена объектов, когда специальные символы типа \".\", \"-\" или пространства были использованы в атрибутах лица! Пожалуйста, удалите старые объекты вручную, если это необходимо.",
-                    "pt": "A nova versão 1.2.x irá potencialmente alterar os Nomes de Objetos quando caracteres especiais como \".\", \"-\" ou espaços foram usados em atributos de entidade! Por favor, exclua os objetos antigos manualmente, se necessário.",
-                    "nl": "De nieuwe versie 1.2.x zal de Namen van Objects veranderen als speciale personages zoals \", \" of ruimtes werden gebruikt in entiteitsaanklachten! Verwijder de oude objecten handmatig als het nodig is.",
-                    "fr": "La nouvelle version 1.2.x modifiera potentiellement les Noms des Objets lorsque des caractères spéciaux comme \", \"-\" ou des espaces ont été utilisés dans des attributs d'entité ! Veuillez supprimer les anciens objets manuellement si nécessaire.",
-                    "it": "La nuova versione 1.2.x cambierà potenzialmente i nomi degli oggetti quando caratteri speciali come \".\", \"-\" o spazi sono stati utilizzati negli attributi dell'entità! Si prega di eliminare i vecchi oggetti manualmente se necessario.",
-                    "es": "La nueva versión 1.2.x potencialmente cambiará los Nombres de Objetos cuando caracteres especiales como \"., \"-\" o espacios fueron utilizados en atributos de entidad! Por favor, borre los viejos objetos manualmente si es necesario.",
-                    "pl": "Nowa wersja 1.2.x będzie potencjalnie zmieniać nazwy obiektów, kiedy szczególne postacie takie jak „.”, „-” lub przestrzenie były używane w atrybutach. Okazuje się, że stare obiekty ręcznie będą potrzebne.",
-                    "zh-cn": "新版本1.2.x将可能改变物体的名称,如“......”、“-”或空间在实体的属性中使用。 请在必要时删除旧物体。.",
-                    "uk": "Нова версія 1.2.x потенційно змінить назви об’єктів, якщо в атрибутах об’єктів використовувалися спеціальні символи, такі як «.», «-» або пробіли! За потреби видаліть старі об’єкти вручну."
-                },
-                "level": "warn",
-                "buttons": [
-                    "agree",
-                    "cancel"
-                ]
-            }
+        "level": "warn",
+        "buttons": [
+          "agree",
+          "cancel"
         ]
-    },
-    "native": {
-        "host": "127.0.0.1",
-        "port": 8123,
-        "password": "",
-        "secure": false
-    },
-    "protectedNative": [
-        "password"
-    ],
-    "encryptedNative": [
-        "password"
-    ],
-    "objects": [],
-    "instanceObjects": [
-        {
-            "_id": "info",
-            "type": "channel",
-            "common": {
-                "name": "Information"
-            },
-            "native": {}
+      },
+      {
+        "condition": {
+          "operand": "and",
+          "rules": [
+            "oldVersion<1.2.0",
+            "newVersion>=1.2.0"
+          ]
         },
-        {
-            "_id": "info.connection",
-            "type": "state",
-            "common": {
-                "role": "indicator.connected",
-                "name": "If connected to HASS server",
-                "type": "boolean",
-                "read": true,
-                "write": false,
-                "def": false
-            },
-            "native": {}
+        "title": {
+          "en": "Important notice!",
+          "de": "Wichtiger Hinweis!",
+          "ru": "Важное замечание!",
+          "pt": "Notícia importante!",
+          "nl": "Belangrijke mededeling!",
+          "fr": "Avis important!",
+          "it": "Avviso IMPORTANTE!",
+          "es": "Noticia importante!",
+          "pl": "Ważna uwaga!",
+          "zh-cn": "重要通知!",
+          "uk": "Важливе повідомлення!"
         },
-        {
-            "_id": "entities",
-            "type": "channel",
-            "common": {
-                "name": "HASS entities"
-            },
-            "native": {}
-        }
+        "text": {
+          "en": "The new version 1.2.x will potentially change the Names of Objects when special characters like \".\", \"-\" or spaces were used in entity attributes! Please delete the old objects manually if needed.",
+          "de": "Die neue Version 1.2.x wird die Namen von Objekten möglicherweise ändern, wenn spezielle Zeichen wie \".\", \"-\" oder Leerzeichen in Entity-Attributen verwendet wurden! Alten Objekte bitte bei Bedarf manuell löschen.",
+          "ru": "Новая версия 1.2.x будет потенциально менять имена объектов, когда специальные символы типа \".\", \"-\" или пространства были использованы в атрибутах лица! Пожалуйста, удалите старые объекты вручную, если это необходимо.",
+          "pt": "A nova versão 1.2.x irá potencialmente alterar os Nomes de Objetos quando caracteres especiais como \".\", \"-\" ou espaços foram usados em atributos de entidade! Por favor, exclua os objetos antigos manualmente, se necessário.",
+          "nl": "De nieuwe versie 1.2.x zal de Namen van Objects veranderen als speciale personages zoals \", \" of ruimtes werden gebruikt in entiteitsaanklachten! Verwijder de oude objecten handmatig als het nodig is.",
+          "fr": "La nouvelle version 1.2.x modifiera potentiellement les Noms des Objets lorsque des caractères spéciaux comme \", \"-\" ou des espaces ont été utilisés dans des attributs d'entité ! Veuillez supprimer les anciens objets manuellement si nécessaire.",
+          "it": "La nuova versione 1.2.x cambierà potenzialmente i nomi degli oggetti quando caratteri speciali come \".\", \"-\" o spazi sono stati utilizzati negli attributi dell'entità! Si prega di eliminare i vecchi oggetti manualmente se necessario.",
+          "es": "La nueva versión 1.2.x potencialmente cambiará los Nombres de Objetos cuando caracteres especiales como \"., \"-\" o espacios fueron utilizados en atributos de entidad! Por favor, borre los viejos objetos manualmente si es necesario.",
+          "pl": "Nowa wersja 1.2.x będzie potencjalnie zmieniać nazwy obiektów, kiedy szczególne postacie takie jak „.”, „-” lub przestrzenie były używane w atrybutach. Okazuje się, że stare obiekty ręcznie będą potrzebne.",
+          "zh-cn": "新版本1.2.x将可能改变物体的名称,如“......”、“-”或空间在实体的属性中使用。 请在必要时删除旧物体。.",
+          "uk": "Нова версія 1.2.x потенційно змінить назви об’єктів, якщо в атрибутах об’єктів використовувалися спеціальні символи, такі як «.», «-» або пробіли! За потреби видаліть старі об’єкти вручну."
+        },
+        "level": "warn",
+        "buttons": [
+          "agree",
+          "cancel"
+        ]
+      }
     ]
+  },
+  "native": {
+    "host": "127.0.0.1",
+    "port": 8123,
+    "password": "",
+    "secure": false
+  },
+  "protectedNative": [
+    "password"
+  ],
+  "encryptedNative": [
+    "password"
+  ],
+  "objects": [],
+  "instanceObjects": [
+    {
+      "_id": "info",
+      "type": "channel",
+      "common": {
+        "name": "Information"
+      },
+      "native": {}
+    },
+    {
+      "_id": "info.connection",
+      "type": "state",
+      "common": {
+        "role": "indicator.connected",
+        "name": "If connected to HASS server",
+        "type": "boolean",
+        "read": true,
+        "write": false,
+        "def": false
+      },
+      "native": {}
+    },
+    {
+      "_id": "entities",
+      "type": "channel",
+      "common": {
+        "name": "HASS entities"
+      },
+      "native": {}
+    }
+  ]
 }
