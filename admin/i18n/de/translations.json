@@ -1,6 +1,6 @@
 {
-    "Home assistant IP:": "IP-Adresse des Heimassistenten:",
-    "Home assistant WS Port:": "Home Assistant WS-Port:",
+    "Home assistant IP:": "IP-Adresse von Home Assistant:",
+    "Home assistant WS Port:": "Home Assistant WebSocket-Port:",
     "Password repeat:": "Passwort wiederholen:",
     "Password:": "Passwort:",
     "Passwords missmatch!": "Passwörter stimmen nicht überein!",
