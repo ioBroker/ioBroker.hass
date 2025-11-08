@@ -129,7 +129,10 @@
     "enabled": true,
     "compact": true,
     "materialize": true,
-    "license": "MIT",
+    "licenseInformation": {
+      "type": "free",
+      "license": "MIT"
+    },
     "extIcon": "https://raw.githubusercontent.com/ioBroker/ioBroker.hass/master/admin/hass.png",
     "keywords": [
       "HASS",
