@@ -1,0 +1,44 @@
+{
+    "i18n": true,
+    "type": "panel",
+    "items": {
+        "host": {
+            "type": "text",
+            "label": "Home assistant IP",
+            "sm": 12,
+            "md": 6,
+            "lg": 4
+        },
+        "port": {
+            "type": "number",
+            "label": "Home assistant WS Port",
+            "min": 1,
+            "max": 65535,
+            "sm": 12,
+            "md": 6,
+            "lg": 4
+        },
+        "_divider1": {
+            "type": "divider"
+        },
+        "password": {
+            "type": "password",
+            "label": "Password",
+            "repeat": true,
+            "visible": true,
+            "sm": 12,
+            "md": 6,
+            "lg": 4
+        },
+        "_divider2": {
+            "type": "divider"
+        },
+        "secure": {
+            "type": "checkbox",
+            "label": "Secure",
+            "sm": 12,
+            "md": 6,
+            "lg": 4
+        }
+    }
+}

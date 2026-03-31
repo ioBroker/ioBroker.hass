@@ -1,0 +1,8 @@
+{
+    "Home assistant IP": "Adres IP asystenta domowego",
+    "Home assistant WS Port": "Asystent domowy Port WS",
+    "Password repeat": "Powtórz hasło",
+    "Password": "Hasło",
+    "Passwords missmatch!": "Niezgodność haseł!",
+    "Secure": "HTTPS?"
+}

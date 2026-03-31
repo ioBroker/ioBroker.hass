@@ -1,0 +1,8 @@
+{
+    "Home assistant IP": "Домашний помощник IP",
+    "Home assistant WS Port": "Домашний помощник WS Порт",
+    "Password repeat": "Повтор пароля",
+    "Password": "Пароль",
+    "Passwords missmatch!": "Пароли не совпадают!",
+    "Secure": "HTTPS?"
+}
