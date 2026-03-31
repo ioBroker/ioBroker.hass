@@ -106,7 +106,7 @@ Please check it https://www.smarthomejetzt.de/mit-iobroker-auf-eine-home-assista
 -->
 
 ## Changelog
-### **WORK IN PROGRESS**
+### 2.0.0 (2026-03-31)
 * (@GermanBluefox) Adapter was updated and migrated to TypeScript
 
 ### 1.4.0 (2023-01-03)
