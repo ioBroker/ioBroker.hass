@@ -5,16 +5,16 @@
     "title": "Home Assistant",
     "titleLang": {
       "en": "Home Assistant",
-      "de": "Home-Assistent",
-      "ru": "Домашний помощник",
+      "de": "Home Assistant",
+      "ru": "Home Assistant",
       "pt": "Home Assistant",
-      "nl": "Thuisassistent",
-      "fr": "Assistante à domicile",
-      "it": "Assistente domiciliare",
-      "es": "Asistente de hogar",
-      "pl": "Asystent domowy",
-      "zh-cn": "家庭助理",
-      "uk": "Домашній помічник"
+      "nl": "Home Assistant",
+      "fr": "Home Assistant",
+      "it": "Home Assistant",
+      "es": "Home Assistant",
+      "pl": "Home Assistant",
+      "zh-cn": "Home Assistant",
+      "uk": "Home Assistant"
     },
     "desc": {
       "en": "Home Assistant connection for ioBroker",
@@ -128,7 +128,9 @@
     "icon": "hass.png",
     "enabled": true,
     "compact": true,
-    "materialize": true,
+    "adminUI": {
+      "config": "json"
+    },
     "license": "MIT",
     "extIcon": "https://raw.githubusercontent.com/ioBroker/ioBroker.hass/master/admin/hass.png",
     "keywords": [
@@ -144,12 +146,12 @@
     ],
     "dependencies": [
       {
-        "js-controller": ">=3.0.0"
+        "js-controller": ">=6.0.11"
       }
     ],
     "globalDependencies": [
       {
-        "admin": ">=5.1.28"
+        "admin": ">=6.0.0"
       }
     ],
     "plugins": {

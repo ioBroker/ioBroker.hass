@@ -1,6 +1,7 @@
 node_modules
 .idea
 tmp
+build
 admin/i18n/flat.txt
 admin/i18n/*/flat.txt
 iob_npm.done

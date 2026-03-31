@@ -1,0 +1,8 @@
+{
+    "Home assistant IP": "家庭助理IP：",
+    "Home assistant WS Port": "家庭助理 WS 端口：",
+    "Password repeat": "密码重复：",
+    "Password": "密码：",
+    "Passwords missmatch!": "密码不匹配！",
+    "Secure": "HTTPS？"
+}

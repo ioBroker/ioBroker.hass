@@ -23,14 +23,13 @@ export default [
     },
     {
         ignores: [
+            'node_modules/**/*',
             'build/**/*',
-            'src/lib/**/*.js',
             'admin/**/*',
             'test/**/*',
             'src-admin/**/*',
-            'src-rules/**/*',
-            'tasks.js',
-            '**/*.mjs'
+            'tmp/**/*',
+            '**/*.mjs',
         ],
     },
 ];
