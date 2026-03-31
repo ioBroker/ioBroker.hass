@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "hass",
-    "version": "2.0.0",
+    "version": "2.0.1",
     "title": "Home Assistant",
     "titleLang": {
       "en": "Home Assistant",
@@ -30,6 +30,19 @@
       "uk": "Підключення Home Assistant для ioBroker"
     },
     "news": {
+      "2.0.1": {
+        "en": "Adapter was updated and migrated to TypeScript",
+        "de": "Adapter wurde aktualisiert und auf TypeScript migriert",
+        "ru": "Адаптер был обновлен и перенесен на TypeScript",
+        "pt": "O adaptador foi atualizado e migrado para TypeScript",
+        "nl": "Adapter is bijgewerkt en gemigreerd naar TypeScript",
+        "fr": "Adaptateur a été mis à jour et migré vers TypeScript",
+        "it": "L'adattatore è stato aggiornato e migrato a TypeScript",
+        "es": "Adaptador fue actualizado y migrado a TipoScript",
+        "pl": "Adapter został zaktualizowany i przeniesiony do TypeScript",
+        "uk": "Адаптер був оновлений і мігрований до TypeScript",
+        "zh-cn": "适应器被更新并迁移到 TypeScript"
+      },
       "1.4.0": {
         "en": "Added more guidance logging when setting services incorrectly\nPrevent crashes when attributes contain \".\" at the end of their names\nAdded logging for state updates for unknown objects",
         "de": "Mehr Anleitungsprotokollierung hinzugefügt, wenn Dienste falsch eingestellt werden\nVerhindern Sie Abstürzen, wenn Attribute \" enthalten.\" am Ende ihrer Namen\nHinzugefügt Protokollierung für Zustandsaktualisierungen für unbekannte Objekte",
