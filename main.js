@@ -4,9 +4,8 @@
 
 'use strict';
 
-const utils       = require('@iobroker/adapter-core');
-const HASS        = require('./lib/hass');
-const adapterName = require('./package.json').name.split('.').pop();
+const utils = require('@iobroker/adapter-core');
+const HASS = require('./lib/hass');
 
 let connected = false;
 let hass;
@@ -17,7 +16,7 @@ let stopped = false;
 
 function startAdapter(options) {
     options = options || {};
-    Object.assign(options, {name: adapterName, unload: stop});
+    Object.assign(options, { name: 'hass', unload: stop });
     adapter = new utils.Adapter(options);
 
     // is called if a subscribed state changes
@@ -62,31 +61,43 @@ function startAdapter(options) {
                         }
                     }
 
-                    adapter.log.debug(`Prepare service call for ${id} with (mapped) request parameters ${JSON.stringify(requestFields)} from value: ${JSON.stringify(state.val)}`);
+                    adapter.log.debug(
+                        `Prepare service call for ${id} with (mapped) request parameters ${JSON.stringify(requestFields)} from value: ${JSON.stringify(state.val)}`,
+                    );
                     if (fields) {
                         for (const field in fields) {
-                            if (!fields.hasOwnProperty(field)) {
+                            if (!Object.prototype.hasOwnProperty.call(fields, field)) {
                                 continue;
                             }
 
                             if (field === 'entity_id') {
-                                target.entity_id = hassObjects[id].native.entity_id
+                                target.entity_id = hassObjects[id].native.entity_id;
                             } else if (requestFields[field] !== undefined) {
                                 serviceData[field] = requestFields[field];
                             }
                         }
                     }
                     const noFields = Object.keys(serviceData).length === 0;
-                    serviceData.entity_id = hassObjects[id].native.entity_id
+                    serviceData.entity_id = hassObjects[id].native.entity_id;
 
-                    adapter.log.debug(`Send to HASS for service ${hassObjects[id].native.attr} with ${hassObjects[id].native.domain || hassObjects[id].native.type} and data ${JSON.stringify(serviceData)}`)
-                    hass.callService(hassObjects[id].native.attr, hassObjects[id].native.domain || hassObjects[id].native.type, serviceData, target, err => {
-                        err && adapter.log.error(`Cannot control ${id}: ${err}`);
-                        if (err && fields && noFields) {
-                            adapter.log.warn(`Please make sure to provide a stringified JSON as value to set relevant fields! Please refer to the Readme for details!`);
-                            adapter.log.warn(`Allowed field keys are: ${Object.keys(fields).join(', ')}`);
-                        }
-                    });
+                    adapter.log.debug(
+                        `Send to HASS for service ${hassObjects[id].native.attr} with ${hassObjects[id].native.domain || hassObjects[id].native.type} and data ${JSON.stringify(serviceData)}`,
+                    );
+                    hass.callService(
+                        hassObjects[id].native.attr,
+                        hassObjects[id].native.domain || hassObjects[id].native.type,
+                        serviceData,
+                        target,
+                        err => {
+                            err && adapter.log.error(`Cannot control ${id}: ${err}`);
+                            if (err && fields && noFields) {
+                                adapter.log.warn(
+                                    `Please make sure to provide a stringified JSON as value to set relevant fields! Please refer to the Readme for details!`,
+                                );
+                                adapter.log.warn(`Allowed field keys are: ${Object.keys(fields).join(', ')}`);
+                            }
+                        },
+                    );
                 }
             }
         }
@@ -106,22 +117,6 @@ function stop(callback) {
     callback && callback();
 }
 
-function getUnit(name) {
-    name = name.toLowerCase();
-    if (name.indexOf('temperature') !== -1) {
-        return '°C';
-    } else if (name.indexOf('humidity') !== -1) {
-        return '%';
-    } else if (name.indexOf('pressure') !== -1) {
-        return 'hPa';
-    } else if (name.indexOf('degrees') !== -1) {
-        return '°';
-    } else if (name.indexOf('speed') !== -1) {
-        return 'kmh';
-    }
-    return undefined;
-}
-
 function syncStates(states, cb) {
     if (!states || !states.length) {
         return cb();
@@ -131,28 +126,33 @@ function syncStates(states, cb) {
     delete state.id;
 
     adapter.setForeignState(id, state, err => {
-        err && adapter.log.error(err);
+        if (err) {
+            adapter.log.error(err);
+        }
         setImmediate(syncStates, states, cb);
     });
 }
 
 function syncObjects(objects, cb) {
-    if (!objects || !objects.length) {
+    if (!objects?.length) {
         return cb();
     }
     const obj = objects.shift();
     hassObjects[obj._id] = obj;
 
     adapter.getForeignObject(obj._id, (err, oldObj) => {
-
-        err && adapter.log.error(err);
+        if (err) {
+            adapter.log.error(err);
+        }
 
         if (!oldObj) {
             adapter.log.debug(`Create "${obj._id}": ${JSON.stringify(obj.common)}`);
             hassObjects[obj._id] = obj;
             adapter.setForeignObject(obj._id, obj, err => {
-                err && adapter.log.error(err);
-                setImmediate(syncObjects, objects, cb);
+                if (err) {
+                    adapter.log.error(err);
+                }
+                setImmediate(() => syncObjects(objects, cb));
             });
         } else {
             hassObjects[obj._id] = oldObj;
@@ -161,101 +161,61 @@ function syncObjects(objects, cb) {
 
                 adapter.log.debug(`Update "${obj._id}": ${JSON.stringify(obj.common)}`);
                 adapter.setForeignObject(obj._id, oldObj, err => {
-                    err => adapter.log.error(err);
-                    setImmediate(syncObjects, objects, cb);
+                    if (err) {
+                        adapter.log.error(err);
+                    }
+                    setImmediate(() => syncObjects(objects, cb));
                 });
             } else {
-                setImmediate(syncObjects, objects, cb);
-            }
-        }
-    });
-}
-
-function syncRoom(room, members, cb) {
-    adapter.getForeignObject(`enum.rooms.${room}`, (err, obj) => {
-        if (!obj) {
-            obj = {
-                _id: `enum.rooms.${room}`,
-                type: 'enum',
-                common: {
-                    name: room,
-                    members: members
-                },
-                native: {}
-            };
-            adapter.log.debug(`Update "${obj._id}"`);
-            adapter.setForeignObject(obj._id, obj, err => {
-                err && adapter.log.error(err);
-                cb();
-            });
-        } else {
-            obj.common = obj.common || {};
-            obj.common.members = obj.common.members || [];
-            let changed = false;
-            for (let m = 0; m < members.length; m++) {
-                if (obj.common.members.indexOf(members[m]) === -1) {
-                    changed = true;
-                    obj.common.members.push(members[m]);
-                }
-            }
-            if (changed) {
-                adapter.log.debug(`Update "${obj._id}"`);
-                adapter.setForeignObject(obj._id, obj, err => {
-                    err && adapter.log.error(err);
-                    cb();
-                });
-            } else {
-                cb();
+                setImmediate(() => syncObjects(objects, cb));
             }
         }
     });
 }
 
 const knownAttributes = {
-    azimuth:   {write: false, read: true, unit: '°'},
-    elevation: {write: false, read: true, unit: '°'}
+    azimuth: { write: false, read: true, unit: '°' },
+    elevation: { write: false, read: true, unit: '°' },
 };
 
-
-const ERRORS = {
-    1: 'ERR_CANNOT_CONNECT',
-    2: 'ERR_INVALID_AUTH',
-    3: 'ERR_CONNECTION_LOST'
-};
 const mapTypes = {
-    'string': 'string',
-    'number': 'number',
-    'object': 'mixed',
-    'boolean': 'boolean'
+    string: 'string',
+    number: 'number',
+    object: 'mixed',
+    boolean: 'boolean',
 };
-const skipServices = [
-    'persistent_notification'
-];
+const skipServices = ['persistent_notification'];
 
 function parseStates(entities, services, callback) {
-    const objs   = [];
+    const objs = [];
     const states = [];
     let obj;
     let channel;
     for (let e = 0; e < entities.length; e++) {
         const entity = entities[e];
-        if (!entity) continue;
+        if (!entity) {
+            continue;
+        }
 
-        const name = entity.name || (entity.attributes && entity.attributes.friendly_name ? entity.attributes.friendly_name : entity.entity_id);
-        const desc = entity.attributes && entity.attributes.attribution   ? entity.attributes.attribution   : undefined;
+        const name =
+            entity.name ||
+            (entity.attributes && entity.attributes.friendly_name ? entity.attributes.friendly_name : entity.entity_id);
+        const desc = entity.attributes && entity.attributes.attribution ? entity.attributes.attribution : undefined;
 
         channel = {
             _id: `${adapter.namespace}.entities.${entity.entity_id}`,
             common: {
-                name: name
+                name: name,
             },
             type: 'channel',
             native: {
                 object_id: entity.object_id,
-                entity_id: entity.entity_id
-            }
+                entity_id: entity.entity_id,
+            },
         };
-        if (desc) channel.common.desc = desc;
+        if (desc) {
+            channel.common.desc = desc;
+        }
         objs.push(channel);
 
         const lc = entity.last_changed ? new Date(entity.last_changed).getTime() : undefined;
@@ -269,18 +229,20 @@ function parseStates(entities, services, callback) {
                     name: `${name} STATE`,
                     type: typeof entity.state,
                     read: true,
-                    write: false
+                    write: false,
                 },
                 native: {
-                    object_id:  entity.object_id,
-                    domain:     entity.domain,
-                    entity_id:  entity.entity_id
-                }
+                    object_id: entity.object_id,
+                    domain: entity.domain,
+                    entity_id: entity.entity_id,
+                },
             };
             if (entity.attributes && entity.attributes.unit_of_measurement) {
                 obj.common.unit = entity.attributes.unit_of_measurement;
             }
-            adapter.log.debug(`Found Entity state ${obj._id}: ${JSON.stringify(obj.common)} / ${JSON.stringify(obj.native)}`)
+            adapter.log.debug(
+                `Found Entity state ${obj._id}: ${JSON.stringify(obj.common)} / ${JSON.stringify(obj.native)}`,
+            );
             objs.push(obj);
 
             let val = entity.state;
@@ -288,12 +250,12 @@ function parseStates(entities, services, callback) {
                 val = JSON.stringify(val);
             }
 
-            states.push({id: obj._id, lc, ts, val, ack: true})
+            states.push({ id: obj._id, lc, ts, val, ack: true });
         }
 
         if (entity.attributes) {
             for (const attr in entity.attributes) {
-                if (entity.attributes.hasOwnProperty(attr)) {
+                if (Object.prototype.hasOwnProperty.call(entity.attributes, attr)) {
                     if (attr === 'friendly_name' || attr === 'unit_of_measurement' || attr === 'icon') {
                         continue;
                     }
@@ -311,11 +273,11 @@ function parseStates(entities, services, callback) {
                         type: 'state',
                         common: common,
                         native: {
-                            object_id:  entity.object_id,
-                            domain:     entity.domain,
-                            entity_id:  entity.entity_id,
-                            attr:       attr
-                        }
+                            object_id: entity.object_id,
+                            domain: entity.domain,
+                            entity_id: entity.entity_id,
+                            attr: attr,
+                        },
                     };
                     if (!common.name) {
                         common.name = `${name} ${attr.replace(/_/g, ' ')}`;
@@ -330,7 +292,9 @@ function parseStates(entities, services, callback) {
                         common.type = mapTypes[typeof entity.attributes[attr]];
                     }
 
-                    adapter.log.debug(`Found Entity attribute ${obj._id}: ${JSON.stringify(obj.common)} / ${JSON.stringify(obj.native)}`)
+                    adapter.log.debug(
+                        `Found Entity attribute ${obj._id}: ${JSON.stringify(obj.common)} / ${JSON.stringify(obj.native)}`,
+                    );
 
                     objs.push(obj);
 
@@ -339,7 +303,7 @@ function parseStates(entities, services, callback) {
                         val = JSON.stringify(val);
                     }
 
-                    states.push({id: obj._id, lc, ts, val, ack: true});
+                    states.push({ id: obj._id, lc, ts, val, ack: true });
                 }
             }
         }
@@ -349,7 +313,7 @@ function parseStates(entities, services, callback) {
         if (services[serviceType] && !skipServices.includes(serviceType)) {
             const service = services[serviceType];
             for (const s in service) {
-                if (service.hasOwnProperty(s)) {
+                if (Object.prototype.hasOwnProperty.call(service, s)) {
                     obj = {
                         _id: `${adapter.namespace}.entities.${entity.entity_id}.${s}`,
                         type: 'state',
@@ -357,19 +321,21 @@ function parseStates(entities, services, callback) {
                             desc: service[s].description,
                             read: false,
                             write: true,
-                            type: 'mixed'
+                            type: 'mixed',
                         },
                         native: {
-                            object_id:  entity.object_id,
-                            domain:     entity.domain,
-                            fields:     service[s].fields,
-                            entity_id:  entity.entity_id,
-                            attr:       s,
-                            type:       serviceType
-                        }
+                            object_id: entity.object_id,
+                            domain: entity.domain,
+                            fields: service[s].fields,
+                            entity_id: entity.entity_id,
+                            attr: s,
+                            type: serviceType,
+                        },
                     };
 
-                    adapter.log.debug(`Found Entity service ${obj._id}: ${JSON.stringify(obj.common)} / ${JSON.stringify(obj.native)}`)
+                    adapter.log.debug(
+                        `Found Entity service ${obj._id}: ${JSON.stringify(obj.common)} / ${JSON.stringify(obj.native)}`,
+                    );
 
                     objs.push(obj);
                 }
@@ -377,8 +343,7 @@ function parseStates(entities, services, callback) {
         }
     }
 
-    syncObjects(objs, () =>
-        syncStates(states, callback));
+    syncObjects(objs, () => syncStates(states, callback));
 }
 
 function main() {
@@ -389,8 +354,7 @@ function main() {
 
     hass = new HASS(adapter.config, adapter.log);
 
-    hass.on('error', err =>
-        adapter.log.error(err));
+    hass.on('error', err => adapter.log.error(err));
 
     hass.on('state_changed', entity => {
         adapter.log.debug(`HASS-Message: State Changed: ${JSON.stringify(entity)}`);
@@ -403,14 +367,22 @@ function main() {
         const ts = entity.last_updated ? new Date(entity.last_updated).getTime() : undefined;
         if (entity.state !== undefined) {
             if (hassObjects[`${adapter.namespace}.${id}state`]) {
-                adapter.setState(`${id}state`, {val: entity.state, ack: true, lc: lc, ts: ts});
+                adapter.setState(`${id}state`, { val: entity.state, ack: true, lc: lc, ts: ts });
             } else {
-                adapter.log.info(`State changed for unknown object ${`${id}state`}. Please restart the adapter to resync the objects.`);
+                adapter.log.info(
+                    `State changed for unknown object ${`${id}state`}. Please restart the adapter to resync the objects.`,
+                );
             }
         }
         if (entity.attributes) {
             for (const attr in entity.attributes) {
-                if (!entity.attributes.hasOwnProperty(attr) || attr === 'friendly_name' || attr === 'unit_of_measurement' || attr === 'icon'|| !attr.length) {
+                if (
+                    !Object.prototype.hasOwnProperty.call(entity.attributes, attr) ||
+                    attr === 'friendly_name' ||
+                    attr === 'unit_of_measurement' ||
+                    attr === 'icon' ||
+                    !attr.length
+                ) {
                     continue;
                 }
                 let val = entity.attributes[attr];
@@ -419,9 +391,11 @@ function main() {
                 }
                 const attrId = attr.replace(adapter.FORBIDDEN_CHARS, '_').replace(/\.+$/, '_');
                 if (hassObjects[`${adapter.namespace}.${id}state`]) {
-                    adapter.setState(id + attrId, {val, ack: true, lc, ts});
+                    adapter.setState(id + attrId, { val, ack: true, lc, ts });
                 } else {
-                    adapter.log.info(`State changed for unknown object ${id + attrId}. Please restart the adapter to resync the objects.`);
+                    adapter.log.info(
+                        `State changed for unknown object ${id + attrId}. Please restart the adapter to resync the objects.`,
+                    );
                 }
             }
         }
@@ -432,7 +406,7 @@ function main() {
             adapter.log.debug('Connected');
             connected = true;
             adapter.setState('info.connection', true, true);
-            hass.getConfig((err, config) => {
+            hass.getConfig(err => {
                 if (err) {
                     adapter.log.error(`Cannot read config: ${err}`);
                     return;
@@ -440,31 +414,39 @@ function main() {
                 //adapter.log.debug(JSON.stringify(config));
                 delayTimeout = setTimeout(() => {
                     delayTimeout = null;
-                    !stopped && hass.getStates((err, states) => {
-                        if (stopped) {
-                            return;
-                        }
-                        if (err) {
-                            return adapter.log.error(`Cannot read states: ${err}`);
-                        }
-                        //adapter.log.debug(JSON.stringify(states));
-                        delayTimeout = setTimeout(() => {
-                            delayTimeout = null;
-                            !stopped && hass.getServices((err, services) => {
-                                if (stopped) {
-                                    return;
-                                }
-                                if (err) {
-                                    adapter.log.error(`Cannot read states: ${err}`);
-                                } else {
-                                    //adapter.log.debug(JSON.stringify(services));
-                                    parseStates(states, services, () => {
-                                        adapter.log.debug('Initial parsing of states done, subscribe to ioBroker states');
-                                        adapter.subscribeStates('*');
+                    if (!stopped) {
+                        hass.getStates((err, states) => {
+                            if (stopped) {
+                                return;
+                            }
+                            if (err) {
+                                return adapter.log.error(`Cannot read states: ${err}`);
+                            }
+                            //adapter.log.debug(JSON.stringify(states));
+                            delayTimeout = setTimeout(() => {
+                                delayTimeout = null;
+                                if (!stopped) {
+                                    hass.getServices((err, services) => {
+                                        if (stopped) {
+                                            return;
+                                        }
+                                        if (err) {
+                                            adapter.log.error(`Cannot read states: ${err}`);
+                                        } else {
+                                            //adapter.log.debug(JSON.stringify(services));
+                                            parseStates(states, services, () => {
+                                                adapter.log.debug(
+                                                    'Initial parsing of states done, subscribe to ioBroker states',
+                                                );
+                                                adapter.subscribeStates('*');
+                                            });
+                                        }
                                     });
                                 }
-                            })}, 100);
-                    })}, 100);
+                            }, 100);
+                        });
+                    }
+                }, 100);
             });
         }
     });

@@ -30,10 +30,11 @@ Allowed field keys are: temperature, target_temp_high, target_temp_low, hvac_mod
 ### Set a stringified JSON to provide one or multiple fields
 Set the state with an ack=false String value which is a stringified JSON object to call the service and use the JSON object as service data
 
-For the last option on a light.turn_off with e.g. `{"transition":10,"flash":"short"}` these two service data details are sent with the call to HASS. The available fields with their exact data definition can be seen in the JSON definition of the ioBroker object in the native.fields section and would look like the following in the above example:
+For the last option on a light.turn_off with e.g. `{"transition":10,"flash":"short"}` these two service data details are sent with the call to HASS. The available fields with their exact data definition can be seen in the JSON definition of the ioBroker object in the `native` fields section and would look like the following in the above example:
 
-`
-...
+```json5
+{
+    // ...
     native: {
         "fields": {
             "transition": {
@@ -65,13 +66,15 @@ For the last option on a light.turn_off with e.g. `{"transition":10,"flash":"sho
         "attr": "turn_off",
         "type": "light"
     }
-...
-`
+    //...
+}
+```
 
 For some services like set_speed it is required to call with a JSON object like `{speed: "high"}` in general to provide required values. In this case the field definition look e.g. like:
 
-```
-...
+```json5
+{
+    //...
     native: {
         "fields": {
             "speed": {
@@ -84,9 +87,10 @@ For some services like set_speed it is required to call with a JSON object like 
                 }
             }
         }
-        ...
+        // ...
     }
-...
+    // ...
+}
 ```
 
 ## Configuration
@@ -98,7 +102,7 @@ Please check it https://www.smarthomejetzt.de/mit-iobroker-auf-eine-home-assista
 
 <!--
 	Placeholder for the next version (at the beginning of the line):
-	### __WORK IN PROGRESS__
+	### **WORK IN PROGRESS**
 -->
 
 ## Changelog
@@ -140,7 +144,7 @@ Please check it https://www.smarthomejetzt.de/mit-iobroker-auf-eine-home-assista
 ## License
 The MIT License (MIT)
 
-Copyright (c) 2018-2023 bluefox <dogafox@gmail.com>
+Copyright (c) 2018-2026 bluefox <dogafox@gmail.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
