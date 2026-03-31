@@ -106,7 +106,7 @@ Please check it https://www.smarthomejetzt.de/mit-iobroker-auf-eine-home-assista
 -->
 
 ## Changelog
-### **WORK IN PROGRESS**
+### 2.0.2 (2026-03-31)
 * (@GermanBluefox) Adapter was updated and migrated to TypeScript
 * (@Titanium177) Added roles for states and added debouncing for reading states from hass
 
