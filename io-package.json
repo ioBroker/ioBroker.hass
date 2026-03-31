@@ -1,20 +1,19 @@
 {
   "common": {
     "name": "hass",
-    "version": "1.4.0",
-    "title": "Home Assistant",
+    "version": "2.0.2",
     "titleLang": {
       "en": "Home Assistant",
-      "de": "Home-Assistent",
-      "ru": "Домашний помощник",
+      "de": "Home Assistant",
+      "ru": "Home Assistant",
       "pt": "Home Assistant",
-      "nl": "Thuisassistent",
-      "fr": "Assistante à domicile",
-      "it": "Assistente domiciliare",
-      "es": "Asistente de hogar",
-      "pl": "Asystent domowy",
-      "zh-cn": "家庭助理",
-      "uk": "Домашній помічник"
+      "nl": "Home Assistant",
+      "fr": "Home Assistant",
+      "it": "Home Assistant",
+      "es": "Home Assistant",
+      "pl": "Home Assistant",
+      "zh-cn": "Home Assistant",
+      "uk": "Home Assistant"
     },
     "desc": {
       "en": "Home Assistant connection for ioBroker",
@@ -30,6 +29,19 @@
       "uk": "Підключення Home Assistant для ioBroker"
     },
     "news": {
+      "2.0.2": {
+        "en": "Adapter was updated and migrated to TypeScript\nAdded roles for states and added debouncing for reading states from hass",
+        "de": "Adapter wurde aktualisiert und auf TypeScript migriert\nHinzugefügt Rollen für Staaten und hinzugefügt Debouncing für Lesezustände aus hass",
+        "ru": "Адаптер был обновлен и перенесен на TypeScript\nДобавлены роли для штатов и добавлены отговорки для чтения штатов из хэша",
+        "pt": "O adaptador foi atualizado e migrado para TypeScript\nAdicionado papéis para estados e debuncing adicionado para estados de leitura de hass",
+        "nl": "Adapter is bijgewerkt en gemigreerd naar TypeScript\nToegevoegde rollen voor staten en toegevoegd debouncing voor het lezen van staten uit hass",
+        "fr": "Adaptateur a été mis à jour et migré vers TypeScript\nAjout de rôles pour les états et ajout de débonflage pour les états de lecture de hass",
+        "it": "L'adattatore è stato aggiornato e migrato a TypeScript\nAggiunti i ruoli per gli stati e aggiunto debouncing per la lettura di stati da hass",
+        "es": "Adaptador fue actualizado y migrado a TipoScript\nFunciones adicionales para los estados y desembolsos añadidos para la lectura de estados de hass",
+        "pl": "Adapter został zaktualizowany i przeniesiony do TypeScript\nDodano role dla państw i dodano debouncing do czytania stanów z hass",
+        "uk": "Адаптер був оновлений і мігрований до TypeScript\nДодано ролі для штатів і додано деблінг для читання станів з",
+        "zh-cn": "适应器被更新并迁移到 TypeScript\n添加状态角色, 添加读状态的解跳"
+      },
       "1.4.0": {
         "en": "Added more guidance logging when setting services incorrectly\nPrevent crashes when attributes contain \".\" at the end of their names\nAdded logging for state updates for unknown objects",
         "de": "Mehr Anleitungsprotokollierung hinzugefügt, wenn Dienste falsch eingestellt werden\nVerhindern Sie Abstürzen, wenn Attribute \" enthalten.\" am Ende ihrer Namen\nHinzugefügt Protokollierung für Zustandsaktualisierungen für unbekannte Objekte",
@@ -107,19 +119,6 @@
         "pl": "WAŻNE: Po zainstalowaniu tej wersji należy raz ponownie wprowadzić hasło!\nZaimplementuj wyzwalacze usługi, aby używać dowolnej wartości do wyzwalania lub skróconego JSON do wywołania z polami\nZoptymalizuj obsługę rozładunku\nDodaj Sentry do zgłaszania awarii",
         "zh-cn": "重要提示：安装此版本后需要重新输入一次密码！\n实现服务触发器以使用任何值触发或字符串化 JSON 以使用字段调用\n优化卸载处理\n添加 Sentry 以进行崩溃报告",
         "uk": "ВАЖЛИВО: після встановлення цієї версії потрібно повторно ввести пароль!\nРеалізуйте тригери служби, щоб використовувати будь-яке значення для запуску або рядковий JSON для виклику з полями\nОптимізуйте роботу з розвантаженням\nДодайте Sentry для звітування про збої"
-      },
-      "1.0.1": {
-        "en": "IMPORTANT: js-controller 2.0 is needed st least!\nFix start issue\n(Apollon77/Garfonso) Fix issue where value could not be set in hass",
-        "de": "WICHTIG: js-controller 2.0 wird am wenigsten benötigt!\nStartproblem beheben\n(Apollon77/Garfonso) Problem behoben, bei dem der Wert nicht in Hass festgelegt werden konnte",
-        "ru": "ВАЖНО: js-controller 2.0 нужен как минимум!\nИсправить проблему с запуском\n(Apollon77 / Garfonso) Исправлена ошибка, из-за которой значение не могло быть установлено в hass.",
-        "pt": "IMPORTANTE: o js-controller 2.0 é o mínimo necessário!\nCorrigir problema inicial\n(Apollon77 / Garfonso) Correção do problema em que o valor não podia ser definido em hass",
-        "nl": "BELANGRIJK: js-controller 2.0 is minimaal nodig!\nStartprobleem oplossen\n(Apollon77/Garfonso) Probleem opgelost waarbij de waarde niet kon worden ingesteld in hass",
-        "fr": "IMPORTANT : js-controller 2.0 est au moins nécessaire !\nRésoudre le problème de démarrage\n(Apollon77/Garfonso) Correction d'un problème où la valeur ne pouvait pas être définie dans hass",
-        "it": "IMPORTANTE: come minimo è necessario js-controller 2.0!\nRisolvi il problema di avvio\n(Apollon77/Garfonso) Risolto il problema per cui il valore non poteva essere impostato in hass",
-        "es": "IMPORTANTE: ¡js-controller 2.0 es lo menos necesario!\nSolucionar problema de inicio\n(Apollon77 / Garfonso) Se solucionó el problema por el cual no se podía establecer el valor en hass",
-        "pl": "WAŻNE: js-controller 2.0 jest potrzebny przynajmniej!\nNapraw problem z uruchomieniem\n(Apollon77/Garfonso) Napraw problem, w którym nie można było ustawić wartości w hass",
-        "zh-cn": "重要提示：至少需要 js-controller 2.0！\n修复启动问题\n(Apollon77/Garfonso) 修复无法在 hass 中设置值的问题",
-        "uk": "ВАЖЛИВО: як мінімум потрібен js-контроллер 2.0!\nВиправити проблему запуску\n(Apollon77/Garfonso) Виправлено проблему, через яку значення не можна було встановити в hass"
       }
     },
     "localLink": "http://%host%:8123",
@@ -128,7 +127,9 @@
     "icon": "hass.png",
     "enabled": true,
     "compact": true,
-    "materialize": true,
+    "adminUI": {
+      "config": "json"
+    },
     "license": "MIT",
     "extIcon": "https://raw.githubusercontent.com/ioBroker/ioBroker.hass/master/admin/hass.png",
     "keywords": [
@@ -144,12 +145,12 @@
     ],
     "dependencies": [
       {
-        "js-controller": ">=3.0.0"
+        "js-controller": ">=6.0.11"
       }
     ],
     "globalDependencies": [
       {
-        "admin": ">=5.1.28"
+        "admin": ">=6.0.0"
       }
     ],
     "plugins": {
