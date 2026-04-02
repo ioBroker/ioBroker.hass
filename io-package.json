@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "hass",
-    "version": "2.0.2",
+    "version": "2.0.3",
     "title": "Home Assistant",
     "titleLang": {
       "en": "Home Assistant",
@@ -30,6 +30,19 @@
       "uk": "Підключення Home Assistant для ioBroker"
     },
     "news": {
+      "2.0.3": {
+        "en": "Adapter was updated and migrated to TypeScript\nAdded roles for states and added debouncing for reading states from hass",
+        "de": "Adapter wurde aktualisiert und auf TypeScript migriert\nHinzugefügt Rollen für Staaten und hinzugefügt Debouncing für Lesezustände aus hass",
+        "ru": "Адаптер был обновлен и перенесен на TypeScript\nДобавлены роли для штатов и добавлены отговорки для чтения штатов из хэша",
+        "pt": "O adaptador foi atualizado e migrado para TypeScript\nAdicionado papéis para estados e debuncing adicionado para estados de leitura de hass",
+        "nl": "Adapter is bijgewerkt en gemigreerd naar TypeScript\nToegevoegde rollen voor staten en toegevoegd debouncing voor het lezen van staten uit hass",
+        "fr": "Adaptateur a été mis à jour et migré vers TypeScript\nAjout de rôles pour les états et ajout de débonflage pour les états de lecture de hass",
+        "it": "L'adattatore è stato aggiornato e migrato a TypeScript\nAggiunti i ruoli per gli stati e aggiunto debouncing per la lettura di stati da hass",
+        "es": "Adaptador fue actualizado y migrado a TipoScript\nFunciones adicionales para los estados y desembolsos añadidos para la lectura de estados de hass",
+        "pl": "Adapter został zaktualizowany i przeniesiony do TypeScript\nDodano role dla państw i dodano debouncing do czytania stanów z hass",
+        "uk": "Адаптер був оновлений і мігрований до TypeScript\nДодано ролі для штатів і додано деблінг для читання станів з",
+        "zh-cn": "适应器被更新并迁移到 TypeScript\n添加状态角色, 添加读状态的解跳"
+      },
       "1.4.0": {
         "en": "Added more guidance logging when setting services incorrectly\nPrevent crashes when attributes contain \".\" at the end of their names\nAdded logging for state updates for unknown objects",
         "de": "Mehr Anleitungsprotokollierung hinzugefügt, wenn Dienste falsch eingestellt werden\nVerhindern Sie Abstürzen, wenn Attribute \" enthalten.\" am Ende ihrer Namen\nHinzugefügt Protokollierung für Zustandsaktualisierungen für unbekannte Objekte",
