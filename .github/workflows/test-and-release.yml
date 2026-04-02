@@ -47,6 +47,7 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           os: ${{ matrix.os }}
+          build: true
 
   deploy:
     needs: [check-and-lint, adapter-tests]
@@ -68,3 +69,4 @@ jobs:
         with:
           node-version: '22.x'
           github-token: ${{ secrets.GITHUB_TOKEN }}
+          build: true
