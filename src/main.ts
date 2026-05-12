@@ -664,7 +664,7 @@ class HassAdapter extends Adapter {
 
         this.hass.on('error', err => this.log.error(err));
 
-        this.hass.on('state_changed', entity => {
+        this.hass.on('state_changed', async entity => {
             this.log.debug(`HASS-Message: State Changed: ${JSON.stringify(entity)}`);
             if (!entity || typeof entity.entity_id !== 'string') {
                 return;
@@ -711,6 +711,27 @@ class HassAdapter extends Adapter {
                     }
                     const attrId = attr.replace(this.FORBIDDEN_CHARS, '_').replace(/\.+$/, '_');
                     if (this.hassObjects[`${this.namespace}.${id}state`]) {
+                        const fullAttrId = `${this.namespace}.${id}${attrId}`;
+                        if (!this.hassObjects[fullAttrId]) {
+                            // Attribute appeared after initial sync — create object dynamically
+                            const common: ioBroker.StateCommon = {
+                                ...(knownAttributes[attr] as ioBroker.StateCommon | undefined),
+                                name: attr.replace(/_/g, ' '),
+                                read: true,
+                                write: false,
+                                role: 'state',
+                                type: (mapTypes[typeof entity.attributes[attr]] ?? 'mixed') as ioBroker.CommonType,
+                            };
+                            const newObj: ioBroker.StateObject = {
+                                _id: fullAttrId,
+                                type: 'state',
+                                common,
+                                native: { entity_id: entity.entity_id, attr },
+                            };
+                            this.log.debug(`Creating missing attribute object ${fullAttrId}`);
+                            await this.setForeignObjectAsync(fullAttrId, newObj);
+                            this.hassObjects[fullAttrId] = newObj;
+                        }
                         this.setState(id + attrId, { val, ack: true, lc, ts });
                     } else {
                         this.log.info(
