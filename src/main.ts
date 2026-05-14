@@ -702,83 +702,91 @@ class HassAdapter extends Adapter {
         }
 
         const prefix = `${this.namespace}.entities.`;
-        const channelsToDelete: { id: string; entityId: string }[] = [];
+
+        // Group every object under entities.* by its derived entity_id. We extract
+        // the entity_id from the object id (first two path components after the
+        // prefix) instead of native.entity_id — older objects from previous adapter
+        // versions may have been written as flat states without a parent channel
+        // and without native.entity_id, but their id still encodes the entity.
+        const matchedByEntity = new Map<string, string[]>();
 
         for (const id in allObjects) {
             if (!Object.prototype.hasOwnProperty.call(allObjects, id) || !id.startsWith(prefix)) {
                 continue;
             }
-            const obj = allObjects[id];
-            if (obj.type !== 'channel') {
+            const rest = id.substring(prefix.length);
+            const parts = rest.split('.');
+            if (parts.length < 2) {
                 continue;
             }
-            const entityId = (obj.native as Record<string, any>)?.entity_id;
-            if (typeof entityId !== 'string') {
+            const entityId = `${parts[0]}.${parts[1]}`;
+            if (!isExcluded(entityId, this.excludePatterns)) {
                 continue;
             }
-            if (isExcluded(entityId, this.excludePatterns)) {
-                channelsToDelete.push({ id, entityId });
+            const ids = matchedByEntity.get(entityId);
+            if (ids) {
+                ids.push(id);
+            } else {
+                matchedByEntity.set(entityId, [id]);
             }
         }
 
-        if (channelsToDelete.length === 0) {
+        if (matchedByEntity.size === 0) {
             this.log.info('Cleanup: no existing objects matched exclude patterns');
             return;
         }
 
-        let deletedCount = 0;
+        let deletedEntityCount = 0;
+        let deletedIdCount = 0;
         let keptForCustomCount = 0;
 
-        for (const { id, entityId } of channelsToDelete) {
-            const channelCustom = (allObjects[id].common as { custom?: Record<string, unknown> } | undefined)
-                ?.custom;
-            let hasCustom = !!(channelCustom && Object.keys(channelCustom).length);
-            if (!hasCustom) {
-                const subPrefix = `${id}.`;
-                for (const subId in allObjects) {
-                    if (!subId.startsWith(subPrefix)) {
-                        continue;
-                    }
-                    const subCustom = (
-                        allObjects[subId].common as { custom?: Record<string, unknown> } | undefined
-                    )?.custom;
-                    if (subCustom && Object.keys(subCustom).length) {
-                        hasCustom = true;
-                        break;
-                    }
+        for (const [entityId, ids] of matchedByEntity) {
+            // Custom-config protection: scan all ids of the group; if any holds
+            // common.custom (history/influxdb/sql) keep the whole entity.
+            let hasCustom = false;
+            for (const id of ids) {
+                const custom = (allObjects[id].common as { custom?: Record<string, unknown> } | undefined)
+                    ?.custom;
+                if (custom && Object.keys(custom).length) {
+                    hasCustom = true;
+                    break;
                 }
             }
-
             if (hasCustom) {
                 keptForCustomCount++;
                 this.log.warn(
-                    `Cleanup: keeping "${id}" (entity ${entityId}) — has custom adapter config (history/influxdb/sql); remove it manually if you really want to drop it`,
+                    `Cleanup: keeping entity "${entityId}" — has custom adapter config (history/influxdb/sql); remove it manually if you really want to drop it`,
                 );
                 continue;
             }
 
-            try {
-                await this.delObjectAsync(id, { recursive: true });
-                delete this.hassObjects[id];
-                const subPrefix = `${id}.`;
-                for (const cachedId of Object.keys(this.hassObjects)) {
-                    if (cachedId.startsWith(subPrefix)) {
-                        delete this.hassObjects[cachedId];
-                    }
+            // Delete sub-states first (longest ids), then any parent channel last.
+            const sortedIds = [...ids].sort((a, b) => b.length - a.length);
+            let entityFullyDeleted = true;
+            for (const id of sortedIds) {
+                try {
+                    await this.delObjectAsync(id);
+                    delete this.hassObjects[id];
+                    deletedIdCount++;
+                } catch (err) {
+                    entityFullyDeleted = false;
+                    this.log.error(`Cleanup: failed to delete "${id}": ${err}`);
                 }
-                deletedCount++;
+            }
+            if (entityFullyDeleted) {
+                deletedEntityCount++;
                 if (this.config.verboseFilterLog) {
-                    this.log.info(`Cleanup: deleted "${id}" (entity ${entityId})`);
+                    this.log.info(
+                        `Cleanup: deleted entity "${entityId}" (${ids.length} object${ids.length === 1 ? '' : 's'})`,
+                    );
                 }
-            } catch (err) {
-                this.log.error(`Cleanup: failed to delete "${id}": ${err}`);
             }
         }
 
         this.log.info(
-            `Cleanup: deleted ${deletedCount} excluded entit${deletedCount === 1 ? 'y' : 'ies'}` +
+            `Cleanup: deleted ${deletedEntityCount} excluded entit${deletedEntityCount === 1 ? 'y' : 'ies'} (${deletedIdCount} object${deletedIdCount === 1 ? '' : 's'} total)` +
                 (keptForCustomCount > 0
-                    ? `, kept ${keptForCustomCount} with custom config (see warnings above)`
+                    ? `, kept ${keptForCustomCount} entit${keptForCustomCount === 1 ? 'y' : 'ies'} with custom config (see warnings above)`
                     : ''),
         );
     }
