@@ -9,6 +9,7 @@ interface HassAdapterConfig {
     secure: boolean;
     excludePatterns: string;
     verboseFilterLog: boolean;
+    cleanupExcludedOnStart: boolean;
 }
 
 interface HassEntity {
@@ -683,6 +684,105 @@ class HassAdapter extends Adapter {
         this.initialSyncCompleted = true;
     }
 
+    private async cleanupExcludedObjects(): Promise<void> {
+        if (!this.config.cleanupExcludedOnStart) {
+            return;
+        }
+        if (this.excludePatterns.length === 0) {
+            this.log.info('Cleanup skipped: no exclude patterns configured');
+            return;
+        }
+
+        let allObjects: Record<string, ioBroker.Object>;
+        try {
+            allObjects = (await this.getAdapterObjectsAsync()) as Record<string, ioBroker.Object>;
+        } catch (err) {
+            this.log.error(`Cleanup: failed to load adapter objects: ${err}`);
+            return;
+        }
+
+        const prefix = `${this.namespace}.entities.`;
+        const channelsToDelete: { id: string; entityId: string }[] = [];
+
+        for (const id in allObjects) {
+            if (!Object.prototype.hasOwnProperty.call(allObjects, id) || !id.startsWith(prefix)) {
+                continue;
+            }
+            const obj = allObjects[id];
+            if (obj.type !== 'channel') {
+                continue;
+            }
+            const entityId = (obj.native as Record<string, any>)?.entity_id;
+            if (typeof entityId !== 'string') {
+                continue;
+            }
+            if (isExcluded(entityId, this.excludePatterns)) {
+                channelsToDelete.push({ id, entityId });
+            }
+        }
+
+        if (channelsToDelete.length === 0) {
+            this.log.info('Cleanup: no existing objects matched exclude patterns');
+            return;
+        }
+
+        let deletedCount = 0;
+        let keptForCustomCount = 0;
+
+        for (const { id, entityId } of channelsToDelete) {
+            const channelCustom = (allObjects[id].common as { custom?: Record<string, unknown> } | undefined)
+                ?.custom;
+            let hasCustom = !!(channelCustom && Object.keys(channelCustom).length);
+            if (!hasCustom) {
+                const subPrefix = `${id}.`;
+                for (const subId in allObjects) {
+                    if (!subId.startsWith(subPrefix)) {
+                        continue;
+                    }
+                    const subCustom = (
+                        allObjects[subId].common as { custom?: Record<string, unknown> } | undefined
+                    )?.custom;
+                    if (subCustom && Object.keys(subCustom).length) {
+                        hasCustom = true;
+                        break;
+                    }
+                }
+            }
+
+            if (hasCustom) {
+                keptForCustomCount++;
+                this.log.warn(
+                    `Cleanup: keeping "${id}" (entity ${entityId}) — has custom adapter config (history/influxdb/sql); remove it manually if you really want to drop it`,
+                );
+                continue;
+            }
+
+            try {
+                await this.delObjectAsync(id, { recursive: true });
+                delete this.hassObjects[id];
+                const subPrefix = `${id}.`;
+                for (const cachedId of Object.keys(this.hassObjects)) {
+                    if (cachedId.startsWith(subPrefix)) {
+                        delete this.hassObjects[cachedId];
+                    }
+                }
+                deletedCount++;
+                if (this.config.verboseFilterLog) {
+                    this.log.info(`Cleanup: deleted "${id}" (entity ${entityId})`);
+                }
+            } catch (err) {
+                this.log.error(`Cleanup: failed to delete "${id}": ${err}`);
+            }
+        }
+
+        this.log.info(
+            `Cleanup: deleted ${deletedCount} excluded entit${deletedCount === 1 ? 'y' : 'ies'}` +
+                (keptForCustomCount > 0
+                    ? `, kept ${keptForCustomCount} with custom config (see warnings above)`
+                    : ''),
+        );
+    }
+
     private async main(): Promise<void> {
         this.config.host ||= '127.0.0.1';
         this.config.port = parseInt(String(this.config.port), 10) || 8123;
@@ -700,6 +800,8 @@ class HassAdapter extends Adapter {
                 `Entity filter active: ${this.excludePatterns.length} pattern(s) loaded: ${this.excludePatterns.join(', ')}`,
             );
         }
+
+        await this.cleanupExcludedObjects();
 
         await this.setStateAsync('info.connection', false, true);
 

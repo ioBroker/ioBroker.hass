@@ -8,5 +8,7 @@
     "Exclude patterns (one per line)": "Шаблоны исключения (по одному на строку)",
     "Glob patterns, * wildcard. Lines starting with # are comments. Empty = filter off.": "Glob-шаблоны, * — подстановочный знак. Строки, начинающиеся с #, являются комментариями. Пусто = фильтр выключен.",
     "Verbose filter logging": "Подробное логирование фильтра",
-    "When enabled, log each excluded entity_id individually during the initial adapter sync (requires loglevel info or debug).": "Когда включено, каждый исключённый entity_id логируется отдельно во время начальной синхронизации адаптера (требуется loglevel info или debug)."
+    "When enabled, log each excluded entity_id individually during the initial adapter sync (requires loglevel info or debug).": "Когда включено, каждый исключённый entity_id логируется отдельно во время начальной синхронизации адаптера (требуется loglevel info или debug).",
+    "Cleanup excluded entities on adapter start": "Cleanup excluded entities on adapter start",
+    "When enabled, on each adapter start delete existing objects under entities.* whose entity_id matches the exclude patterns. Objects with custom adapter config (history/influxdb/sql) are kept and logged.": "When enabled, on each adapter start delete existing objects under entities.* whose entity_id matches the exclude patterns. Objects with custom adapter config (history/influxdb/sql) are kept and logged."
 }

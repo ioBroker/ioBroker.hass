@@ -254,7 +254,8 @@
     "password": "",
     "secure": false,
     "excludePatterns": "# Glob patterns, one per line. Lines starting with # are comments.\n# Example: filter out all entities prefixed with `iob_` regardless of domain:\n# *.iob_*",
-    "verboseFilterLog": false
+    "verboseFilterLog": false,
+    "cleanupExcludedOnStart": false
   },
   "protectedNative": [
     "password"
