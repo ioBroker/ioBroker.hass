@@ -4,5 +4,7 @@
     "Password repeat": "Répéter le mot de passe ",
     "Password": "Mot de passe",
     "Passwords missmatch!": "Les mots de passe ne correspondent pas !",
-    "Secure": "HTTPS ?"
+    "Secure": "HTTPS ?",
+    "Exclude patterns (one per line)": "Modèles d'exclusion (un par ligne)",
+    "Glob patterns, * wildcard. Lines starting with # are comments. Empty = filter off.": "Modèles glob, * comme joker. Les lignes commençant par # sont des commentaires. Vide = filtre désactivé."
 }

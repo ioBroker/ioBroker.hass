@@ -4,5 +4,7 @@
     "Password repeat": "Wachtwoord herhalen",
     "Password": "Wachtwoord",
     "Passwords missmatch!": "Wachtwoorden komen niet overeen!",
-    "Secure": "HTTPS?"
+    "Secure": "HTTPS?",
+    "Exclude patterns (one per line)": "Uitsluitpatronen (één per regel)",
+    "Glob patterns, * wildcard. Lines starting with # are comments. Empty = filter off.": "Glob-patronen, * als wildcard. Regels die beginnen met # zijn commentaar. Leeg = filter uit."
 }

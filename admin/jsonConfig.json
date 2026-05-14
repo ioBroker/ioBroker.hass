@@ -39,6 +39,17 @@
             "sm": 12,
             "md": 6,
             "lg": 4
+        },
+        "_divider3": {
+            "type": "divider"
+        },
+        "excludePatterns": {
+            "type": "text",
+            "label": "Exclude patterns (one per line)",
+            "help": "Glob patterns, * wildcard. Lines starting with # are comments. Empty = filter off.",
+            "multiline": true,
+            "minRows": 6,
+            "sm": 12
         }
     }
 }

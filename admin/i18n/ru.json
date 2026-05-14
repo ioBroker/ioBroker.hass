@@ -4,5 +4,7 @@
     "Password repeat": "Повтор пароля",
     "Password": "Пароль",
     "Passwords missmatch!": "Пароли не совпадают!",
-    "Secure": "HTTPS?"
+    "Secure": "HTTPS?",
+    "Exclude patterns (one per line)": "Шаблоны исключения (по одному на строку)",
+    "Glob patterns, * wildcard. Lines starting with # are comments. Empty = filter off.": "Glob-шаблоны, * — подстановочный знак. Строки, начинающиеся с #, являются комментариями. Пусто = фильтр выключен."
 }

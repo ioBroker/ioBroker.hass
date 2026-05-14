@@ -4,5 +4,7 @@
     "Password repeat": "密码重复：",
     "Password": "密码：",
     "Passwords missmatch!": "密码不匹配！",
-    "Secure": "HTTPS？"
+    "Secure": "HTTPS？",
+    "Exclude patterns (one per line)": "排除模式（每行一个）",
+    "Glob patterns, * wildcard. Lines starting with # are comments. Empty = filter off.": "Glob 模式，* 通配符。以 # 开头的行是注释。为空 = 过滤器关闭。"
 }

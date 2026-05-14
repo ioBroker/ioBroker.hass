@@ -4,5 +4,7 @@
     "Password repeat": "Ripeti password",
     "Password": "Parola d'ordine",
     "Passwords missmatch!": "Le password non corrispondono!",
-    "Secure": "HTTPS?"
+    "Secure": "HTTPS?",
+    "Exclude patterns (one per line)": "Pattern di esclusione (uno per riga)",
+    "Glob patterns, * wildcard. Lines starting with # are comments. Empty = filter off.": "Pattern glob, * come wildcard. Le righe che iniziano con # sono commenti. Vuoto = filtro disattivato."
 }
