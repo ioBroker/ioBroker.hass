@@ -8,6 +8,7 @@ interface HassAdapterConfig {
     password: string;
     secure: boolean;
     excludePatterns: string;
+    verboseFilterLog: boolean;
 }
 
 interface HassEntity {
@@ -191,6 +192,7 @@ class HassAdapter extends Adapter {
     private syncDebounceTimeout: ReturnType<typeof setTimeout> | null = null;
     private stopped: boolean = false;
     private excludePatterns: string[] = [];
+    private initialSyncCompleted: boolean = false;
 
     public constructor(options: Partial<AdapterOptions> = {}) {
         super({
@@ -458,6 +460,7 @@ class HassAdapter extends Adapter {
         const states: { id: string; lc?: number; ts?: number; val: ioBroker.StateValue; ack: boolean }[] = [];
         const expectedObjects = new Set<string>();
         let excludedCount = 0;
+        const excludedIds: string[] = [];
 
         for (let e = 0; e < entities.length; e++) {
             const entity = entities[e];
@@ -467,6 +470,9 @@ class HassAdapter extends Adapter {
 
             if (isExcluded(entity.entity_id, this.excludePatterns)) {
                 excludedCount++;
+                if (this.config.verboseFilterLog && !this.initialSyncCompleted) {
+                    excludedIds.push(entity.entity_id);
+                }
                 continue;
             }
 
@@ -667,6 +673,14 @@ class HassAdapter extends Adapter {
                 `Entity filter excluded ${excludedCount} entit${excludedCount === 1 ? 'y' : 'ies'} from sync`,
             );
         }
+
+        if (excludedIds.length > 0) {
+            for (const id of excludedIds) {
+                this.log.info(`Entity filter excluded: ${id}`);
+            }
+        }
+
+        this.initialSyncCompleted = true;
     }
 
     private async main(): Promise<void> {

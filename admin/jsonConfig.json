@@ -50,6 +50,12 @@
             "multiline": true,
             "minRows": 6,
             "sm": 12
+        },
+        "verboseFilterLog": {
+            "type": "checkbox",
+            "label": "Verbose filter logging",
+            "help": "When enabled, log each excluded entity_id individually during the initial adapter sync (requires loglevel info or debug).",
+            "sm": 12
         }
     }
 }

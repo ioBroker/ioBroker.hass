@@ -6,5 +6,7 @@
     "Passwords missmatch!": "Паролі не збігаються!",
     "Secure": "HTTPS?",
     "Exclude patterns (one per line)": "Шаблони виключення (по одному в рядку)",
-    "Glob patterns, * wildcard. Lines starting with # are comments. Empty = filter off.": "Glob-шаблони, * — підстановочний знак. Рядки, що починаються з #, є коментарями. Порожньо = фільтр вимкнено."
+    "Glob patterns, * wildcard. Lines starting with # are comments. Empty = filter off.": "Glob-шаблони, * — підстановочний знак. Рядки, що починаються з #, є коментарями. Порожньо = фільтр вимкнено.",
+    "Verbose filter logging": "Детальне логування фільтра",
+    "When enabled, log each excluded entity_id individually during the initial adapter sync (requires loglevel info or debug).": "Коли увімкнено, кожен виключений entity_id логується окремо під час початкової синхронізації адаптера (потрібен loglevel info або debug)."
 }

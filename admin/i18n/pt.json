@@ -6,5 +6,7 @@
     "Passwords missmatch!": "As senhas não correspondem!",
     "Secure": "HTTPS?",
     "Exclude patterns (one per line)": "Padrões de exclusão (um por linha)",
-    "Glob patterns, * wildcard. Lines starting with # are comments. Empty = filter off.": "Padrões glob, * como wildcard. Linhas começando com # são comentários. Vazio = filtro desligado."
+    "Glob patterns, * wildcard. Lines starting with # are comments. Empty = filter off.": "Padrões glob, * como wildcard. Linhas começando com # são comentários. Vazio = filtro desligado.",
+    "Verbose filter logging": "Registro detalhado do filtro",
+    "When enabled, log each excluded entity_id individually during the initial adapter sync (requires loglevel info or debug).": "Quando ativado, cada entity_id excluído é registrado individualmente durante a sincronização inicial do adaptador (requer loglevel info ou debug)."
 }

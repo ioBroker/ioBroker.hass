@@ -253,7 +253,8 @@
     "port": 8123,
     "password": "",
     "secure": false,
-    "excludePatterns": "# Glob patterns, one per line. Lines starting with # are comments.\n# Example: filter out all entities prefixed with `iob_` regardless of domain:\n# *.iob_*"
+    "excludePatterns": "# Glob patterns, one per line. Lines starting with # are comments.\n# Example: filter out all entities prefixed with `iob_` regardless of domain:\n# *.iob_*",
+    "verboseFilterLog": false
   },
   "protectedNative": [
     "password"

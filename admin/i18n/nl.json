@@ -6,5 +6,7 @@
     "Passwords missmatch!": "Wachtwoorden komen niet overeen!",
     "Secure": "HTTPS?",
     "Exclude patterns (one per line)": "Uitsluitpatronen (één per regel)",
-    "Glob patterns, * wildcard. Lines starting with # are comments. Empty = filter off.": "Glob-patronen, * als wildcard. Regels die beginnen met # zijn commentaar. Leeg = filter uit."
+    "Glob patterns, * wildcard. Lines starting with # are comments. Empty = filter off.": "Glob-patronen, * als wildcard. Regels die beginnen met # zijn commentaar. Leeg = filter uit.",
+    "Verbose filter logging": "Uitgebreide filterlogging",
+    "When enabled, log each excluded entity_id individually during the initial adapter sync (requires loglevel info or debug).": "Indien ingeschakeld, wordt elke uitgesloten entity_id afzonderlijk gelogd tijdens de initiële adapter-synchronisatie (vereist loglevel info of debug)."
 }
