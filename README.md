@@ -100,12 +100,45 @@ Please check it https://www.smarthomejetzt.de/mit-iobroker-auf-eine-home-assista
 
 **Unfortunately only in German, but the [Google Translate works rather good](https://translate.google.com/translate?hl=en&sl=de&tl=en&u=https%3A%2F%2Fwww.smarthomejetzt.de%2Fmit-iobroker-auf-eine-home-assistant-hass-io-installation-und-die-geraete-zugreifen%2F)** 
 
+## Entity exclude filter
+
+Optionally restrict which Home Assistant entities are synchronised into ioBroker.
+
+Each non-empty, non-comment line in the **Exclude patterns** field is a glob
+(only `*` is a wildcard and matches any sequence of characters, including `.`).
+Patterns are matched case-sensitively against the full `entity_id` (e.g.
+`switch.living_room`). An entity that matches any pattern is:
+
+- skipped when objects are created or updated (initial sync and re-syncs)
+- ignored when its state changes in HASS (no state writes triggered in ioBroker)
+
+Lines starting with `#` are treated as comments.
+
+Examples:
+
+```
+# Drop every entity whose name starts with `iob_`, regardless of domain:
+*.iob_*
+
+# Drop sensors only:
+sensor.iob_*
+```
+
+Tick **Verbose filter logging** to log every excluded `entity_id` individually
+during the first sync (requires adapter loglevel `info` or `debug`). Subsequent
+re-syncs only emit the aggregate count to keep the log clean.
+
+An empty pattern list leaves the adapter behaviour identical to previous versions.
+
 <!--
 	Placeholder for the next version (at the beginning of the line):
 	### **WORK IN PROGRESS**
 -->
 
 ## Changelog
+### **WORK IN PROGRESS**
+* (mokusone) Added optional entity exclude filter with glob patterns, configurable via the admin UI, plus a verbose-logging toggle for inspecting matches
+
 ### 2.0.4 (2026-05-05)
 * (@GermanBluefox) Tried to keep the custom settings of the objects when updating them with new data from HASS
 
