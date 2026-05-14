@@ -50,6 +50,7 @@
   "scripts": {
     "test:integration": "mocha --exit",
     "test:package": "mocha test/testPackageFiles.js --exit",
+    "test:unit": "mocha test/testEntityFilter.js --exit",
     "test": "npm run test:integration",
     "build:tsc": "tsc -p tsconfig.build.json",
     "build": "npm run build:tsc",
