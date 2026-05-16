@@ -152,6 +152,8 @@ Please check it https://www.smarthomejetzt.de/mit-iobroker-auf-eine-home-assista
 ### 0.1.0
 * (bluefox) initial release
 
+[Older changelogs can be found there](CHANGELOG_OLD.md)
+
 ## License
 The MIT License (MIT)
 
