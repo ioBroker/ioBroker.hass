@@ -562,7 +562,7 @@ class HassAdapter extends adapter_core_1.Adapter {
         await this.setStateAsync('info.connection', false, true);
         this.hass = new hass_1.default(this.config, this.log);
         this.hass.on('error', err => this.log.error(err));
-        this.hass.on('state_changed', entity => {
+        this.hass.on('state_changed', async (entity) => {
             this.log.debug(`HASS-Message: State Changed: ${JSON.stringify(entity)}`);
             if (!entity || typeof entity.entity_id !== 'string') {
                 return;
@@ -572,7 +572,7 @@ class HassAdapter extends adapter_core_1.Adapter {
             const ts = entity.last_updated ? new Date(entity.last_updated).getTime() : undefined;
             if (entity.state !== undefined) {
                 if (this.hassObjects[`${this.namespace}.${id}state`]) {
-                    this.setState(`${id}state`, { val: entity.state, ack: true, lc, ts });
+                    await this.setStateAsync(`${id}state`, { val: entity.state, ack: true, lc, ts });
                 }
                 else {
                     this.log.info(`State changed for unknown object ${id}state. Triggering synchronization to resync the objects.`);
@@ -580,7 +580,7 @@ class HassAdapter extends adapter_core_1.Adapter {
                 }
                 // Update boolean state
                 if (this.hassObjects[`${this.namespace}.${id}state_boolean`]) {
-                    this.setState(`${id}state_boolean`, {
+                    await this.setStateAsync(`${id}state_boolean`, {
                         val: entity.state === 'on',
                         ack: true,
                         lc: lc || Date.now(),
@@ -603,7 +603,28 @@ class HassAdapter extends adapter_core_1.Adapter {
                     }
                     const attrId = attr.replace(this.FORBIDDEN_CHARS, '_').replace(/\.+$/, '_');
                     if (this.hassObjects[`${this.namespace}.${id}state`]) {
-                        this.setState(id + attrId, { val, ack: true, lc, ts });
+                        const fullAttrId = `${this.namespace}.${id}${attrId}`;
+                        if (!this.hassObjects[fullAttrId]) {
+                            // Attribute appeared after initial sync — create object dynamically
+                            const common = {
+                                ...knownAttributes[attr],
+                                name: attr.replace(/_/g, ' '),
+                                read: true,
+                                write: false,
+                                role: 'state',
+                                type: mapTypes[typeof entity.attributes[attr]] ?? 'mixed',
+                            };
+                            const newObj = {
+                                _id: fullAttrId,
+                                type: 'state',
+                                common,
+                                native: { entity_id: entity.entity_id, attr },
+                            };
+                            this.log.debug(`Creating missing attribute object ${fullAttrId}`);
+                            await this.setForeignObjectAsync(fullAttrId, newObj);
+                            this.hassObjects[fullAttrId] = newObj;
+                        }
+                        await this.setStateAsync(id + attrId, { val, ack: true, lc, ts });
                     }
                     else {
                         this.log.info(`State changed for unknown object ${id + attrId}. Triggering synchronization to resync the objects.`);
@@ -616,7 +637,7 @@ class HassAdapter extends adapter_core_1.Adapter {
             if (!this.hassConnected) {
                 this.log.debug('Connected');
                 this.hassConnected = true;
-                this.setState('info.connection', true, true);
+                void this.setState('info.connection', true, true);
                 this.hass.getConfig(err => {
                     if (err) {
                         this.log.error(`Cannot read config: ${err}`);
@@ -661,7 +682,7 @@ class HassAdapter extends adapter_core_1.Adapter {
             if (this.hassConnected) {
                 this.log.debug('Disconnected');
                 this.hassConnected = false;
-                this.setState('info.connection', false, true);
+                void this.setState('info.connection', false, true);
             }
         });
         this.hass.connect();

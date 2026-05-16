@@ -88,12 +88,13 @@ class HASS extends node_events_1.EventEmitter {
                 }
             }
             else if (response.type === 'auth_required') {
-                if (!this.options.password) {
+                const password = this.options.password || process.env.SUPERVISOR_TOKEN;
+                if (!password) {
                     this.emit('error', 'Password required. Connection closed');
                     socket.terminate();
                 }
                 else {
-                    setTimeout(() => this.sendAuth(socket, this.options.password), 50);
+                    setTimeout(() => this.sendAuth(socket, password), 50);
                 }
             }
             else if (response.type === 'auth_ok') {
@@ -196,7 +197,7 @@ class HASS extends node_events_1.EventEmitter {
             clearTimeout(this.connectTimeout);
             this.connectTimeout = null;
         }
-        this.socket = new ws_1.default(`ws${this.options.secure ? 's' : ''}://${this.options.host}:${this.options.port}/api/websocket`, { perMessageDeflate: false });
+        this.socket = new ws_1.default(`ws${this.options.secure ? 's' : ''}://${this.options.host}:${this.options.port}/${this.options.host === 'supervisor' ? 'core' : 'api'}/websocket`, { perMessageDeflate: false });
         this.initSocket(this.socket);
     }
     close() {

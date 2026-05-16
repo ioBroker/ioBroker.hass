@@ -619,7 +619,7 @@ class HassAdapter extends Adapter {
                                 desc: service[s].description,
                                 read: false,
                                 write: true,
-                                type: 'mixed' as ioBroker.CommonType,
+                                type: 'mixed',
                                 role: 'button',
                             },
                             native: {
@@ -676,7 +676,7 @@ class HassAdapter extends Adapter {
 
             if (entity.state !== undefined) {
                 if (this.hassObjects[`${this.namespace}.${id}state`]) {
-                    this.setState(`${id}state`, { val: entity.state, ack: true, lc, ts });
+                    await this.setStateAsync(`${id}state`, { val: entity.state, ack: true, lc, ts });
                 } else {
                     this.log.info(
                         `State changed for unknown object ${id}state. Triggering synchronization to resync the objects.`,
@@ -685,7 +685,7 @@ class HassAdapter extends Adapter {
                 }
                 // Update boolean state
                 if (this.hassObjects[`${this.namespace}.${id}state_boolean`]) {
-                    this.setState(`${id}state_boolean`, {
+                    await this.setStateAsync(`${id}state_boolean`, {
                         val: entity.state === 'on',
                         ack: true,
                         lc: lc || Date.now(),
@@ -720,7 +720,7 @@ class HassAdapter extends Adapter {
                                 read: true,
                                 write: false,
                                 role: 'state',
-                                type: (mapTypes[typeof entity.attributes[attr]] ?? 'mixed') as ioBroker.CommonType,
+                                type: mapTypes[typeof entity.attributes[attr]] ?? 'mixed',
                             };
                             const newObj: ioBroker.StateObject = {
                                 _id: fullAttrId,
@@ -732,7 +732,7 @@ class HassAdapter extends Adapter {
                             await this.setForeignObjectAsync(fullAttrId, newObj);
                             this.hassObjects[fullAttrId] = newObj;
                         }
-                        this.setState(id + attrId, { val, ack: true, lc, ts });
+                        await this.setStateAsync(id + attrId, { val, ack: true, lc, ts });
                     } else {
                         this.log.info(
                             `State changed for unknown object ${id + attrId}. Triggering synchronization to resync the objects.`,
@@ -747,7 +747,7 @@ class HassAdapter extends Adapter {
             if (!this.hassConnected) {
                 this.log.debug('Connected');
                 this.hassConnected = true;
-                this.setState('info.connection', true, true);
+                void this.setState('info.connection', true, true);
                 this.hass!.getConfig(err => {
                     if (err) {
                         this.log.error(`Cannot read config: ${err}`);
@@ -792,7 +792,7 @@ class HassAdapter extends Adapter {
             if (this.hassConnected) {
                 this.log.debug('Disconnected');
                 this.hassConnected = false;
-                this.setState('info.connection', false, true);
+                void this.setState('info.connection', false, true);
             }
         });
 
