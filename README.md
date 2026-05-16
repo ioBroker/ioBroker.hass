@@ -138,6 +138,9 @@ An empty pattern list leaves the adapter behaviour identical to previous version
 ## Changelog
 ### **WORK IN PROGRESS**
 * (mokusone) Added optional entity exclude filter with glob patterns, configurable via the admin UI, plus a verbose-logging toggle for inspecting matches
+* (@klein0r) Use /core/ instead of /api/ when connecting to supervisor directly (e.g. in ha app)
+* (@klein0r) Use ENV var SUPERVISOR_TOKEN as fallback for password
+
 
 ### 2.0.4 (2026-05-05)
 * (@GermanBluefox) Tried to keep the custom settings of the objects when updating them with new data from HASS
@@ -180,6 +183,8 @@ An empty pattern list leaves the adapter behaviour identical to previous version
 
 ### 0.1.0
 * (bluefox) initial release
+
+[Older changelogs can be found there](CHANGELOG_OLD.md)
 
 ## License
 The MIT License (MIT)
