@@ -9,3 +9,7 @@ package-lock.json
 .commitinfo
 .claude/settings.local.json
 
+
+
+# ioBroker dev-server
+.dev-server/
