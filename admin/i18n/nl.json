@@ -1,14 +1,14 @@
 {
-    "Home assistant IP": "Thuisassistent IP",
-    "Home assistant WS Port": "Thuisassistent WS Poort",
-    "Password repeat": "Wachtwoord herhalen",
-    "Password": "Wachtwoord",
-    "Passwords missmatch!": "Wachtwoorden komen niet overeen!",
-    "Secure": "HTTPS?",
+    "Cleanup excluded entities on adapter start": "Verwijder uitgesloten entiteiten bij het opstarten van de adapter.",
     "Exclude patterns (one per line)": "Uitsluitpatronen (één per regel)",
     "Glob patterns, * wildcard. Lines starting with # are comments. Empty = filter off.": "Glob-patronen, * als wildcard. Regels die beginnen met # zijn commentaar. Leeg = filter uit.",
+    "Home assistant IP": "Thuisassistent IP",
+    "Home assistant WS Port": "Thuisassistent WS Poort",
+    "Password": "Wachtwoord",
+    "Password repeat": "Wachtwoord herhalen",
+    "Passwords missmatch!": "Wachtwoorden komen niet overeen!",
+    "Secure": "HTTPS?",
     "Verbose filter logging": "Uitgebreide filterlogging",
     "When enabled, log each excluded entity_id individually during the initial adapter sync (requires loglevel info or debug).": "Indien ingeschakeld, wordt elke uitgesloten entity_id afzonderlijk gelogd tijdens de initiële adapter-synchronisatie (vereist loglevel info of debug).",
-    "Cleanup excluded entities on adapter start": "Cleanup excluded entities on adapter start",
-    "When enabled, on each adapter start delete existing objects under entities.* whose entity_id matches the exclude patterns. Objects with custom adapter config (history/influxdb/sql) are kept and logged.": "When enabled, on each adapter start delete existing objects under entities.* whose entity_id matches the exclude patterns. Objects with custom adapter config (history/influxdb/sql) are kept and logged."
+    "When enabled, on each adapter start delete existing objects under entities.* whose entity_id matches the exclude patterns. Objects with custom adapter config (history/influxdb/sql) are kept and logged.": "Indien ingeschakeld, worden bij elke adapterstart bestaande objecten onder entities.* verwijderd waarvan de entity_id overeenkomt met de uitsluitingspatronen. Objecten met een aangepaste adapterconfiguratie (history/influxdb/sql) worden behouden en gelogd."
 }

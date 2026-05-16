@@ -231,33 +231,27 @@
                 "buttons": ["agree", "cancel"]
             }
         ]
-      }
-    ]
-  },
-  "native": {
-    "host": "127.0.0.1",
-    "port": 8123,
-    "password": "",
-    "secure": false,
-    "excludePatterns": "# Glob patterns, one per line. Lines starting with # are comments.\n# Example: filter out all entities prefixed with `iob_` regardless of domain:\n# *.iob_*",
-    "verboseFilterLog": false,
-    "cleanupExcludedOnStart": false
-  },
-  "protectedNative": [
-    "password"
-  ],
-  "encryptedNative": [
-    "password"
-  ],
-  "objects": [],
-  "instanceObjects": [
-    {
-      "_id": "info",
-      "type": "channel",
-      "common": {
-        "name": "Information"
-      },
-      "native": {}
+    },
+    "native": {
+        "host": "127.0.0.1",
+        "port": 8123,
+        "password": "",
+        "secure": false,
+        "excludePatterns": "# Glob patterns, one per line. Lines starting with # are comments.\n# Example: filter out all entities prefixed with `iob_` regardless of domain:\n# *.iob_*",
+        "verboseFilterLog": false,
+        "cleanupExcludedOnStart": false
+    },
+    "protectedNative": ["password"],
+    "encryptedNative": ["password"],
+    "objects": [],
+    "instanceObjects": [
+        {
+            "_id": "info",
+            "type": "channel",
+            "common": {
+                "name": "Information"
+            },
+            "native": {}
         },
         {
             "_id": "info.connection",

@@ -1,14 +1,14 @@
 {
-    "Home assistant IP": "IP del asistente de hogar",
-    "Home assistant WS Port": "Asistente doméstico Puerto WS",
-    "Password repeat": "Repite la contraseña",
-    "Password": "Clave",
-    "Passwords missmatch!": "¡Las contraseñas no coinciden!",
-    "Secure": "¿HTTPS?",
+    "Cleanup excluded entities on adapter start": "Limpiar las entidades excluidas al iniciar el adaptador.",
     "Exclude patterns (one per line)": "Patrones de exclusión (uno por línea)",
     "Glob patterns, * wildcard. Lines starting with # are comments. Empty = filter off.": "Patrones glob, * como comodín. Las líneas que empiezan con # son comentarios. Vacío = filtro desactivado.",
+    "Home assistant IP": "IP del asistente de hogar",
+    "Home assistant WS Port": "Asistente doméstico Puerto WS",
+    "Password": "Clave",
+    "Password repeat": "Repite la contraseña",
+    "Passwords missmatch!": "¡Las contraseñas no coinciden!",
+    "Secure": "¿HTTPS?",
     "Verbose filter logging": "Registro detallado del filtro",
     "When enabled, log each excluded entity_id individually during the initial adapter sync (requires loglevel info or debug).": "Cuando está activado, cada entity_id excluido se registra individualmente durante la sincronización inicial del adaptador (requiere loglevel info o debug).",
-    "Cleanup excluded entities on adapter start": "Cleanup excluded entities on adapter start",
-    "When enabled, on each adapter start delete existing objects under entities.* whose entity_id matches the exclude patterns. Objects with custom adapter config (history/influxdb/sql) are kept and logged.": "When enabled, on each adapter start delete existing objects under entities.* whose entity_id matches the exclude patterns. Objects with custom adapter config (history/influxdb/sql) are kept and logged."
+    "When enabled, on each adapter start delete existing objects under entities.* whose entity_id matches the exclude patterns. Objects with custom adapter config (history/influxdb/sql) are kept and logged.": "Cuando está habilitada, en cada inicio del adaptador se eliminan los objetos existentes en entities.* cuyo entity_id coincida con los patrones de exclusión. Los objetos con configuración de adaptador personalizada (history/influxdb/sql) se conservan y se registran."
 }

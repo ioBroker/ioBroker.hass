@@ -9,7 +9,7 @@
 [![Translation status](https://weblate.iobroker.net/widgets/adapters/-/hass/svg-badge.svg)](https://weblate.iobroker.net/engage/adapters/?utm_source=widget)
 [![Downloads](https://img.shields.io/npm/dm/iobroker.hass.svg)](https://www.npmjs.com/package/iobroker.hass)
 
-**This adapter uses Sentry libraries to automatically report exceptions and code errors to the developers.** For more details and for information how to disable the error reporting see [Sentry-Plugin Documentation](https://github.com/ioBroker/plugin-sentry#plugin-sentry)! Sentry reporting is used starting with js-controller 3.0.
+**This adapter uses Sentry libraries to automatically report exceptions and code errors to the developers.** For more details and for information on how to disable the error reporting, see [Sentry-Plugin Documentation](https://github.com/ioBroker/plugin-sentry#plugin-sentry)! Sentry reporting is used starting with js-controller 3.0.
 
 
 This adapter allows the connecting of Home Assistant to ioBroker.
@@ -20,7 +20,7 @@ Create a long-term token in HASS and use it as PW (copy it also in the repeat fi
 Then it should read out all attributes for all devices. Services might be controllable (e.g. "turn_on"). To control services, you have two options:
 
 ### Set a direct value
-Set the state with an ack=false value which is not a string (e.g. Boolean true) then it will be triggered also in HASS without additional service data. This will only work if the service has one field to be sent - then the value is sent as this field! If the service has more than one field, you will find a warning in the log that provides more details about the fields that are possible to be sent, e.g.
+Set the state with an ack=false value which is not a string (e.g. Boolean true), then it will be triggered also in HASS without additional service data. This will only work if the service has one field to be sent - then the value is sent as this field! If the service has more than one field, you will find a warning in the log that provides more details about the fields that are possible to be sent, e.g.
 
 ```
 Please make sure to provide a stringified JSON as value to set relevant fields! Please refer to the Readme for details!
@@ -94,7 +94,7 @@ For some services like set_speed it is required to call with a JSON object like 
 ```
 
 ## Configuration
-There is a good article about connection. 
+There is a good article about the connection. 
 
 Please check it https://www.smarthomejetzt.de/mit-iobroker-auf-eine-home-assistant-hass-io-installation-und-die-geraete-zugreifen/ 
 
@@ -102,7 +102,7 @@ Please check it https://www.smarthomejetzt.de/mit-iobroker-auf-eine-home-assista
 
 ## Entity exclude filter
 
-Optionally restrict which Home Assistant entities are synchronised into ioBroker.
+Optionally, restrict which Home Assistant entities are synchronised into ioBroker.
 
 Each non-empty, non-comment line in the **Exclude patterns** field is a glob
 (only `*` is a wildcard and matches any sequence of characters, including `.`).
@@ -138,9 +138,8 @@ An empty pattern list leaves the adapter behaviour identical to previous version
 ## Changelog
 ### **WORK IN PROGRESS**
 * (mokusone) Added optional entity exclude filter with glob patterns, configurable via the admin UI, plus a verbose-logging toggle for inspecting matches
-* (@klein0r) Use /core/ instead of /api/ when connecting to supervisor directly (e.g. in ha app)
+* (@klein0r) Use `/core/` instead of `/api/` when connecting to supervisor directly (e.g., in ha app)
 * (@klein0r) Use ENV var SUPERVISOR_TOKEN as fallback for password
-
 
 ### 2.0.4 (2026-05-05)
 * (@GermanBluefox) Tried to keep the custom settings of the objects when updating them with new data from HASS

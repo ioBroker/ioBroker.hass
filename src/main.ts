@@ -1,13 +1,13 @@
 import { Adapter, type AdapterOptions } from '@iobroker/adapter-core';
 import HASS from './lib/hass';
-import { isExcluded } from './lib/entityFilter';
+import { isExcluded, buildExcludeRegexps } from './lib/entityFilter';
 
 interface HassAdapterConfig {
     host: string;
     port: number;
     password: string;
     secure: boolean;
-    excludePatterns: string;
+    excludePatterns: RegExp[];
     verboseFilterLog: boolean;
     cleanupExcludedOnStart: boolean;
 }
@@ -192,7 +192,7 @@ class HassAdapter extends Adapter {
     private delayTimeout: ReturnType<typeof setTimeout> | null = null;
     private syncDebounceTimeout: ReturnType<typeof setTimeout> | null = null;
     private stopped: boolean = false;
-    private excludePatterns: string[] = [];
+    private excludePatterns: RegExp[] = [];
     private initialSyncCompleted: boolean = false;
 
     public constructor(options: Partial<AdapterOptions> = {}) {
@@ -695,7 +695,7 @@ class HassAdapter extends Adapter {
 
         let allObjects: Record<string, ioBroker.Object>;
         try {
-            allObjects = (await this.getAdapterObjectsAsync()) as Record<string, ioBroker.Object>;
+            allObjects = await this.getAdapterObjectsAsync();
         } catch (err) {
             this.log.error(`Cleanup: failed to load adapter objects: ${err}`);
             return;
@@ -745,8 +745,7 @@ class HassAdapter extends Adapter {
             // common.custom (history/influxdb/sql) keep the whole entity.
             let hasCustom = false;
             for (const id of ids) {
-                const custom = (allObjects[id].common as { custom?: Record<string, unknown> } | undefined)
-                    ?.custom;
+                const custom = (allObjects[id].common as { custom?: Record<string, unknown> } | undefined)?.custom;
                 if (custom && Object.keys(custom).length) {
                     hasCustom = true;
                     break;
@@ -784,10 +783,11 @@ class HassAdapter extends Adapter {
         }
 
         this.log.info(
-            `Cleanup: deleted ${deletedEntityCount} excluded entit${deletedEntityCount === 1 ? 'y' : 'ies'} (${deletedIdCount} object${deletedIdCount === 1 ? '' : 's'} total)` +
-                (keptForCustomCount > 0
+            `Cleanup: deleted ${deletedEntityCount} excluded entit${deletedEntityCount === 1 ? 'y' : 'ies'} (${deletedIdCount} object${deletedIdCount === 1 ? '' : 's'} total)${
+                keptForCustomCount > 0
                     ? `, kept ${keptForCustomCount} entit${keptForCustomCount === 1 ? 'y' : 'ies'} with custom config (see warnings above)`
-                    : ''),
+                    : ''
+            }`,
         );
     }
 
@@ -796,16 +796,18 @@ class HassAdapter extends Adapter {
         this.config.port = parseInt(String(this.config.port), 10) || 8123;
 
         const rawPatterns = (this.config.excludePatterns || '').toString();
-        this.excludePatterns = rawPatterns
+        const stringPatterns = rawPatterns
             .split(/\r?\n/)
             .map(s => s.trim())
             .filter(line => line.length > 0 && !line.startsWith('#'));
+
+        this.excludePatterns = buildExcludeRegexps(stringPatterns);
 
         if (this.excludePatterns.length === 0) {
             this.log.info('Entity filter inactive (no exclude patterns configured)');
         } else {
             this.log.info(
-                `Entity filter active: ${this.excludePatterns.length} pattern(s) loaded: ${this.excludePatterns.join(', ')}`,
+                `Entity filter active: ${this.excludePatterns.length} pattern(s) loaded: ${stringPatterns.join(', ')}`,
             );
         }
 

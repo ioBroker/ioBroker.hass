@@ -1,3 +1,7 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.isExcluded = isExcluded;
+exports.buildExcludeRegexps = buildExcludeRegexps;
 /**
  * Returns true if entityId matches any of the supplied glob patterns.
  * Glob syntax: `*` is the only wildcard and matches any sequence of characters
@@ -7,7 +11,7 @@
  *
  * An empty patterns array always returns false.
  */
-export function isExcluded(entityId: string, patterns: RegExp[]): boolean {
+function isExcluded(entityId, patterns) {
     if (!patterns?.length) {
         return false;
     }
@@ -18,8 +22,7 @@ export function isExcluded(entityId: string, patterns: RegExp[]): boolean {
     }
     return false;
 }
-
-export function buildExcludeRegexps(patterns: string[]): RegExp[] {
+function buildExcludeRegexps(patterns) {
     if (!patterns?.length) {
         return [];
     }
@@ -28,3 +31,4 @@ export function buildExcludeRegexps(patterns: string[]): RegExp[] {
         return new RegExp(`^${escaped}$`);
     });
 }
+//# sourceMappingURL=entityFilter.js.map

@@ -1,14 +1,14 @@
 {
-    "Home assistant IP": "Домашній помічник IP",
-    "Home assistant WS Port": "Домашній помічник WS Порт",
-    "Password repeat": "Повторення пароля",
-    "Password": "Пароль",
-    "Passwords missmatch!": "Паролі не збігаються!",
-    "Secure": "HTTPS?",
+    "Cleanup excluded entities on adapter start": "Очищення виключених об'єктів під час запуску адаптера",
     "Exclude patterns (one per line)": "Шаблони виключення (по одному в рядку)",
     "Glob patterns, * wildcard. Lines starting with # are comments. Empty = filter off.": "Glob-шаблони, * — підстановочний знак. Рядки, що починаються з #, є коментарями. Порожньо = фільтр вимкнено.",
+    "Home assistant IP": "Домашній помічник IP",
+    "Home assistant WS Port": "Домашній помічник WS Порт",
+    "Password": "Пароль",
+    "Password repeat": "Повторення пароля",
+    "Passwords missmatch!": "Паролі не збігаються!",
+    "Secure": "HTTPS?",
     "Verbose filter logging": "Детальне логування фільтра",
     "When enabled, log each excluded entity_id individually during the initial adapter sync (requires loglevel info or debug).": "Коли увімкнено, кожен виключений entity_id логується окремо під час початкової синхронізації адаптера (потрібен loglevel info або debug).",
-    "Cleanup excluded entities on adapter start": "Cleanup excluded entities on adapter start",
-    "When enabled, on each adapter start delete existing objects under entities.* whose entity_id matches the exclude patterns. Objects with custom adapter config (history/influxdb/sql) are kept and logged.": "When enabled, on each adapter start delete existing objects under entities.* whose entity_id matches the exclude patterns. Objects with custom adapter config (history/influxdb/sql) are kept and logged."
+    "When enabled, on each adapter start delete existing objects under entities.* whose entity_id matches the exclude patterns. Objects with custom adapter config (history/influxdb/sql) are kept and logged.": "Якщо ввімкнено, на кожному адаптері починається видалення існуючих об'єктів у розділі entity.*, чий entity_id відповідає шаблонам виключення. Об'єкти з власною конфігурацією адаптера (history/influxdb/sql) зберігаються та реєструються."
 }

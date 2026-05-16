@@ -5,6 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const adapter_core_1 = require("@iobroker/adapter-core");
 const hass_1 = __importDefault(require("./lib/hass"));
+const entityFilter_1 = require("./lib/entityFilter");
 const knownAttributes = {
     azimuth: { write: false, read: true, unit: '°' },
     elevation: { write: false, read: true, unit: '°' },
@@ -156,6 +157,8 @@ class HassAdapter extends adapter_core_1.Adapter {
     delayTimeout = null;
     syncDebounceTimeout = null;
     stopped = false;
+    excludePatterns = [];
+    initialSyncCompleted = false;
     constructor(options = {}) {
         super({
             ...options,
@@ -381,9 +384,18 @@ class HassAdapter extends adapter_core_1.Adapter {
         const objs = [];
         const states = [];
         const expectedObjects = new Set();
+        let excludedCount = 0;
+        const excludedIds = [];
         for (let e = 0; e < entities.length; e++) {
             const entity = entities[e];
             if (!entity) {
+                continue;
+            }
+            if ((0, entityFilter_1.isExcluded)(entity.entity_id, this.excludePatterns)) {
+                excludedCount++;
+                if (this.config.verboseFilterLog && !this.initialSyncCompleted) {
+                    excludedIds.push(entity.entity_id);
+                }
                 continue;
             }
             const name = entity.name || entity.attributes?.friendly_name || entity.entity_id;
@@ -555,16 +567,134 @@ class HassAdapter extends adapter_core_1.Adapter {
             }
             this.log.info(`Synchronization completed: ${changes.join(', ')}`);
         }
+        if (excludedCount > 0) {
+            this.log.info(`Entity filter excluded ${excludedCount} entit${excludedCount === 1 ? 'y' : 'ies'} from sync`);
+        }
+        if (excludedIds.length > 0) {
+            for (const id of excludedIds) {
+                this.log.info(`Entity filter excluded: ${id}`);
+            }
+        }
+        this.initialSyncCompleted = true;
+    }
+    async cleanupExcludedObjects() {
+        if (!this.config.cleanupExcludedOnStart) {
+            return;
+        }
+        if (this.excludePatterns.length === 0) {
+            this.log.info('Cleanup skipped: no exclude patterns configured');
+            return;
+        }
+        let allObjects;
+        try {
+            allObjects = await this.getAdapterObjectsAsync();
+        }
+        catch (err) {
+            this.log.error(`Cleanup: failed to load adapter objects: ${err}`);
+            return;
+        }
+        const prefix = `${this.namespace}.entities.`;
+        // Group every object under entities.* by its derived entity_id. We extract
+        // the entity_id from the object id (first two path components after the
+        // prefix) instead of native.entity_id — older objects from previous adapter
+        // versions may have been written as flat states without a parent channel
+        // and without native.entity_id, but their id still encodes the entity.
+        const matchedByEntity = new Map();
+        for (const id in allObjects) {
+            if (!Object.prototype.hasOwnProperty.call(allObjects, id) || !id.startsWith(prefix)) {
+                continue;
+            }
+            const rest = id.substring(prefix.length);
+            const parts = rest.split('.');
+            if (parts.length < 2) {
+                continue;
+            }
+            const entityId = `${parts[0]}.${parts[1]}`;
+            if (!(0, entityFilter_1.isExcluded)(entityId, this.excludePatterns)) {
+                continue;
+            }
+            const ids = matchedByEntity.get(entityId);
+            if (ids) {
+                ids.push(id);
+            }
+            else {
+                matchedByEntity.set(entityId, [id]);
+            }
+        }
+        if (matchedByEntity.size === 0) {
+            this.log.info('Cleanup: no existing objects matched exclude patterns');
+            return;
+        }
+        let deletedEntityCount = 0;
+        let deletedIdCount = 0;
+        let keptForCustomCount = 0;
+        for (const [entityId, ids] of matchedByEntity) {
+            // Custom-config protection: scan all ids of the group; if any holds
+            // common.custom (history/influxdb/sql) keep the whole entity.
+            let hasCustom = false;
+            for (const id of ids) {
+                const custom = allObjects[id].common?.custom;
+                if (custom && Object.keys(custom).length) {
+                    hasCustom = true;
+                    break;
+                }
+            }
+            if (hasCustom) {
+                keptForCustomCount++;
+                this.log.warn(`Cleanup: keeping entity "${entityId}" — has custom adapter config (history/influxdb/sql); remove it manually if you really want to drop it`);
+                continue;
+            }
+            // Delete sub-states first (longest ids), then any parent channel last.
+            const sortedIds = [...ids].sort((a, b) => b.length - a.length);
+            let entityFullyDeleted = true;
+            for (const id of sortedIds) {
+                try {
+                    await this.delObjectAsync(id);
+                    delete this.hassObjects[id];
+                    deletedIdCount++;
+                }
+                catch (err) {
+                    entityFullyDeleted = false;
+                    this.log.error(`Cleanup: failed to delete "${id}": ${err}`);
+                }
+            }
+            if (entityFullyDeleted) {
+                deletedEntityCount++;
+                if (this.config.verboseFilterLog) {
+                    this.log.info(`Cleanup: deleted entity "${entityId}" (${ids.length} object${ids.length === 1 ? '' : 's'})`);
+                }
+            }
+        }
+        this.log.info(`Cleanup: deleted ${deletedEntityCount} excluded entit${deletedEntityCount === 1 ? 'y' : 'ies'} (${deletedIdCount} object${deletedIdCount === 1 ? '' : 's'} total)${keptForCustomCount > 0
+            ? `, kept ${keptForCustomCount} entit${keptForCustomCount === 1 ? 'y' : 'ies'} with custom config (see warnings above)`
+            : ''}`);
     }
     async main() {
         this.config.host ||= '127.0.0.1';
         this.config.port = parseInt(String(this.config.port), 10) || 8123;
+        const rawPatterns = (this.config.excludePatterns || '').toString();
+        const stringPatterns = rawPatterns
+            .split(/\r?\n/)
+            .map(s => s.trim())
+            .filter(line => line.length > 0 && !line.startsWith('#'));
+        this.excludePatterns = (0, entityFilter_1.buildExcludeRegexps)(stringPatterns);
+        if (this.excludePatterns.length === 0) {
+            this.log.info('Entity filter inactive (no exclude patterns configured)');
+        }
+        else {
+            this.log.info(`Entity filter active: ${this.excludePatterns.length} pattern(s) loaded: ${stringPatterns.join(', ')}`);
+        }
+        await this.cleanupExcludedObjects();
         await this.setStateAsync('info.connection', false, true);
         this.hass = new hass_1.default(this.config, this.log);
         this.hass.on('error', err => this.log.error(err));
         this.hass.on('state_changed', async (entity) => {
             this.log.debug(`HASS-Message: State Changed: ${JSON.stringify(entity)}`);
             if (!entity || typeof entity.entity_id !== 'string') {
+                return;
+            }
+            if ((0, entityFilter_1.isExcluded)(entity.entity_id, this.excludePatterns)) {
+                this.log.debug(`Entity filter: ignored state_changed for ${entity.entity_id}`);
                 return;
             }
             const id = `entities.${entity.entity_id}.`;
