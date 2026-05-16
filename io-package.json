@@ -128,6 +128,7 @@
     "icon": "hass.png",
     "enabled": true,
     "compact": true,
+    "nogit": true,
     "adminUI": {
       "config": "json"
     },
@@ -154,7 +155,7 @@
     ],
     "globalDependencies": [
       {
-        "admin": ">=6.0.0"
+        "admin": ">=7.6.17"
       }
     ],
     "plugins": {
