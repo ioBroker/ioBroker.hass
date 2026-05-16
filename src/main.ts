@@ -797,7 +797,7 @@ class HassAdapter extends Adapter {
 
         const rawPatterns = (this.config.excludePatterns || '').toString();
         this.excludePatterns = rawPatterns
-            .split('\n')
+            .split(/\r?\n/)
             .map(s => s.trim())
             .filter(line => line.length > 0 && !line.startsWith('#'));
 
