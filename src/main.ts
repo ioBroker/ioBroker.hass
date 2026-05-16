@@ -1,11 +1,15 @@
 import { Adapter, type AdapterOptions } from '@iobroker/adapter-core';
 import HASS from './lib/hass';
+import { isExcluded } from './lib/entityFilter';
 
 interface HassAdapterConfig {
     host: string;
     port: number;
     password: string;
     secure: boolean;
+    excludePatterns: string;
+    verboseFilterLog: boolean;
+    cleanupExcludedOnStart: boolean;
 }
 
 interface HassEntity {
@@ -188,6 +192,8 @@ class HassAdapter extends Adapter {
     private delayTimeout: ReturnType<typeof setTimeout> | null = null;
     private syncDebounceTimeout: ReturnType<typeof setTimeout> | null = null;
     private stopped: boolean = false;
+    private excludePatterns: string[] = [];
+    private initialSyncCompleted: boolean = false;
 
     public constructor(options: Partial<AdapterOptions> = {}) {
         super({
@@ -454,10 +460,20 @@ class HassAdapter extends Adapter {
         const objs: (ioBroker.ChannelObject | ioBroker.StateObject)[] = [];
         const states: { id: string; lc?: number; ts?: number; val: ioBroker.StateValue; ack: boolean }[] = [];
         const expectedObjects = new Set<string>();
+        let excludedCount = 0;
+        const excludedIds: string[] = [];
 
         for (let e = 0; e < entities.length; e++) {
             const entity = entities[e];
             if (!entity) {
+                continue;
+            }
+
+            if (isExcluded(entity.entity_id, this.excludePatterns)) {
+                excludedCount++;
+                if (this.config.verboseFilterLog && !this.initialSyncCompleted) {
+                    excludedIds.push(entity.entity_id);
+                }
                 continue;
             }
 
@@ -652,11 +668,148 @@ class HassAdapter extends Adapter {
             }
             this.log.info(`Synchronization completed: ${changes.join(', ')}`);
         }
+
+        if (excludedCount > 0) {
+            this.log.info(
+                `Entity filter excluded ${excludedCount} entit${excludedCount === 1 ? 'y' : 'ies'} from sync`,
+            );
+        }
+
+        if (excludedIds.length > 0) {
+            for (const id of excludedIds) {
+                this.log.info(`Entity filter excluded: ${id}`);
+            }
+        }
+
+        this.initialSyncCompleted = true;
+    }
+
+    private async cleanupExcludedObjects(): Promise<void> {
+        if (!this.config.cleanupExcludedOnStart) {
+            return;
+        }
+        if (this.excludePatterns.length === 0) {
+            this.log.info('Cleanup skipped: no exclude patterns configured');
+            return;
+        }
+
+        let allObjects: Record<string, ioBroker.Object>;
+        try {
+            allObjects = (await this.getAdapterObjectsAsync()) as Record<string, ioBroker.Object>;
+        } catch (err) {
+            this.log.error(`Cleanup: failed to load adapter objects: ${err}`);
+            return;
+        }
+
+        const prefix = `${this.namespace}.entities.`;
+
+        // Group every object under entities.* by its derived entity_id. We extract
+        // the entity_id from the object id (first two path components after the
+        // prefix) instead of native.entity_id — older objects from previous adapter
+        // versions may have been written as flat states without a parent channel
+        // and without native.entity_id, but their id still encodes the entity.
+        const matchedByEntity = new Map<string, string[]>();
+
+        for (const id in allObjects) {
+            if (!Object.prototype.hasOwnProperty.call(allObjects, id) || !id.startsWith(prefix)) {
+                continue;
+            }
+            const rest = id.substring(prefix.length);
+            const parts = rest.split('.');
+            if (parts.length < 2) {
+                continue;
+            }
+            const entityId = `${parts[0]}.${parts[1]}`;
+            if (!isExcluded(entityId, this.excludePatterns)) {
+                continue;
+            }
+            const ids = matchedByEntity.get(entityId);
+            if (ids) {
+                ids.push(id);
+            } else {
+                matchedByEntity.set(entityId, [id]);
+            }
+        }
+
+        if (matchedByEntity.size === 0) {
+            this.log.info('Cleanup: no existing objects matched exclude patterns');
+            return;
+        }
+
+        let deletedEntityCount = 0;
+        let deletedIdCount = 0;
+        let keptForCustomCount = 0;
+
+        for (const [entityId, ids] of matchedByEntity) {
+            // Custom-config protection: scan all ids of the group; if any holds
+            // common.custom (history/influxdb/sql) keep the whole entity.
+            let hasCustom = false;
+            for (const id of ids) {
+                const custom = (allObjects[id].common as { custom?: Record<string, unknown> } | undefined)
+                    ?.custom;
+                if (custom && Object.keys(custom).length) {
+                    hasCustom = true;
+                    break;
+                }
+            }
+            if (hasCustom) {
+                keptForCustomCount++;
+                this.log.warn(
+                    `Cleanup: keeping entity "${entityId}" — has custom adapter config (history/influxdb/sql); remove it manually if you really want to drop it`,
+                );
+                continue;
+            }
+
+            // Delete sub-states first (longest ids), then any parent channel last.
+            const sortedIds = [...ids].sort((a, b) => b.length - a.length);
+            let entityFullyDeleted = true;
+            for (const id of sortedIds) {
+                try {
+                    await this.delObjectAsync(id);
+                    delete this.hassObjects[id];
+                    deletedIdCount++;
+                } catch (err) {
+                    entityFullyDeleted = false;
+                    this.log.error(`Cleanup: failed to delete "${id}": ${err}`);
+                }
+            }
+            if (entityFullyDeleted) {
+                deletedEntityCount++;
+                if (this.config.verboseFilterLog) {
+                    this.log.info(
+                        `Cleanup: deleted entity "${entityId}" (${ids.length} object${ids.length === 1 ? '' : 's'})`,
+                    );
+                }
+            }
+        }
+
+        this.log.info(
+            `Cleanup: deleted ${deletedEntityCount} excluded entit${deletedEntityCount === 1 ? 'y' : 'ies'} (${deletedIdCount} object${deletedIdCount === 1 ? '' : 's'} total)` +
+                (keptForCustomCount > 0
+                    ? `, kept ${keptForCustomCount} entit${keptForCustomCount === 1 ? 'y' : 'ies'} with custom config (see warnings above)`
+                    : ''),
+        );
     }
 
     private async main(): Promise<void> {
         this.config.host ||= '127.0.0.1';
         this.config.port = parseInt(String(this.config.port), 10) || 8123;
+
+        const rawPatterns = (this.config.excludePatterns || '').toString();
+        this.excludePatterns = rawPatterns
+            .split(/\r?\n/)
+            .map(s => s.trim())
+            .filter(line => line.length > 0 && !line.startsWith('#'));
+
+        if (this.excludePatterns.length === 0) {
+            this.log.info('Entity filter inactive (no exclude patterns configured)');
+        } else {
+            this.log.info(
+                `Entity filter active: ${this.excludePatterns.length} pattern(s) loaded: ${this.excludePatterns.join(', ')}`,
+            );
+        }
+
+        await this.cleanupExcludedObjects();
 
         await this.setStateAsync('info.connection', false, true);
 
@@ -667,6 +820,11 @@ class HassAdapter extends Adapter {
         this.hass.on('state_changed', async entity => {
             this.log.debug(`HASS-Message: State Changed: ${JSON.stringify(entity)}`);
             if (!entity || typeof entity.entity_id !== 'string') {
+                return;
+            }
+
+            if (isExcluded(entity.entity_id, this.excludePatterns)) {
+                this.log.debug(`Entity filter: ignored state_changed for ${entity.entity_id}`);
                 return;
             }
 

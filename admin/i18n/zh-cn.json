@@ -4,5 +4,11 @@
     "Password repeat": "密码重复：",
     "Password": "密码：",
     "Passwords missmatch!": "密码不匹配！",
-    "Secure": "HTTPS？"
+    "Secure": "HTTPS？",
+    "Exclude patterns (one per line)": "排除模式（每行一个）",
+    "Glob patterns, * wildcard. Lines starting with # are comments. Empty = filter off.": "Glob 模式，* 通配符。以 # 开头的行是注释。为空 = 过滤器关闭。",
+    "Verbose filter logging": "详细过滤器日志",
+    "When enabled, log each excluded entity_id individually during the initial adapter sync (requires loglevel info or debug).": "启用后，在适配器初始同步期间单独记录每个被排除的 entity_id（需要日志级别 info 或 debug）。",
+    "Cleanup excluded entities on adapter start": "Cleanup excluded entities on adapter start",
+    "When enabled, on each adapter start delete existing objects under entities.* whose entity_id matches the exclude patterns. Objects with custom adapter config (history/influxdb/sql) are kept and logged.": "When enabled, on each adapter start delete existing objects under entities.* whose entity_id matches the exclude patterns. Objects with custom adapter config (history/influxdb/sql) are kept and logged."
 }

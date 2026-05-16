@@ -4,5 +4,11 @@
     "Password repeat": "Repite la contraseña",
     "Password": "Clave",
     "Passwords missmatch!": "¡Las contraseñas no coinciden!",
-    "Secure": "¿HTTPS?"
+    "Secure": "¿HTTPS?",
+    "Exclude patterns (one per line)": "Patrones de exclusión (uno por línea)",
+    "Glob patterns, * wildcard. Lines starting with # are comments. Empty = filter off.": "Patrones glob, * como comodín. Las líneas que empiezan con # son comentarios. Vacío = filtro desactivado.",
+    "Verbose filter logging": "Registro detallado del filtro",
+    "When enabled, log each excluded entity_id individually during the initial adapter sync (requires loglevel info or debug).": "Cuando está activado, cada entity_id excluido se registra individualmente durante la sincronización inicial del adaptador (requiere loglevel info o debug).",
+    "Cleanup excluded entities on adapter start": "Cleanup excluded entities on adapter start",
+    "When enabled, on each adapter start delete existing objects under entities.* whose entity_id matches the exclude patterns. Objects with custom adapter config (history/influxdb/sql) are kept and logged.": "When enabled, on each adapter start delete existing objects under entities.* whose entity_id matches the exclude patterns. Objects with custom adapter config (history/influxdb/sql) are kept and logged."
 }
