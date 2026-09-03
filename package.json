@@ -28,7 +28,7 @@
     "url": "https://github.com/ioBroker/ioBroker.hass"
   },
   "dependencies": {
-    "@iobroker/adapter-core": "^3.3.2",
+    "@iobroker/adapter-core": "^3.4.3",
     "ws": "^8.20.1"
   },
   "devDependencies": {
