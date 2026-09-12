@@ -151,6 +151,7 @@ function getRoleForAttribute(attr, value, type) {
     }
 }
 class HassAdapter extends adapter_core_1.Adapter {
+    static DEFAULT_OBJECTS_WARN_LIMIT = 30000;
     hassConnected = false;
     hass = null;
     hassObjects = {};
@@ -189,6 +190,13 @@ class HassAdapter extends adapter_core_1.Adapter {
                 });
             });
         }, 3000);
+    }
+    isEntityExcluded(entityId) {
+        return (0, entityFilter_1.isAnyExcluded)([entityId, `entities.${entityId}`, `${this.namespace}.entities.${entityId}`], this.excludePatterns);
+    }
+    isObjectIdExcluded(id) {
+        const idWithoutNamespace = id.startsWith(`${this.namespace}.`) ? id.substring(this.namespace.length + 1) : id;
+        return (0, entityFilter_1.isAnyExcluded)([idWithoutNamespace, id], this.excludePatterns);
     }
     onStateChange(id, state) {
         if (!state || state.ack) {
@@ -299,6 +307,10 @@ class HassAdapter extends adapter_core_1.Adapter {
             for (const state of states) {
                 const id = state.id;
                 delete state.id;
+                if (!this.hassObjects[id]) {
+                    this.log.debug(`Skip state sync for "${id}": object does not exist`);
+                    continue;
+                }
                 try {
                     await this.setForeignStateAsync(id, state);
                 }
@@ -312,7 +324,6 @@ class HassAdapter extends adapter_core_1.Adapter {
         const stats = { newCount: 0, updatedCount: 0 };
         if (objects?.length) {
             for (const obj of objects) {
-                this.hassObjects[obj._id] = obj;
                 try {
                     const oldObj = await this.getForeignObjectAsync(obj._id);
                     if (!oldObj) {
@@ -332,6 +343,7 @@ class HassAdapter extends adapter_core_1.Adapter {
                     }
                 }
                 catch (err) {
+                    delete this.hassObjects[obj._id];
                     this.log.error(err.toString());
                 }
             }
@@ -391,7 +403,7 @@ class HassAdapter extends adapter_core_1.Adapter {
             if (!entity) {
                 continue;
             }
-            if ((0, entityFilter_1.isExcluded)(entity.entity_id, this.excludePatterns)) {
+            if (this.isEntityExcluded(entity.entity_id)) {
                 excludedCount++;
                 if (this.config.verboseFilterLog && !this.initialSyncCompleted) {
                     excludedIds.push(entity.entity_id);
@@ -421,36 +433,38 @@ class HassAdapter extends adapter_core_1.Adapter {
             const ts = entity.last_updated ? new Date(entity.last_updated).getTime() : undefined;
             if (entity.state !== undefined) {
                 const stateId = `${channelId}.state`;
-                expectedObjects.add(stateId);
-                const obj = {
-                    _id: stateId,
-                    type: 'state',
-                    common: {
-                        name: `${name} STATE`,
-                        type: typeof entity.state,
-                        role: getRoleForState(entity),
-                        read: true,
-                        write: false,
-                    },
-                    native: {
-                        object_id: entity.object_id,
-                        domain: entity.domain,
-                        entity_id: entity.entity_id,
-                    },
-                };
-                if (entity.attributes?.unit_of_measurement) {
-                    obj.common.unit = entity.attributes.unit_of_measurement;
+                if (!this.isObjectIdExcluded(stateId)) {
+                    expectedObjects.add(stateId);
+                    const obj = {
+                        _id: stateId,
+                        type: 'state',
+                        common: {
+                            name: `${name} STATE`,
+                            type: typeof entity.state,
+                            role: getRoleForState(entity),
+                            read: true,
+                            write: false,
+                        },
+                        native: {
+                            object_id: entity.object_id,
+                            domain: entity.domain,
+                            entity_id: entity.entity_id,
+                        },
+                    };
+                    if (entity.attributes?.unit_of_measurement) {
+                        obj.common.unit = entity.attributes.unit_of_measurement;
+                    }
+                    objs.push(obj);
+                    let val = entity.state;
+                    if ((typeof val === 'object' && val !== null) || Array.isArray(val)) {
+                        val = JSON.stringify(val);
+                    }
+                    states.push({ id: obj._id, lc, ts, val, ack: true });
                 }
-                objs.push(obj);
-                let val = entity.state;
-                if ((typeof val === 'object' && val !== null) || Array.isArray(val)) {
-                    val = JSON.stringify(val);
-                }
-                states.push({ id: obj._id, lc, ts, val, ack: true });
                 // Create boolean state for on/off entities
                 const boolStateId = `${channelId}.state_boolean`;
-                expectedObjects.add(boolStateId);
-                if (!objs.find(o => o._id === boolStateId)) {
+                if (!this.isObjectIdExcluded(boolStateId) && !objs.find(o => o._id === boolStateId)) {
+                    expectedObjects.add(boolStateId);
                     const booleanObj = {
                         _id: boolStateId,
                         type: 'state',
@@ -497,6 +511,9 @@ class HassAdapter extends adapter_core_1.Adapter {
                     }
                     const attrId = attr.replace(this.FORBIDDEN_CHARS, '_').replace(/\.+$/, '_');
                     const fullAttrId = `${channelId}.${attrId}`;
+                    if (this.isObjectIdExcluded(fullAttrId)) {
+                        continue;
+                    }
                     expectedObjects.add(fullAttrId);
                     const obj = {
                         _id: fullAttrId,
@@ -528,6 +545,9 @@ class HassAdapter extends adapter_core_1.Adapter {
                 for (const s in service) {
                     if (Object.prototype.hasOwnProperty.call(service, s)) {
                         const serviceId = `${channelId}.${s}`;
+                        if (this.isObjectIdExcluded(serviceId)) {
+                            continue;
+                        }
                         expectedObjects.add(serviceId);
                         const obj = {
                             _id: serviceId,
@@ -594,12 +614,11 @@ class HassAdapter extends adapter_core_1.Adapter {
             return;
         }
         const prefix = `${this.namespace}.entities.`;
-        // Group every object under entities.* by its derived entity_id. We extract
-        // the entity_id from the object id (first two path components after the
-        // prefix) instead of native.entity_id — older objects from previous adapter
-        // versions may have been written as flat states without a parent channel
-        // and without native.entity_id, but their id still encodes the entity.
-        const matchedByEntity = new Map();
+        // Collect every object under entities.* whose entity_id or concrete object
+        // path matches an exclude pattern. This supports both broad entity filters
+        // like `device_tracker.*` and narrow object filters like
+        // `entities.sensor.foo.device_class`.
+        const idsToDelete = new Set();
         for (const id in allObjects) {
             if (!Object.prototype.hasOwnProperty.call(allObjects, id) || !id.startsWith(prefix)) {
                 continue;
@@ -610,68 +629,64 @@ class HassAdapter extends adapter_core_1.Adapter {
                 continue;
             }
             const entityId = `${parts[0]}.${parts[1]}`;
-            if (!(0, entityFilter_1.isExcluded)(entityId, this.excludePatterns)) {
-                continue;
-            }
-            const ids = matchedByEntity.get(entityId);
-            if (ids) {
-                ids.push(id);
-            }
-            else {
-                matchedByEntity.set(entityId, [id]);
+            if (this.isEntityExcluded(entityId) || this.isObjectIdExcluded(id)) {
+                idsToDelete.add(id);
             }
         }
-        if (matchedByEntity.size === 0) {
+        if (idsToDelete.size === 0) {
             this.log.info('Cleanup: no existing objects matched exclude patterns');
             return;
         }
-        let deletedEntityCount = 0;
         let deletedIdCount = 0;
         let keptForCustomCount = 0;
-        for (const [entityId, ids] of matchedByEntity) {
-            // Custom-config protection: scan all ids of the group; if any holds
-            // common.custom (history/influxdb/sql) keep the whole entity.
-            let hasCustom = false;
-            for (const id of ids) {
-                const custom = allObjects[id].common?.custom;
-                if (custom && Object.keys(custom).length) {
-                    hasCustom = true;
-                    break;
-                }
-            }
-            if (hasCustom) {
+        const sortedIds = [...idsToDelete].sort((a, b) => b.length - a.length);
+        for (const id of sortedIds) {
+            const custom = allObjects[id].common?.custom;
+            if (custom && Object.keys(custom).length) {
                 keptForCustomCount++;
-                this.log.warn(`Cleanup: keeping entity "${entityId}" — has custom adapter config (history/influxdb/sql); remove it manually if you really want to drop it`);
+                this.log.warn(`Cleanup: keeping object "${id}" — has custom adapter config (history/influxdb/sql); remove it manually if you really want to drop it`);
                 continue;
             }
-            // Delete sub-states first (longest ids), then any parent channel last.
-            const sortedIds = [...ids].sort((a, b) => b.length - a.length);
-            let entityFullyDeleted = true;
-            for (const id of sortedIds) {
-                try {
-                    await this.delObjectAsync(id);
-                    delete this.hassObjects[id];
-                    deletedIdCount++;
-                }
-                catch (err) {
-                    entityFullyDeleted = false;
-                    this.log.error(`Cleanup: failed to delete "${id}": ${err}`);
+            try {
+                await this.delObjectAsync(id);
+                delete this.hassObjects[id];
+                deletedIdCount++;
+                if (this.config.verboseFilterLog) {
+                    this.log.info(`Cleanup: deleted object "${id}"`);
                 }
             }
-            if (entityFullyDeleted) {
-                deletedEntityCount++;
-                if (this.config.verboseFilterLog) {
-                    this.log.info(`Cleanup: deleted entity "${entityId}" (${ids.length} object${ids.length === 1 ? '' : 's'})`);
-                }
+            catch (err) {
+                this.log.error(`Cleanup: failed to delete "${id}": ${err}`);
             }
         }
-        this.log.info(`Cleanup: deleted ${deletedEntityCount} excluded entit${deletedEntityCount === 1 ? 'y' : 'ies'} (${deletedIdCount} object${deletedIdCount === 1 ? '' : 's'} total)${keptForCustomCount > 0
-            ? `, kept ${keptForCustomCount} entit${keptForCustomCount === 1 ? 'y' : 'ies'} with custom config (see warnings above)`
+        this.log.info(`Cleanup: deleted ${deletedIdCount} excluded object${deletedIdCount === 1 ? '' : 's'}${keptForCustomCount > 0
+            ? `, kept ${keptForCustomCount} object${keptForCustomCount === 1 ? '' : 's'} with custom config (see warnings above)`
             : ''}`);
+    }
+    async ensureObjectsWarnLimit() {
+        const id = 'objectsWarnLimit';
+        await this.extendObjectAsync(id, {
+            type: 'state',
+            common: {
+                role: 'state',
+                name: 'Object warning limit for this adapter instance',
+                type: 'number',
+                read: true,
+                write: true,
+                def: HassAdapter.DEFAULT_OBJECTS_WARN_LIMIT,
+            },
+            native: {},
+        });
+        const current = await this.getStateAsync(id);
+        if (typeof current?.val !== 'number' || current.val < HassAdapter.DEFAULT_OBJECTS_WARN_LIMIT) {
+            await this.setStateAsync(id, HassAdapter.DEFAULT_OBJECTS_WARN_LIMIT, true);
+            this.log.info(`Object warning limit set to ${HassAdapter.DEFAULT_OBJECTS_WARN_LIMIT}`);
+        }
     }
     async main() {
         this.config.host ||= '127.0.0.1';
         this.config.port = parseInt(String(this.config.port), 10) || 8123;
+        await this.ensureObjectsWarnLimit();
         const rawPatterns = (this.config.excludePatterns || '').toString();
         const stringPatterns = rawPatterns
             .split(/\r?\n/)
@@ -693,7 +708,11 @@ class HassAdapter extends adapter_core_1.Adapter {
             if (!entity || typeof entity.entity_id !== 'string') {
                 return;
             }
-            if ((0, entityFilter_1.isExcluded)(entity.entity_id, this.excludePatterns)) {
+            if (!this.initialSyncCompleted) {
+                this.log.debug(`Ignoring state_changed for ${entity.entity_id} before initial sync completed`);
+                return;
+            }
+            if (this.isEntityExcluded(entity.entity_id)) {
                 this.log.debug(`Entity filter: ignored state_changed for ${entity.entity_id}`);
                 return;
             }
@@ -701,7 +720,11 @@ class HassAdapter extends adapter_core_1.Adapter {
             const lc = entity.last_changed ? new Date(entity.last_changed).getTime() : undefined;
             const ts = entity.last_updated ? new Date(entity.last_updated).getTime() : undefined;
             if (entity.state !== undefined) {
-                if (this.hassObjects[`${this.namespace}.${id}state`]) {
+                const stateObjectId = `${this.namespace}.${id}state`;
+                if (this.isObjectIdExcluded(stateObjectId)) {
+                    this.log.debug(`Entity filter: ignored state_changed for ${id}state`);
+                }
+                else if (this.hassObjects[stateObjectId]) {
                     await this.setStateAsync(`${id}state`, { val: entity.state, ack: true, lc, ts });
                 }
                 else {
@@ -709,7 +732,11 @@ class HassAdapter extends adapter_core_1.Adapter {
                     this.debouncedSync();
                 }
                 // Update boolean state
-                if (this.hassObjects[`${this.namespace}.${id}state_boolean`]) {
+                const booleanObjectId = `${this.namespace}.${id}state_boolean`;
+                if (this.isObjectIdExcluded(booleanObjectId)) {
+                    this.log.debug(`Entity filter: ignored state_changed for ${id}state_boolean`);
+                }
+                else if (this.hassObjects[booleanObjectId]) {
                     await this.setStateAsync(`${id}state_boolean`, {
                         val: entity.state === 'on',
                         ack: true,
@@ -732,8 +759,12 @@ class HassAdapter extends adapter_core_1.Adapter {
                         val = JSON.stringify(val);
                     }
                     const attrId = attr.replace(this.FORBIDDEN_CHARS, '_').replace(/\.+$/, '_');
+                    const fullAttrId = `${this.namespace}.${id}${attrId}`;
+                    if (this.isObjectIdExcluded(fullAttrId)) {
+                        this.log.debug(`Entity filter: ignored state_changed for ${id}${attrId}`);
+                        continue;
+                    }
                     if (this.hassObjects[`${this.namespace}.${id}state`]) {
-                        const fullAttrId = `${this.namespace}.${id}${attrId}`;
                         if (!this.hassObjects[fullAttrId]) {
                             // Attribute appeared after initial sync — create object dynamically
                             const common = {

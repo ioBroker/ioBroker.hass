@@ -289,6 +289,19 @@
       "native": {}
     },
     {
+      "_id": "objectsWarnLimit",
+      "type": "state",
+      "common": {
+        "role": "state",
+        "name": "Object warning limit for this adapter instance",
+        "type": "number",
+        "read": true,
+        "write": true,
+        "def": 30000
+      },
+      "native": {}
+    },
+    {
       "_id": "entities",
       "type": "channel",
       "common": {

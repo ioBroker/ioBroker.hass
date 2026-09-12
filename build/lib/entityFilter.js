@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.isExcluded = isExcluded;
+exports.isAnyExcluded = isAnyExcluded;
 exports.buildExcludeRegexps = buildExcludeRegexps;
 /**
  * Returns true if entityId matches any of the supplied glob patterns.
@@ -21,6 +22,12 @@ function isExcluded(entityId, patterns) {
         }
     }
     return false;
+}
+function isAnyExcluded(candidates, patterns) {
+    if (!patterns?.length) {
+        return false;
+    }
+    return candidates.some(candidate => isExcluded(candidate, patterns));
 }
 function buildExcludeRegexps(patterns) {
     if (!patterns?.length) {
