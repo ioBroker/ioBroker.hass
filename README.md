@@ -1,4 +1,4 @@
-![Logo](admin/hass.png)
+![Logo](admin/hass.svg)
 # ioBroker.hass
 
 ![Number of Installations](http://iobroker.live/badges/hass-installed.svg)
