@@ -19,6 +19,13 @@ export function isExcluded(entityId: string, patterns: RegExp[]): boolean {
     return false;
 }
 
+export function isAnyExcluded(candidates: string[], patterns: RegExp[]): boolean {
+    if (!patterns?.length) {
+        return false;
+    }
+    return candidates.some(candidate => isExcluded(candidate, patterns));
+}
+
 export function buildExcludeRegexps(patterns: string[]): RegExp[] {
     if (!patterns?.length) {
         return [];

@@ -107,10 +107,16 @@ Optionally, restrict which Home Assistant entities are synchronised into ioBroke
 Each non-empty, non-comment line in the **Exclude patterns** field is a glob
 (only `*` is a wildcard and matches any sequence of characters, including `.`).
 Patterns are matched case-sensitively against the full `entity_id` (e.g.
-`switch.living_room`). An entity that matches any pattern is:
+`switch.living_room`) and against ioBroker-style object paths (e.g.
+`entities.sensor.living_room_temperature.device_class`). An entity that matches
+any entity-level pattern is:
 
 - skipped when objects are created or updated (initial sync and re-syncs)
 - ignored when its state changes in HASS (no state writes triggered in ioBroker)
+
+A concrete object path that matches a pattern is skipped individually. This can
+be used to drop noisy attributes such as `device_class` or `state_class` without
+dropping the sensor itself.
 
 Lines starting with `#` are treated as comments.
 
@@ -122,6 +128,13 @@ Examples:
 
 # Drop sensors only:
 sensor.iob_*
+
+# Drop a whole ioBroker object subtree:
+entities.device_tracker.*
+
+# Drop noisy attributes from all synced entities while keeping the main state:
+entities.*.*.device_class
+entities.*.*.state_class
 ```
 
 Tick **Verbose filter logging** to log every excluded `entity_id` individually

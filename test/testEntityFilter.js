@@ -1,5 +1,5 @@
 const { expect } = require('chai');
-const { isExcluded, buildExcludeRegexps } = require('../build/lib/entityFilter');
+const { isExcluded, isAnyExcluded, buildExcludeRegexps } = require('../build/lib/entityFilter');
 
 describe('entityFilter.isExcluded', () => {
     it('returns false for an empty pattern list', () => {
@@ -44,5 +44,22 @@ describe('entityFilter.isExcluded', () => {
         // `.` in pattern matches literal `.`, not "any char"
         expect(isExcluded('switch.iob_foo', buildExcludeRegexps(['switch.iob_foo']))).to.equal(true);
         expect(isExcluded('switchXiob_foo', buildExcludeRegexps(['switch.iob_foo']))).to.equal(false);
+    });
+
+    it('matches one of several candidate ids', () => {
+        const regexps = buildExcludeRegexps(['entities.device_tracker.*']);
+        expect(
+            isAnyExcluded(['device_tracker.repeater_kue', 'entities.device_tracker.repeater_kue'], regexps),
+        ).to.equal(true);
+    });
+
+    it('matches concrete ioBroker attribute object paths', () => {
+        const regexps = buildExcludeRegexps(['entities.*.*.device_class']);
+        expect(
+            isAnyExcluded(
+                ['sensor.hyper_2000_gt_solar_power1', 'entities.sensor.hyper_2000_gt_solar_power1.device_class'],
+                regexps,
+            ),
+        ).to.equal(true);
     });
 });
