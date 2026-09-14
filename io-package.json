@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "hass",
-    "version": "2.1.0",
+    "version": "2.1.1",
     "titleLang": {
       "en": "Home Assistant",
       "de": "Home Assistant",
@@ -29,6 +29,19 @@
       "uk": "Підключення Home Assistant для ioBroker"
     },
     "news": {
+      "2.1.1": {
+        "en": "Adapter requires node.js >= 22 now\nExclude patterns starting with `entities.` filter single objects (e.g. `entities.*.*.device_class`) without dropping the entity\nReduced resync noise and raised the default object warning limit to 30000 for large installations\nState changes received during the initial synchronization are applied afterward instead of being lost",
+        "de": "Adapter benötigt jetzt node.js >= 22\nSchließt Muster ab `entities.` aus, filtert einzelne Objekte (z. B. `entities.*.*.device_class`), ohne die Entität zu löschen\nResync-Rauschen reduziert und die Warnungsgrenze für große Anlagen auf 30.000 erhöht\nStatusänderungen bei der ersten Synchronisation werden später übernommen und gehen nicht verloren",
+        "ru": "Теперь для адаптера требуется файл node.js >= 22\nИсключите шаблоны, начинающиеся с `entities.`, фильтруют отдельные объекты (например, `entities.*.*.device_class`), не удаляя объект\nУменьшен шум при повторной синхронизации и увеличено стандартное ограничение предупреждений об объектах до 30000 для больших установок\nИзменения состояния, полученные во время первоначальной синхронизации, применяются позже, а не теряются",
+        "pt": "O adaptador exige node.js >= 2\nExclua padrões começando com `entidades.` filtra objetos únicos (ex. `entities.*.*.device_class`) sem excluir a entidade\nReduziu o ruído de ressincronização e elevou o limite padrão de aviso de objetos para 30.000\nAs mudanças de estado recebidas na sincronização inicial são aplicadas depois, em vez de perdidas",
+        "nl": "Voor de adapter is nu node.js >= 22 nodig\nPatronen uitsluiten die beginnen met `entities.` filter afzonderlijke objecten (bijv. `entities.*.*.device_class`) zonder de entiteit te verwijderen\nMinder hersynchronisatiegeluid en verhoogde de standaardwaarschuwingslimiet voor objecten naar 30.000 voor grote installaties\nStatuswijzigingen die tijdens de eerste synchronisatie zijn ontvangen, worden daarna toegepast in plaats van verloren te gaan",
+        "fr": "Adapter nécessite node.js >= 22\nExcluez les modèles commençant par des « entités ». Filtrez des objets uniques (par exemple, « entities.*.*.device_class ») sans supprimer l'entité\nBruit de resynchronisation réduit et limite d'objets par défaut à 30 000 pour les grandes installations\nLes changements d'état reçus lors de la synchronisation initiale sont appliqués par la suite au lieu d'être perdus",
+        "it": "Adapter richiede node.js =2 ora\nEscluda i pattern che iniziano con `entities.` filtra singoli oggetti (ad es. `entities.*.*.device_class`) senza eliminare l'entità\nRidotto il rumore di risync e aumentato il limite di avviso predefinito a 30.000 per grandi impianti\nLe modifiche di stato ricevute durante la sincronizzazione iniziale vengono applicate dopo e non perse",
+        "es": "El adaptador necesita node.js >= 22 ahora\nExcluir patrones que empiecen por «entidades». Filtre objetos individuales (por ejemplo, `entidades.*.*.device_class`) sin eliminar la entidad\nRedujo el ruido de resincronización y elevó el límite de aviso de objetos por defecto a 30 000 en grandes instalaciones\nLos cambios de estado recibidos durante la sincronización inicial se aplican después en lugar de perderse",
+        "pl": "Adapter wymaga teraz node.js >= 22\nWyklucz wzorce zaczynające się od `entities.` filtruj pojedyncze obiekty (np. `entities.*.*.device_class`) bez upuszczania elementu\nZmniejszono szumy ponownej synchronizacji i podniesiono domyślny limit ostrzegania o obiektach do 30000 dla dużych instalacji\nZmiany stanu otrzymane podczas początkowej synchronizacji są stosowane później, zamiast zostać utracone",
+        "uk": "Адаптер вимагає node.js >= 22 зараз\nВиключити шаблони, що починаються з `entites.` фільтрують окремі об'єкти (наприклад, `entities.*.device_class`), не скидаючи сутність\nЗменшення шуму повторної синхронізації та підвищено обмеження попередження об'єкта за замовчуванням до 30000 для великих установок\nЗміни стану, отримані під час початкової синхронізації, застосовуються згодом, а не втрачаються",
+        "zh-cn": "适配器现在需要 node.js >= 22\n排除以 “实体” 开头的模式在不删除实体的情况下过滤单个对象（例如 “实体。*.*.*.device_class”）\n降低了重新同步噪音，并将大型安装的默认对象警告限制提高到 30000\n初始同步期间收到的状态更改将在之后应用，而不是丢失"
+      },
       "2.1.0": {
         "en": "Added optional entity exclude filter with glob patterns, configurable via the admin UI, plus a verbose-logging toggle for inspecting matches\nUse `/core/` instead of `/api/` when connecting to supervisor directly (e.g., in ha app)\nUse ENV var SUPERVISOR_TOKEN as fallback for password",
         "de": "Zusätzliche optionale Entität schließt Filter mit Glocke-Muster aus, konfigurierbar über den Admin UI, plus ein Verbose-Logging-Toggle für die Überprüfung von Übereinstimmungen\nVerwenden Sie `/core/` anstelle von `/api/`, wenn Sie direkt mit dem Supervisor (z.B. in ha App)\nVerwenden Sie ENV var SUPERVISOR TOKEN als Rückfall für das Passwort",
@@ -106,19 +119,6 @@
         "pl": "IMPORTANT: Replace special characters in identity attribution names with an underscore! (ang.). Zmiany obiektów mogą się zmieniać!\nniewątpliwą wartością w zmianach stanowych nie jest rozbicie się",
         "zh-cn": "IMPORTANT:将实体的特色性改为强调的! 目标国际组织可能改变!\n确保在国家变化中确保无效不失",
         "uk": "ВАЖЛИВО: Замініть спеціальні символи в іменах атрибутів сутності на підкреслення! Ідентифікатори об'єктів можуть змінитися!\nпереконайтеся, що \"нульове\" значення в змінах стану не аварійно завершує роботу"
-      },
-      "1.1.2": {
-        "en": "Fix crash cases reported by Sentry",
-        "de": "Von Sentry gemeldete Absturzfälle beheben",
-        "ru": "Исправить случаи сбоев, о которых сообщил Sentry",
-        "pt": "Corrigir casos de travamento relatados pelo Sentinela",
-        "nl": "Herstel crashgevallen gemeld door Sentry",
-        "fr": "Correction des cas de plantage signalés par Sentry",
-        "it": "Risolvi i casi di crash segnalati da Sentry",
-        "es": "Solucionar casos de fallas informados por Sentry",
-        "pl": "Napraw przypadki awarii zgłoszone przez Sentry",
-        "zh-cn": "修复 Sentry 报告的崩溃案例",
-        "uk": "Виправте випадки збоїв, про які повідомляє Sentry"
       }
     },
     "localLinks": {
