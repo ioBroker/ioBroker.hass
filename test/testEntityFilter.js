@@ -1,5 +1,11 @@
 const { expect } = require('chai');
-const { isExcluded, isAnyExcluded, buildExcludeRegexps } = require('../build/lib/entityFilter');
+const {
+    isExcluded,
+    buildExcludeRegexps,
+    buildExcludeFilter,
+    isEntityIdExcluded,
+    isObjectPathExcluded,
+} = require('../build/lib/entityFilter');
 
 describe('entityFilter.isExcluded', () => {
     it('returns false for an empty pattern list', () => {
@@ -45,21 +51,33 @@ describe('entityFilter.isExcluded', () => {
         expect(isExcluded('switch.iob_foo', buildExcludeRegexps(['switch.iob_foo']))).to.equal(true);
         expect(isExcluded('switchXiob_foo', buildExcludeRegexps(['switch.iob_foo']))).to.equal(false);
     });
+});
 
-    it('matches one of several candidate ids', () => {
-        const regexps = buildExcludeRegexps(['entities.device_tracker.*']);
-        expect(
-            isAnyExcluded(['device_tracker.repeater_kue', 'entities.device_tracker.repeater_kue'], regexps),
-        ).to.equal(true);
+describe('entityFilter.buildExcludeFilter', () => {
+    it('matches entity_id patterns against entities only, never against object paths', () => {
+        const filter = buildExcludeFilter(['*battery*']);
+        expect(isEntityIdExcluded('sensor.phone_battery', filter)).to.equal(true);
+        expect(isEntityIdExcluded('light.kitchen', filter)).to.equal(false);
+        expect(isObjectPathExcluded('entities.light.kitchen.battery_level', filter)).to.equal(false);
     });
 
-    it('matches concrete ioBroker attribute object paths', () => {
-        const regexps = buildExcludeRegexps(['entities.*.*.device_class']);
-        expect(
-            isAnyExcluded(
-                ['sensor.hyper_2000_gt_solar_power1', 'entities.sensor.hyper_2000_gt_solar_power1.device_class'],
-                regexps,
-            ),
-        ).to.equal(true);
+    it('excludes a whole entity with an object path pattern for its subtree', () => {
+        const filter = buildExcludeFilter(['entities.device_tracker.*']);
+        expect(isEntityIdExcluded('device_tracker.repeater_kue', filter)).to.equal(true);
+        expect(isEntityIdExcluded('sensor.repeater_kue', filter)).to.equal(false);
+    });
+
+    it('excludes single objects without excluding the entity', () => {
+        const filter = buildExcludeFilter(['entities.*.*.device_class']);
+        const entityId = 'sensor.hyper_2000_gt_solar_power1';
+        expect(isEntityIdExcluded(entityId, filter)).to.equal(false);
+        expect(isObjectPathExcluded(`entities.${entityId}.device_class`, filter)).to.equal(true);
+        expect(isObjectPathExcluded(`entities.${entityId}.state`, filter)).to.equal(false);
+    });
+
+    it('accepts object path patterns with the instance prefix', () => {
+        const filter = buildExcludeFilter(['hass.0.entities.sensor.foo.state_class'], 'hass.0');
+        expect(filter.entityPatterns).to.have.length(0);
+        expect(isObjectPathExcluded('entities.sensor.foo.state_class', filter)).to.equal(true);
     });
 });

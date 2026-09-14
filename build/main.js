@@ -150,16 +150,22 @@ function getRoleForAttribute(attr, value, type) {
             return 'state';
     }
 }
+/** True if the object holds user configuration like common.custom (history/influxdb/sql adapter settings) */
+function hasCustomConfig(obj) {
+    const custom = obj?.common?.custom;
+    return !!custom && Object.keys(custom).length > 0;
+}
 class HassAdapter extends adapter_core_1.Adapter {
-    static DEFAULT_OBJECTS_WARN_LIMIT = 30000;
     hassConnected = false;
     hass = null;
     hassObjects = {};
     delayTimeout = null;
     syncDebounceTimeout = null;
     stopped = false;
-    excludePatterns = [];
+    excludeFilter = { entityPatterns: [], objectPatterns: [] };
     initialSyncCompleted = false;
+    /** Latest state_changed event per entity_id, received before the initial sync completed */
+    pendingStateChanges = new Map();
     constructor(options = {}) {
         super({
             ...options,
@@ -192,11 +198,11 @@ class HassAdapter extends adapter_core_1.Adapter {
         }, 3000);
     }
     isEntityExcluded(entityId) {
-        return (0, entityFilter_1.isAnyExcluded)([entityId, `entities.${entityId}`, `${this.namespace}.entities.${entityId}`], this.excludePatterns);
+        return (0, entityFilter_1.isEntityIdExcluded)(entityId, this.excludeFilter);
     }
     isObjectIdExcluded(id) {
-        const idWithoutNamespace = id.startsWith(`${this.namespace}.`) ? id.substring(this.namespace.length + 1) : id;
-        return (0, entityFilter_1.isAnyExcluded)([idWithoutNamespace, id], this.excludePatterns);
+        const path = id.startsWith(`${this.namespace}.`) ? id.substring(this.namespace.length + 1) : id;
+        return (0, entityFilter_1.isObjectPathExcluded)(path, this.excludeFilter);
     }
     onStateChange(id, state) {
         if (!state || state.ack) {
@@ -377,8 +383,7 @@ class HassAdapter extends adapter_core_1.Adapter {
                 // those silently on a transient HASS hiccup would force the user
                 // to recreate them. See issue #165.
                 const existing = await this.getForeignObjectAsync(id);
-                const custom = existing?.common?.custom;
-                if (custom && Object.keys(custom).length) {
+                if (hasCustomConfig(existing)) {
                     this.log.debug(`Keeping "${id}" despite being stale: object holds custom adapter configuration`);
                     continue;
                 }
@@ -397,6 +402,7 @@ class HassAdapter extends adapter_core_1.Adapter {
         const states = [];
         const expectedObjects = new Set();
         let excludedCount = 0;
+        let excludedObjectCount = 0;
         const excludedIds = [];
         for (let e = 0; e < entities.length; e++) {
             const entity = entities[e];
@@ -433,7 +439,10 @@ class HassAdapter extends adapter_core_1.Adapter {
             const ts = entity.last_updated ? new Date(entity.last_updated).getTime() : undefined;
             if (entity.state !== undefined) {
                 const stateId = `${channelId}.state`;
-                if (!this.isObjectIdExcluded(stateId)) {
+                if (this.isObjectIdExcluded(stateId)) {
+                    excludedObjectCount++;
+                }
+                else {
                     expectedObjects.add(stateId);
                     const obj = {
                         _id: stateId,
@@ -463,7 +472,10 @@ class HassAdapter extends adapter_core_1.Adapter {
                 }
                 // Create boolean state for on/off entities
                 const boolStateId = `${channelId}.state_boolean`;
-                if (!this.isObjectIdExcluded(boolStateId) && !objs.find(o => o._id === boolStateId)) {
+                if (this.isObjectIdExcluded(boolStateId)) {
+                    excludedObjectCount++;
+                }
+                else {
                     expectedObjects.add(boolStateId);
                     const booleanObj = {
                         _id: boolStateId,
@@ -512,6 +524,7 @@ class HassAdapter extends adapter_core_1.Adapter {
                     const attrId = attr.replace(this.FORBIDDEN_CHARS, '_').replace(/\.+$/, '_');
                     const fullAttrId = `${channelId}.${attrId}`;
                     if (this.isObjectIdExcluded(fullAttrId)) {
+                        excludedObjectCount++;
                         continue;
                     }
                     expectedObjects.add(fullAttrId);
@@ -546,6 +559,7 @@ class HassAdapter extends adapter_core_1.Adapter {
                     if (Object.prototype.hasOwnProperty.call(service, s)) {
                         const serviceId = `${channelId}.${s}`;
                         if (this.isObjectIdExcluded(serviceId)) {
+                            excludedObjectCount++;
                             continue;
                         }
                         expectedObjects.add(serviceId);
@@ -590,6 +604,9 @@ class HassAdapter extends adapter_core_1.Adapter {
         if (excludedCount > 0) {
             this.log.info(`Entity filter excluded ${excludedCount} entit${excludedCount === 1 ? 'y' : 'ies'} from sync`);
         }
+        if (excludedObjectCount > 0) {
+            this.log.info(`Entity filter excluded ${excludedObjectCount} single object${excludedObjectCount === 1 ? '' : 's'} from sync`);
+        }
         if (excludedIds.length > 0) {
             for (const id of excludedIds) {
                 this.log.info(`Entity filter excluded: ${id}`);
@@ -601,7 +618,7 @@ class HassAdapter extends adapter_core_1.Adapter {
         if (!this.config.cleanupExcludedOnStart) {
             return;
         }
-        if (this.excludePatterns.length === 0) {
+        if (!this.excludeFilter.entityPatterns.length && !this.excludeFilter.objectPatterns.length) {
             this.log.info('Cleanup skipped: no exclude patterns configured');
             return;
         }
@@ -614,11 +631,15 @@ class HassAdapter extends adapter_core_1.Adapter {
             return;
         }
         const prefix = `${this.namespace}.entities.`;
-        // Collect every object under entities.* whose entity_id or concrete object
-        // path matches an exclude pattern. This supports both broad entity filters
-        // like `device_tracker.*` and narrow object filters like
-        // `entities.sensor.foo.device_class`.
-        const idsToDelete = new Set();
+        // Group every object under entities.* of an excluded entity by its derived
+        // entity_id. We extract the entity_id from the object id (first two path
+        // components after the prefix) instead of native.entity_id — older objects
+        // from previous adapter versions may have been written as flat states without
+        // a parent channel and without native.entity_id, but their id still encodes
+        // the entity. Objects of not excluded entities that match an object path
+        // pattern (e.g. `entities.*.*.device_class`) are collected separately.
+        const matchedByEntity = new Map();
+        const matchedObjectIds = [];
         for (const id in allObjects) {
             if (!Object.prototype.hasOwnProperty.call(allObjects, id) || !id.startsWith(prefix)) {
                 continue;
@@ -629,20 +650,57 @@ class HassAdapter extends adapter_core_1.Adapter {
                 continue;
             }
             const entityId = `${parts[0]}.${parts[1]}`;
-            if (this.isEntityExcluded(entityId) || this.isObjectIdExcluded(id)) {
-                idsToDelete.add(id);
+            if (this.isEntityExcluded(entityId)) {
+                const ids = matchedByEntity.get(entityId);
+                if (ids) {
+                    ids.push(id);
+                }
+                else {
+                    matchedByEntity.set(entityId, [id]);
+                }
+            }
+            else if (this.isObjectIdExcluded(id)) {
+                matchedObjectIds.push(id);
             }
         }
-        if (idsToDelete.size === 0) {
+        if (matchedByEntity.size === 0 && matchedObjectIds.length === 0) {
             this.log.info('Cleanup: no existing objects matched exclude patterns');
             return;
         }
+        let deletedEntityCount = 0;
         let deletedIdCount = 0;
         let keptForCustomCount = 0;
-        const sortedIds = [...idsToDelete].sort((a, b) => b.length - a.length);
-        for (const id of sortedIds) {
-            const custom = allObjects[id].common?.custom;
-            if (custom && Object.keys(custom).length) {
+        for (const [entityId, ids] of matchedByEntity) {
+            // Custom-config protection: if any object of the entity holds common.custom
+            // (history/influxdb/sql), keep the whole entity, so no state loses its channel.
+            if (ids.some(id => hasCustomConfig(allObjects[id]))) {
+                keptForCustomCount++;
+                this.log.warn(`Cleanup: keeping entity "${entityId}" — has custom adapter config (history/influxdb/sql); remove it manually if you really want to drop it`);
+                continue;
+            }
+            // Delete sub-states first (longest ids), then any parent channel last.
+            const sortedIds = [...ids].sort((a, b) => b.length - a.length);
+            let entityFullyDeleted = true;
+            for (const id of sortedIds) {
+                try {
+                    await this.delObjectAsync(id);
+                    delete this.hassObjects[id];
+                    deletedIdCount++;
+                }
+                catch (err) {
+                    entityFullyDeleted = false;
+                    this.log.error(`Cleanup: failed to delete "${id}": ${err}`);
+                }
+            }
+            if (entityFullyDeleted) {
+                deletedEntityCount++;
+                if (this.config.verboseFilterLog) {
+                    this.log.info(`Cleanup: deleted entity "${entityId}" (${ids.length} object${ids.length === 1 ? '' : 's'})`);
+                }
+            }
+        }
+        for (const id of matchedObjectIds) {
+            if (hasCustomConfig(allObjects[id])) {
                 keptForCustomCount++;
                 this.log.warn(`Cleanup: keeping object "${id}" — has custom adapter config (history/influxdb/sql); remove it manually if you really want to drop it`);
                 continue;
@@ -659,45 +717,133 @@ class HassAdapter extends adapter_core_1.Adapter {
                 this.log.error(`Cleanup: failed to delete "${id}": ${err}`);
             }
         }
-        this.log.info(`Cleanup: deleted ${deletedIdCount} excluded object${deletedIdCount === 1 ? '' : 's'}${keptForCustomCount > 0
-            ? `, kept ${keptForCustomCount} object${keptForCustomCount === 1 ? '' : 's'} with custom config (see warnings above)`
+        this.log.info(`Cleanup: deleted ${deletedEntityCount} excluded entit${deletedEntityCount === 1 ? 'y' : 'ies'} (${deletedIdCount} object${deletedIdCount === 1 ? '' : 's'} total)${keptForCustomCount > 0
+            ? `, kept ${keptForCustomCount} entit${keptForCustomCount === 1 ? 'y' : 'ies'}/object${keptForCustomCount === 1 ? '' : 's'} with custom config (see warnings above)`
             : ''}`);
     }
-    async ensureObjectsWarnLimit() {
-        const id = 'objectsWarnLimit';
-        await this.extendObjectAsync(id, {
-            type: 'state',
-            common: {
-                role: 'state',
-                name: 'Object warning limit for this adapter instance',
-                type: 'number',
-                read: true,
-                write: true,
-                def: HassAdapter.DEFAULT_OBJECTS_WARN_LIMIT,
-            },
-            native: {},
-        });
-        const current = await this.getStateAsync(id);
-        if (typeof current?.val !== 'number' || current.val < HassAdapter.DEFAULT_OBJECTS_WARN_LIMIT) {
-            await this.setStateAsync(id, HassAdapter.DEFAULT_OBJECTS_WARN_LIMIT, true);
-            this.log.info(`Object warning limit set to ${HassAdapter.DEFAULT_OBJECTS_WARN_LIMIT}`);
+    /**
+     * Applies the state changes buffered while the initial sync was running. The initial
+     * sync can take minutes on large installations, and dropping these events would leave
+     * rarely changing states (e.g. door contacts) outdated until their next change.
+     */
+    async replayPendingStateChanges() {
+        if (!this.pendingStateChanges.size) {
+            return;
+        }
+        this.log.debug(`Applying ${this.pendingStateChanges.size} state change(s) received during initial sync`);
+        // Each entry is removed before it is applied. A live event arriving meanwhile removes
+        // its entity from the map, so it is never overwritten by an older buffered one.
+        for (const [entityId, entity] of this.pendingStateChanges) {
+            this.pendingStateChanges.delete(entityId);
+            try {
+                await this.onHassStateChanged(entity);
+            }
+            catch (err) {
+                this.log.error(`Cannot apply state change for ${entityId}: ${err}`);
+            }
+        }
+    }
+    async onHassStateChanged(entity) {
+        if (this.isEntityExcluded(entity.entity_id)) {
+            this.log.debug(`Entity filter: ignored state_changed for ${entity.entity_id}`);
+            return;
+        }
+        const id = `entities.${entity.entity_id}.`;
+        const lc = entity.last_changed ? new Date(entity.last_changed).getTime() : undefined;
+        const ts = entity.last_updated ? new Date(entity.last_updated).getTime() : undefined;
+        if (entity.state !== undefined) {
+            const stateObjectId = `${this.namespace}.${id}state`;
+            if (this.isObjectIdExcluded(stateObjectId)) {
+                this.log.debug(`Entity filter: ignored state_changed for ${id}state`);
+            }
+            else if (this.hassObjects[stateObjectId]) {
+                await this.setStateAsync(`${id}state`, { val: entity.state, ack: true, lc, ts });
+            }
+            else {
+                this.log.info(`State changed for unknown object ${id}state. Triggering synchronization to resync the objects.`);
+                this.debouncedSync();
+            }
+            // Update boolean state
+            const booleanObjectId = `${this.namespace}.${id}state_boolean`;
+            if (this.isObjectIdExcluded(booleanObjectId)) {
+                this.log.debug(`Entity filter: ignored state_changed for ${id}state_boolean`);
+            }
+            else if (this.hassObjects[booleanObjectId]) {
+                await this.setStateAsync(`${id}state_boolean`, {
+                    val: entity.state === 'on',
+                    ack: true,
+                    lc: lc || Date.now(),
+                    ts: ts || Date.now(),
+                });
+            }
+        }
+        if (entity.attributes) {
+            // Attributes belong to the entity channel. Do not check the `state` object here:
+            // it may be excluded by an object path pattern, and every attribute update would
+            // then trigger a full resync.
+            const channelObjectId = `${this.namespace}.entities.${entity.entity_id}`;
+            for (const attr in entity.attributes) {
+                if (!Object.prototype.hasOwnProperty.call(entity.attributes, attr) ||
+                    attr === 'friendly_name' ||
+                    attr === 'unit_of_measurement' ||
+                    attr === 'icon' ||
+                    !attr.length) {
+                    continue;
+                }
+                let val = entity.attributes[attr];
+                if ((typeof val === 'object' && val !== null) || Array.isArray(val)) {
+                    val = JSON.stringify(val);
+                }
+                const attrId = attr.replace(this.FORBIDDEN_CHARS, '_').replace(/\.+$/, '_');
+                const fullAttrId = `${this.namespace}.${id}${attrId}`;
+                if (this.isObjectIdExcluded(fullAttrId)) {
+                    this.log.debug(`Entity filter: ignored state_changed for ${id}${attrId}`);
+                    continue;
+                }
+                if (this.hassObjects[channelObjectId]) {
+                    if (!this.hassObjects[fullAttrId]) {
+                        // Attribute appeared after initial sync — create object dynamically
+                        const common = {
+                            ...knownAttributes[attr],
+                            name: attr.replace(/_/g, ' '),
+                            read: true,
+                            write: false,
+                            role: 'state',
+                            type: mapTypes[typeof entity.attributes[attr]] ?? 'mixed',
+                        };
+                        const newObj = {
+                            _id: fullAttrId,
+                            type: 'state',
+                            common,
+                            native: { entity_id: entity.entity_id, attr },
+                        };
+                        this.log.debug(`Creating missing attribute object ${fullAttrId}`);
+                        await this.setForeignObjectAsync(fullAttrId, newObj);
+                        this.hassObjects[fullAttrId] = newObj;
+                    }
+                    await this.setStateAsync(id + attrId, { val, ack: true, lc, ts });
+                }
+                else {
+                    this.log.info(`State changed for unknown object ${id + attrId}. Triggering synchronization to resync the objects.`);
+                    this.debouncedSync();
+                }
+            }
         }
     }
     async main() {
         this.config.host ||= '127.0.0.1';
         this.config.port = parseInt(String(this.config.port), 10) || 8123;
-        await this.ensureObjectsWarnLimit();
         const rawPatterns = (this.config.excludePatterns || '').toString();
         const stringPatterns = rawPatterns
             .split(/\r?\n/)
             .map(s => s.trim())
             .filter(line => line.length > 0 && !line.startsWith('#'));
-        this.excludePatterns = (0, entityFilter_1.buildExcludeRegexps)(stringPatterns);
-        if (this.excludePatterns.length === 0) {
+        this.excludeFilter = (0, entityFilter_1.buildExcludeFilter)(stringPatterns, this.namespace);
+        if (stringPatterns.length === 0) {
             this.log.info('Entity filter inactive (no exclude patterns configured)');
         }
         else {
-            this.log.info(`Entity filter active: ${this.excludePatterns.length} pattern(s) loaded: ${stringPatterns.join(', ')}`);
+            this.log.info(`Entity filter active: ${stringPatterns.length} pattern(s) loaded: ${stringPatterns.join(', ')}`);
         }
         await this.cleanupExcludedObjects();
         await this.setStateAsync('info.connection', false, true);
@@ -709,90 +855,15 @@ class HassAdapter extends adapter_core_1.Adapter {
                 return;
             }
             if (!this.initialSyncCompleted) {
-                this.log.debug(`Ignoring state_changed for ${entity.entity_id} before initial sync completed`);
+                // Objects are just being created, so keep the latest change per entity
+                // and apply it after the initial sync instead of triggering a resync.
+                this.log.debug(`Deferring state_changed for ${entity.entity_id} until initial sync completed`);
+                this.pendingStateChanges.set(entity.entity_id, entity);
                 return;
             }
-            if (this.isEntityExcluded(entity.entity_id)) {
-                this.log.debug(`Entity filter: ignored state_changed for ${entity.entity_id}`);
-                return;
-            }
-            const id = `entities.${entity.entity_id}.`;
-            const lc = entity.last_changed ? new Date(entity.last_changed).getTime() : undefined;
-            const ts = entity.last_updated ? new Date(entity.last_updated).getTime() : undefined;
-            if (entity.state !== undefined) {
-                const stateObjectId = `${this.namespace}.${id}state`;
-                if (this.isObjectIdExcluded(stateObjectId)) {
-                    this.log.debug(`Entity filter: ignored state_changed for ${id}state`);
-                }
-                else if (this.hassObjects[stateObjectId]) {
-                    await this.setStateAsync(`${id}state`, { val: entity.state, ack: true, lc, ts });
-                }
-                else {
-                    this.log.info(`State changed for unknown object ${id}state. Triggering synchronization to resync the objects.`);
-                    this.debouncedSync();
-                }
-                // Update boolean state
-                const booleanObjectId = `${this.namespace}.${id}state_boolean`;
-                if (this.isObjectIdExcluded(booleanObjectId)) {
-                    this.log.debug(`Entity filter: ignored state_changed for ${id}state_boolean`);
-                }
-                else if (this.hassObjects[booleanObjectId]) {
-                    await this.setStateAsync(`${id}state_boolean`, {
-                        val: entity.state === 'on',
-                        ack: true,
-                        lc: lc || Date.now(),
-                        ts: ts || Date.now(),
-                    });
-                }
-            }
-            if (entity.attributes) {
-                for (const attr in entity.attributes) {
-                    if (!Object.prototype.hasOwnProperty.call(entity.attributes, attr) ||
-                        attr === 'friendly_name' ||
-                        attr === 'unit_of_measurement' ||
-                        attr === 'icon' ||
-                        !attr.length) {
-                        continue;
-                    }
-                    let val = entity.attributes[attr];
-                    if ((typeof val === 'object' && val !== null) || Array.isArray(val)) {
-                        val = JSON.stringify(val);
-                    }
-                    const attrId = attr.replace(this.FORBIDDEN_CHARS, '_').replace(/\.+$/, '_');
-                    const fullAttrId = `${this.namespace}.${id}${attrId}`;
-                    if (this.isObjectIdExcluded(fullAttrId)) {
-                        this.log.debug(`Entity filter: ignored state_changed for ${id}${attrId}`);
-                        continue;
-                    }
-                    if (this.hassObjects[`${this.namespace}.${id}state`]) {
-                        if (!this.hassObjects[fullAttrId]) {
-                            // Attribute appeared after initial sync — create object dynamically
-                            const common = {
-                                ...knownAttributes[attr],
-                                name: attr.replace(/_/g, ' '),
-                                read: true,
-                                write: false,
-                                role: 'state',
-                                type: mapTypes[typeof entity.attributes[attr]] ?? 'mixed',
-                            };
-                            const newObj = {
-                                _id: fullAttrId,
-                                type: 'state',
-                                common,
-                                native: { entity_id: entity.entity_id, attr },
-                            };
-                            this.log.debug(`Creating missing attribute object ${fullAttrId}`);
-                            await this.setForeignObjectAsync(fullAttrId, newObj);
-                            this.hassObjects[fullAttrId] = newObj;
-                        }
-                        await this.setStateAsync(id + attrId, { val, ack: true, lc, ts });
-                    }
-                    else {
-                        this.log.info(`State changed for unknown object ${id + attrId}. Triggering synchronization to resync the objects.`);
-                        this.debouncedSync();
-                    }
-                }
-            }
+            // This live event supersedes a buffered one that was not replayed yet
+            this.pendingStateChanges.delete(entity.entity_id);
+            await this.onHassStateChanged(entity);
         });
         this.hass.on('connected', () => {
             if (!this.hassConnected) {
@@ -827,6 +898,7 @@ class HassAdapter extends adapter_core_1.Adapter {
                                             }
                                             else {
                                                 await this.parseStates(states, services);
+                                                await this.replayPendingStateChanges();
                                                 this.log.info('Initialization completed');
                                                 await this.subscribeStatesAsync('*');
                                             }

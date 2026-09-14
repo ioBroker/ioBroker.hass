@@ -106,17 +106,27 @@ Optionally, restrict which Home Assistant entities are synchronised into ioBroke
 
 Each non-empty, non-comment line in the **Exclude patterns** field is a glob
 (only `*` is a wildcard and matches any sequence of characters, including `.`).
-Patterns are matched case-sensitively against the full `entity_id` (e.g.
-`switch.living_room`) and against ioBroker-style object paths (e.g.
-`entities.sensor.living_room_temperature.device_class`). An entity that matches
-any entity-level pattern is:
+Matching is case-sensitive and anchored to the full id. There are two kinds of patterns:
+
+- **Entity patterns** (all patterns not starting with `entities.`) are matched
+  against the full `entity_id` (e.g. `switch.living_room`) only.
+- **Object path patterns** start with `entities.` and are matched against the
+  ioBroker object id without the instance prefix (e.g.
+  `entities.sensor.living_room_temperature.device_class`). The instance prefix
+  may be included (e.g. `hass.0.entities.…`), so ids copied from the object
+  browser work as well.
+
+An entity that matches an entity pattern, or whose channel `entities.<entity_id>`
+matches an object path pattern, is:
 
 - skipped when objects are created or updated (initial sync and re-syncs)
 - ignored when its state changes in HASS (no state writes triggered in ioBroker)
 
-A concrete object path that matches a pattern is skipped individually. This can
-be used to drop noisy attributes such as `device_class` or `state_class` without
-dropping the sensor itself.
+A single state, attribute or service object that matches an object path pattern
+is skipped individually. This can be used to drop noisy attributes such as
+`device_class` or `state_class` without dropping the sensor itself. Entity
+patterns never match object paths: `*battery*` drops battery entities, but not
+the `battery_level` attribute of other entities.
 
 Lines starting with `#` are treated as comments.
 
@@ -143,6 +153,15 @@ re-syncs only emit the aggregate count to keep the log clean.
 
 An empty pattern list leaves the adapter behaviour identical to previous versions.
 
+## Large installations
+
+js-controller warns when an adapter instance has more objects than its object
+warning limit (5000 by default). A Home Assistant installation can easily exceed
+this, so the adapter declares a default limit of 30000 (js-controller >= 7.1.2).
+If the warning still appears for an existing instance, raise the value of
+`system.adapter.hass.<instance>.objectsWarnLimit` or reduce the number of objects
+with object path patterns (see above).
+
 <!--
 	Placeholder for the next version (at the beginning of the line):
 	### **WORK IN PROGRESS**
@@ -151,6 +170,9 @@ An empty pattern list leaves the adapter behaviour identical to previous version
 ## Changelog
 ### **WORK IN PROGRESS**
 - (copilot) Adapter requires node.js >= 22 now
+- (@rockbaer2007) Exclude patterns starting with `entities.` filter single objects (e.g. `entities.*.*.device_class`) without dropping the entity
+- (@rockbaer2007) Reduced resync noise and raised the default object warning limit to 30000 for large installations
+- (@GermanBluefox) State changes received during the initial synchronization are applied afterward instead of being lost
 
 ### 2.1.0 (2026-05-16)
 * (mokusone) Added optional entity exclude filter with glob patterns, configurable via the admin UI, plus a verbose-logging toggle for inspecting matches
