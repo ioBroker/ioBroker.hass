@@ -168,6 +168,9 @@ with object path patterns (see above).
 -->
 
 ## Changelog
+### **WORK IN PROGRESS**
+- (@GermanBluefox) Fixed the build: 2.1.1 was not published to npm
+
 ### 2.1.1 (2026-09-14)
 - (copilot) Adapter requires node.js >= 22 now
 - (@rockbaer2007) Exclude patterns starting with `entities.` filter single objects (e.g. `entities.*.*.device_class`) without dropping the entity
@@ -190,3 +193,11 @@ with object path patterns (see above).
 * (Apollon77) Added more guidance logging when setting services incorrectly
 * (Apollon77) Prevent crashes when attributes contain "." at the end of their names
 * (Apollon77) Added logging for state updates for unknown objects
+
+## License
+
+The MIT License (MIT)
+
+Copyright (c) 2018-2026 bluefox <dogafox@gmail.com>
+
+See [LICENSE](LICENSE).
