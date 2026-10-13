@@ -168,7 +168,7 @@ with object path patterns (see above).
 -->
 
 ## Changelog
-### **WORK IN PROGRESS**
+### 2.1.2 (2026-10-13)
 - (@GermanBluefox) Fixed the build: 2.1.1 was not published to npm
 
 ### 2.1.1 (2026-09-14)
@@ -188,11 +188,6 @@ with object path patterns (see above).
 ### 2.0.3 (2026-04-02)
 * (@GermanBluefox) Adapter was updated and migrated to TypeScript
 * (@Titanium177) Added roles for states and added debouncing for reading states from hass
-
-### 1.4.0 (2023-01-03)
-* (Apollon77) Added more guidance logging when setting services incorrectly
-* (Apollon77) Prevent crashes when attributes contain "." at the end of their names
-* (Apollon77) Added logging for state updates for unknown objects
 
 ## License
 

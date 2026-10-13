@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "hass",
-    "version": "2.1.1",
+    "version": "2.1.2",
     "titleLang": {
       "en": "Home Assistant",
       "de": "Home Assistant",
@@ -29,6 +29,19 @@
       "uk": "Підключення Home Assistant для ioBroker"
     },
     "news": {
+      "2.1.2": {
+        "en": "Fixed the build: 2.1.1 was not published to npm",
+        "de": "Build behoben: 2.1.1 war nicht auf npm",
+        "ru": "Исправлена сборка: версия 2.1.1 не была опубликована в npm",
+        "pt": "Corrigido o build: 2.1.1 não foi publicado no npm",
+        "nl": "De build is opgelost: 2.1.1 is niet gepubliceerd op npm",
+        "fr": "Build corrigé : 2.1.1 n'a pas été publié sur npm",
+        "it": "Risolto il bug: 2.1.1 non pubblicato su npm",
+        "es": "Se corrigió la versión: 2.1.1 no se publicó en npm",
+        "pl": "Naprawiono kompilację: 2.1.1 nie został opublikowany do npm",
+        "uk": "Виправлено збірку: 2.1.1 не було опубліковано в npm",
+        "zh-cn": "修复了版本：2.1.1 未发布到 npm"
+      },
       "2.1.1": {
         "en": "Adapter requires node.js >= 22 now\nExclude patterns starting with `entities.` filter single objects (e.g. `entities.*.*.device_class`) without dropping the entity\nReduced resync noise and raised the default object warning limit to 30000 for large installations\nState changes received during the initial synchronization are applied afterward instead of being lost",
         "de": "Adapter benötigt jetzt node.js >= 22\nSchließt Muster ab `entities.` aus, filtert einzelne Objekte (z. B. `entities.*.*.device_class`), ohne die Entität zu löschen\nResync-Rauschen reduziert und die Warnungsgrenze für große Anlagen auf 30.000 erhöht\nStatusänderungen bei der ersten Synchronisation werden später übernommen und gehen nicht verloren",
@@ -106,19 +119,6 @@
         "pl": "Dalsze optymalizowanie danych do HASS i umożliwienie ustalenie wartości takich jak stany normalne, jeśli usługa ma jeden atrybut i może być zmapowana",
         "zh-cn": "进一步优化向人道协调厅系统传送数据,如果该服务具有属性,它可以绘制图表,从而能够将数字象正常国家一样。",
         "uk": "Додатково оптимізуйте надсилання даних до HASS і дозвольте встановлювати такі значення, як числа, як звичайні стани, якщо служба має один атрибут і його можна зіставити"
-      },
-      "1.2.0": {
-        "en": "IMPORTANT: Replace special characters in entity attribute names with an underscore! Object IDs might change!\nmake sure a \"null\" value in state changes is not crashing",
-        "de": "WICHTIG: Ersetzen Sie Sonderzeichen in Namen des Attributes der Einheit mit einem Unterpunkt! Objekt-IDs können sich ändern!\nsicherstellen, dass ein nullwert bei zustandsänderungen nicht abstürzt",
-        "ru": "ВАЖНО: Замените специальные символы в имени сущности с подчеркиванием! ID объекта может измениться!\nубедитесь, что значение null в государственных изменениях не падает",
-        "pt": "IMPORTANTE: Substitua caracteres especiais em nomes de atributos de entidade com um sublinhado! IDs de objeto podem mudar!\ncertifique-se de que um valor nulo em mudanças de estado não está caindo",
-        "nl": "Vervang speciale personages in entiteitsadvocaten met een onderscore! ID's kunnen veranderen!\nzorg ervoor dat een waarde van de staat niet crasht",
-        "fr": "IMPORTANT: Remplacer les caractères spéciaux dans les noms d'attributs d'entité par un accent! Les identifiants d'objet peuvent changer !\ns'assurer qu'une valeur nulle dans les changements d'état ne s'écrase pas",
-        "it": "IMPORTANTE: Sostituisci caratteri speciali in nomi attributo entità con un underscore! Gli ID degli Oggetti potrebbero cambiare!\nassicurarsi che un valore nullo nei cambiamenti di stato non è crash",
-        "es": "IMPORTANTE: Reemplazar caracteres especiales en nombres de atributos de entidad con un subrayado! ¡Las identificaciones de objetos pueden cambiar!\nasegúrese de que un valor nulo en los cambios estatales no se estrella",
-        "pl": "IMPORTANT: Replace special characters in identity attribution names with an underscore! (ang.). Zmiany obiektów mogą się zmieniać!\nniewątpliwą wartością w zmianach stanowych nie jest rozbicie się",
-        "zh-cn": "IMPORTANT:将实体的特色性改为强调的! 目标国际组织可能改变!\n确保在国家变化中确保无效不失",
-        "uk": "ВАЖЛИВО: Замініть спеціальні символи в іменах атрибутів сутності на підкреслення! Ідентифікатори об'єктів можуть змінитися!\nпереконайтеся, що \"нульове\" значення в змінах стану не аварійно завершує роботу"
       }
     },
     "localLinks": {
