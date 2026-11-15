@@ -171,7 +171,7 @@ with object path patterns (see above).
 <!--
 	### **WORK IN PROGRESS**
 -->
-### **WORK IN PROGRESS**
+### 2.2.0 (2026-11-15)
 - (@GermanBluefox) State changes received during a resync or after a reconnect are no longer overwritten by the older snapshot
 - (@GermanBluefox) An invalid access token stops the connection attempts instead of retrying every 3 seconds
 - (@GermanBluefox) Requests pending when the connection is lost now fail with "connection lost" instead of never being answered
@@ -192,10 +192,6 @@ with object path patterns (see above).
 
 ### 2.0.4 (2026-05-05)
 * (@GermanBluefox) Tried to keep the custom settings of the objects when updating them with new data from HASS
-
-### 2.0.3 (2026-04-02)
-* (@GermanBluefox) Adapter was updated and migrated to TypeScript
-* (@Titanium177) Added roles for states and added debouncing for reading states from hass
 
 ## License
 

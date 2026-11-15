@@ -1,4 +1,8 @@
 # Older changes
+## 2.0.3 (2026-04-02)
+* (@GermanBluefox) Adapter was updated and migrated to TypeScript
+* (@Titanium177) Added roles for states and added debouncing for reading states from hass
+
 ## 1.4.0 (2023-01-03)
 * (Apollon77) Added more guidance logging when setting services incorrectly
 * (Apollon77) Prevent crashes when attributes contain "." at the end of their names
