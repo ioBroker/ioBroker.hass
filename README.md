@@ -168,6 +168,14 @@ with object path patterns (see above).
 -->
 
 ## Changelog
+<!--
+	### **WORK IN PROGRESS**
+-->
+### **WORK IN PROGRESS**
+- (@GermanBluefox) State changes received during a resync or after a reconnect are no longer overwritten by the older snapshot
+- (@GermanBluefox) An invalid access token stops the connection attempts instead of retrying every 3 seconds
+- (@GermanBluefox) Requests pending when the connection is lost now fail with "connection lost" instead of never being answered
+
 ### 2.1.2 (2026-10-13)
 - (@GermanBluefox) Fixed the build: 2.1.1 was not published to npm
 

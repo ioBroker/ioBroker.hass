@@ -91,11 +91,20 @@ class HASS extends node_events_1.EventEmitter {
                 const password = this.options.password || process.env.SUPERVISOR_TOKEN;
                 if (!password) {
                     this.emit('error', 'Password required. Connection closed');
+                    // Without a token every reconnect would fail the same way
+                    this.closed = true;
                     socket.terminate();
                 }
                 else {
                     setTimeout(() => this.sendAuth(socket, password), 50);
                 }
+            }
+            else if (response.type === 'auth_invalid') {
+                // Home Assistant closes the socket after this. Do not reconnect: every attempt
+                // counts as a failed login there and, with ip_ban_enabled, can ban this host.
+                this.emit('error', `Authentication failed: ${response.message || 'invalid access token'}. Check the long-lived access token in the instance settings. No further connection attempts until the instance is restarted.`);
+                this.closed = true;
+                socket.close();
             }
             else if (response.type === 'auth_ok') {
                 setImmediate(() => this.subscribeEvents(socket, err => {
@@ -109,12 +118,11 @@ class HASS extends node_events_1.EventEmitter {
                 this.log.error(`Invalid answer: ${msgStr}`);
             }
             else {
-                if (response.type === 'result' && this.requests[response.id]) {
-                    this.log.debug(`got answer for ${this.requests[response.id].type} success = ${response.success}, result = ${JSON.stringify(response.result)}`);
-                    if (typeof this.requests[response.id].cb === 'function') {
-                        this.requests[response.id].cb(!response.success, response.result);
-                        delete this.requests[response.id];
-                    }
+                const request = this.requests[response.id];
+                if (response.type === 'result' && request) {
+                    this.log.debug(`got answer for ${request.type} success = ${response.success}, result = ${JSON.stringify(response.result)}`);
+                    delete this.requests[response.id];
+                    request.cb?.(!response.success, response.result);
                 }
             }
         });
@@ -136,6 +144,8 @@ class HASS extends node_events_1.EventEmitter {
                 this._connected = false;
                 this.emit('disconnected');
             }
+            // A new socket can never answer these, so fail them instead of leaving them pending
+            this.rejectPendingRequests('connection lost');
             if (!this.connectTimeout && !this.closed) {
                 this.connectTimeout = setTimeout(() => {
                     this.connectTimeout = null;
@@ -143,6 +153,16 @@ class HASS extends node_events_1.EventEmitter {
                 }, 3000);
             }
         });
+    }
+    rejectPendingRequests(reason) {
+        for (const id of Object.keys(this.requests)) {
+            const request = this.requests[Number(id)];
+            delete this.requests[Number(id)];
+            if (request.cb) {
+                this.log.debug(`Request ${request.type} not answered: ${reason}`);
+                request.cb(reason);
+            }
+        }
     }
     isConnected() {
         return this._connected;

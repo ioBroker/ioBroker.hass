@@ -164,7 +164,9 @@ class HassAdapter extends adapter_core_1.Adapter {
     stopped = false;
     excludeFilter = { entityPatterns: [], objectPatterns: [] };
     initialSyncCompleted = false;
-    /** Latest state_changed event per entity_id, received before the initial sync completed */
+    /** Number of synchronizations running (from the get_states request until the states are written) */
+    syncsRunning = 0;
+    /** Latest state_changed event per entity_id, received while a synchronization was running */
     pendingStateChanges = new Map();
     constructor(options = {}) {
         super({
@@ -175,23 +177,48 @@ class HassAdapter extends adapter_core_1.Adapter {
             stateChange: (id, state) => this.onStateChange(id, state),
         });
     }
+    /**
+     * Marks the start of a synchronization. Must be called before get_states is sent: from
+     * then on the snapshot can be older than live events, which therefore are buffered.
+     */
+    beginSync() {
+        this.syncsRunning++;
+    }
+    /** Marks the end of a synchronization and applies the buffered events once none is running */
+    async endSync() {
+        this.syncsRunning = Math.max(0, this.syncsRunning - 1);
+        if (!this.syncsRunning && !this.stopped) {
+            await this.replayPendingStateChanges();
+        }
+    }
     debouncedSync(callback) {
         if (this.syncDebounceTimeout) {
             clearTimeout(this.syncDebounceTimeout);
         }
         this.syncDebounceTimeout = setTimeout(() => {
             this.syncDebounceTimeout = null;
+            if (this.stopped) {
+                return;
+            }
+            this.beginSync();
             this.hass.getStates((err, states) => {
                 if (err) {
                     this.log.error(`Cannot read states during resync: ${err}`);
+                    void this.endSync();
                     return;
                 }
                 this.hass.getServices(async (err, services) => {
                     if (err) {
                         this.log.error(`Cannot read services during resync: ${err}`);
+                        await this.endSync();
                         return;
                     }
-                    await this.parseStates(states, services);
+                    try {
+                        await this.parseStates(states, services);
+                    }
+                    finally {
+                        await this.endSync();
+                    }
                     callback?.();
                 });
             });
@@ -722,18 +749,25 @@ class HassAdapter extends adapter_core_1.Adapter {
             : ''}`);
     }
     /**
-     * Applies the state changes buffered while the initial sync was running. The initial
-     * sync can take minutes on large installations, and dropping these events would leave
-     * rarely changing states (e.g. door contacts) outdated until their next change.
+     * Applies the state changes buffered while a synchronization was running. A sync can take
+     * minutes on large installations. Applying these events right away would let the older
+     * get_states snapshot overwrite them, and dropping them would leave rarely changing states
+     * (e.g. door contacts) outdated until their next change.
+     * Only the latest event per entity is kept. It is at least as new as the snapshot, so
+     * replaying it never writes an older value.
      */
     async replayPendingStateChanges() {
         if (!this.pendingStateChanges.size) {
             return;
         }
-        this.log.debug(`Applying ${this.pendingStateChanges.size} state change(s) received during initial sync`);
+        this.log.debug(`Applying ${this.pendingStateChanges.size} state change(s) received during synchronization`);
         // Each entry is removed before it is applied. A live event arriving meanwhile removes
         // its entity from the map, so it is never overwritten by an older buffered one.
         for (const [entityId, entity] of this.pendingStateChanges) {
+            if (this.syncsRunning || this.stopped) {
+                // A new sync started: keep the rest buffered, it is replayed when that one ends
+                break;
+            }
             this.pendingStateChanges.delete(entityId);
             try {
                 await this.onHassStateChanged(entity);
@@ -854,10 +888,10 @@ class HassAdapter extends adapter_core_1.Adapter {
             if (!entity || typeof entity.entity_id !== 'string') {
                 return;
             }
-            if (!this.initialSyncCompleted) {
-                // Objects are just being created, so keep the latest change per entity
-                // and apply it after the initial sync instead of triggering a resync.
-                this.log.debug(`Deferring state_changed for ${entity.entity_id} until initial sync completed`);
+            if (!this.initialSyncCompleted || this.syncsRunning) {
+                // A sync is running: its snapshot would overwrite this newer value, and objects
+                // may still be created. Keep the latest change per entity and apply it afterward.
+                this.log.debug(`Deferring state_changed for ${entity.entity_id} until synchronization completed`);
                 this.pendingStateChanges.set(entity.entity_id, entity);
                 return;
             }
@@ -870,43 +904,53 @@ class HassAdapter extends adapter_core_1.Adapter {
                 this.log.debug('Connected');
                 this.hassConnected = true;
                 void this.setState('info.connection', true, true);
+                // Events received from now on may be older or newer than the coming snapshot
+                this.beginSync();
                 this.hass.getConfig(err => {
                     if (err) {
                         this.log.error(`Cannot read config: ${err}`);
+                        void this.endSync();
                         return;
                     }
                     this.delayTimeout = setTimeout(() => {
                         this.delayTimeout = null;
-                        if (!this.stopped) {
-                            this.hass.getStates((err, states) => {
-                                if (this.stopped) {
-                                    return;
-                                }
+                        if (this.stopped) {
+                            void this.endSync();
+                            return;
+                        }
+                        this.hass.getStates((err, states) => {
+                            if (this.stopped || err) {
                                 if (err) {
                                     this.log.error(`Cannot read states: ${err}`);
+                                }
+                                void this.endSync();
+                                return;
+                            }
+                            this.delayTimeout = setTimeout(() => {
+                                this.delayTimeout = null;
+                                if (this.stopped) {
+                                    void this.endSync();
                                     return;
                                 }
-                                this.delayTimeout = setTimeout(() => {
-                                    this.delayTimeout = null;
-                                    if (!this.stopped) {
-                                        this.hass.getServices(async (err, services) => {
-                                            if (this.stopped) {
-                                                return;
-                                            }
-                                            if (err) {
-                                                this.log.error(`Cannot read services: ${err}`);
-                                            }
-                                            else {
-                                                await this.parseStates(states, services);
-                                                await this.replayPendingStateChanges();
-                                                this.log.info('Initialization completed');
-                                                await this.subscribeStatesAsync('*');
-                                            }
-                                        });
+                                this.hass.getServices(async (err, services) => {
+                                    if (this.stopped || err) {
+                                        if (err) {
+                                            this.log.error(`Cannot read services: ${err}`);
+                                        }
+                                        await this.endSync();
+                                        return;
                                     }
-                                }, 100);
-                            });
-                        }
+                                    try {
+                                        await this.parseStates(states, services);
+                                    }
+                                    finally {
+                                        await this.endSync();
+                                    }
+                                    this.log.info('Initialization completed');
+                                    await this.subscribeStatesAsync('*');
+                                });
+                            }, 100);
+                        });
                     }, 100);
                 });
             }
