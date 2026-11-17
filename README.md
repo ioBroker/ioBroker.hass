@@ -171,6 +171,9 @@ with object path patterns (see above).
 <!--
 	### **WORK IN PROGRESS**
 -->
+### **WORK IN PROGRESS**
+* (GermanBluefox) Avoid unhandled promise rejections (DB closed) during shutdown (#184)
+
 ### 2.2.0 (2026-11-15)
 - (@GermanBluefox) State changes received during a resync or after a reconnect are no longer overwritten by the older snapshot
 - (@GermanBluefox) An invalid access token stops the connection attempts instead of retrying every 3 seconds

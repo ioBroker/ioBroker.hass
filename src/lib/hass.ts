@@ -265,6 +265,7 @@ export default class HASS extends EventEmitter {
             this.connectTimeout = null;
         }
         this.closed = true;
+        this.removeAllListeners('state_changed');
         if (this.socket) {
             this.socket.close();
         }
