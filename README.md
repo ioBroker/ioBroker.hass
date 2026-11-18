@@ -171,7 +171,7 @@ with object path patterns (see above).
 <!--
 	### **WORK IN PROGRESS**
 -->
-### **WORK IN PROGRESS**
+### 2.2.1 (2026-11-18)
 * (GermanBluefox) Avoid unhandled promise rejections (DB closed) during shutdown (#184)
 
 ### 2.2.0 (2026-11-15)
@@ -192,9 +192,6 @@ with object path patterns (see above).
 * (mokusone) Added optional entity exclude filter with glob patterns, configurable via the admin UI, plus a verbose-logging toggle for inspecting matches
 * (@klein0r) Use `/core/` instead of `/api/` when connecting to supervisor directly (e.g., in ha app)
 * (@klein0r) Use ENV var SUPERVISOR_TOKEN as fallback for password
-
-### 2.0.4 (2026-05-05)
-* (@GermanBluefox) Tried to keep the custom settings of the objects when updating them with new data from HASS
 
 ## License
 

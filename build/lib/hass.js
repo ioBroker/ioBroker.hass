@@ -226,6 +226,7 @@ class HASS extends node_events_1.EventEmitter {
             this.connectTimeout = null;
         }
         this.closed = true;
+        this.removeAllListeners('state_changed');
         if (this.socket) {
             this.socket.close();
         }

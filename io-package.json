@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "hass",
-    "version": "2.2.0",
+    "version": "2.2.1",
     "titleLang": {
       "en": "Home Assistant",
       "de": "Home Assistant",
@@ -29,6 +29,19 @@
       "uk": "Підключення Home Assistant для ioBroker"
     },
     "news": {
+      "2.2.1": {
+        "en": "Avoid unhandled promise rejections (DB closed) during shutdown (#184)",
+        "de": "Vermeiden Sie unbehandelte Absagen (DB closed) beim Shutdown (#184)",
+        "ru": "Избегайте необработанных отклонений обещаний (закрытие базы данных) во время отключения (#184)",
+        "pt": "Evite rejeições de promessas não processadas (DB closed) (#184)",
+        "nl": "Voorkom dat beloftes die niet worden afgehandeld (DB gesloten) tijdens de shutdown (#184)",
+        "fr": "Évitez les refus de promesses non gérées (DB fermée) lors de la fermeture (#184)",
+        "it": "Evita promesse non gestite (DB chiuso) durante l'arresto (#184)",
+        "es": "Evite el rechazo descontrolado de promesas (base de datos cerrada) durante el cierre (#184)",
+        "pl": "Unikaj nieobsługiwanych odrzuceń obietnic (baza danych zamknięta) podczas zamykania (#184)",
+        "uk": "Уникайте необроблених відхилень обіцянок (БД закрита) під час вимкнення (#184)",
+        "zh-cn": "避免关机期间未处理的承诺拒绝（数据库已关闭）(#184)"
+      },
       "2.2.0": {
         "en": "State changes received during a resync or after a reconnect are no longer overwritten by the older snapshot\nAn invalid access token stops the connection attempts instead of retrying every 3 seconds\nRequests pending when the connection is lost now fail with \"connection lost\" instead of never being answered",
         "de": "Statusänderungen beim Resync oder Reconnect werden nicht mehr vom alten Snapshot überschrieben\nEin ungültiges Zugriffstoken stoppt die Verbindung und versucht es alle 3 Sekunden\nAusstehende Anfragen bei Verbindungsverlust schlagen jetzt mit „Verbindung verloren“ fehl statt nie beantwortet",
@@ -106,19 +119,6 @@
         "pl": "Adapter został zaktualizowany i przeniesiony do TypeScript\nDodano role dla państw i dodano debouncing do czytania stanów z hass",
         "uk": "Адаптер був оновлений і мігрований до TypeScript\nДодано ролі для штатів і додано деблінг для читання станів з",
         "zh-cn": "适应器被更新并迁移到 TypeScript\n添加状态角色, 添加读状态的解跳"
-      },
-      "1.4.0": {
-        "en": "Added more guidance logging when setting services incorrectly\nPrevent crashes when attributes contain \".\" at the end of their names\nAdded logging for state updates for unknown objects",
-        "de": "Mehr Anleitungsprotokollierung hinzugefügt, wenn Dienste falsch eingestellt werden\nVerhindern Sie Abstürzen, wenn Attribute \" enthalten.\" am Ende ihrer Namen\nHinzugefügt Protokollierung für Zustandsaktualisierungen für unbekannte Objekte",
-        "ru": "Добавили больше руководства, когда установка услуг неправильно\nПредотвратить сбои, когда атрибуты содержат \".\" в конце их имен\nДобавлен вход для государственных обновлений для неизвестных объектов",
-        "pt": "Adicionado mais registro de orientação ao definir serviços incorretamente\nImpedir falhas quando os atributos contêm \". no final de seus nomes\nRegisto adicionado para atualizações de estado para objetos desconhecidos",
-        "nl": "Voeg meer begeleiding toe als ze onjuiste diensten indienen\nVertaling:\nVermeld inloggen op staatsinformatie voor onbekende objecten",
-        "fr": "Ajout d'autres lignes directrices lorsqu'on établit des services incorrectement\nPrévenir les crashes lorsque les attributs contiennent \".\" à la fin de leurs noms\nAjout de logging pour les mises à jour de l'état des objets inconnus",
-        "it": "Aggiunto più guida logging quando imposta i servizi in modo errato\nPrevenire crash quando gli attributi contengono \". alla fine dei loro nomi\nAggiunto logging per aggiornamenti di stato per oggetti sconosciuti",
-        "es": "Se agregó más registro de guía cuando se establecen los servicios incorrectamente\nEvitar fallos cuando los atributos contienen \".\" al final de sus nombres\nRegistro añadido para actualizaciones estatales para objetos desconocidos",
-        "pl": "Wprowadzone są bardziej wytyczne, gdy ustawienie usług nieprawidłowo błędnie\nPrevent rozbija się, gdy atrybuty zawierają „”\nWprowadzone logowanie dla aktualizacji stanów nieznanych obiektów",
-        "uk": "Додайте більше звітів при установці послуг неправильно\nПрофілактика аварійних випадків, коли атрибути містять \".\" в кінці їх імен\nДодана записка для державних оновлень для невідомих об'єктів",
-        "zh-cn": "在不正确地建立服务时增加指导标志\n在名称末尾含有“第2款”的预防事故\n增加用于不明物品的国家更新的伐木"
       }
     },
     "localLinks": {

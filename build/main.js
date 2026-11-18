@@ -202,22 +202,34 @@ class HassAdapter extends adapter_core_1.Adapter {
             }
             this.beginSync();
             this.hass.getStates((err, states) => {
-                if (err) {
-                    this.log.error(`Cannot read states during resync: ${err}`);
+                if (this.stopped || err) {
+                    if (err) {
+                        this.log.error(`Cannot read states during resync: ${err}`);
+                    }
                     void this.endSync();
                     return;
                 }
                 this.hass.getServices(async (err, services) => {
-                    if (err) {
-                        this.log.error(`Cannot read services during resync: ${err}`);
+                    if (this.stopped || err) {
+                        if (err) {
+                            this.log.error(`Cannot read services during resync: ${err}`);
+                        }
                         await this.endSync();
                         return;
                     }
                     try {
                         await this.parseStates(states, services);
                     }
+                    catch (err) {
+                        if (!this.stopped) {
+                            this.log.error(`Cannot synchronize states: ${err}`);
+                        }
+                    }
                     finally {
                         await this.endSync();
+                    }
+                    if (this.stopped) {
+                        return;
                     }
                     callback?.();
                 });
@@ -324,6 +336,7 @@ class HassAdapter extends adapter_core_1.Adapter {
     }
     onUnload(callback) {
         this.stopped = true;
+        this.pendingStateChanges.clear();
         if (this.delayTimeout) {
             clearTimeout(this.delayTimeout);
             this.delayTimeout = null;
@@ -338,6 +351,9 @@ class HassAdapter extends adapter_core_1.Adapter {
     async syncStates(states) {
         if (states?.length) {
             for (const state of states) {
+                if (this.stopped) {
+                    break;
+                }
                 const id = state.id;
                 delete state.id;
                 if (!this.hassObjects[id]) {
@@ -348,7 +364,9 @@ class HassAdapter extends adapter_core_1.Adapter {
                     await this.setForeignStateAsync(id, state);
                 }
                 catch (err) {
-                    this.log.error(err.toString());
+                    if (!this.stopped) {
+                        this.log.error(err.toString());
+                    }
                 }
             }
         }
@@ -357,6 +375,9 @@ class HassAdapter extends adapter_core_1.Adapter {
         const stats = { newCount: 0, updatedCount: 0 };
         if (objects?.length) {
             for (const obj of objects) {
+                if (this.stopped) {
+                    break;
+                }
                 try {
                     const oldObj = await this.getForeignObjectAsync(obj._id);
                     if (!oldObj) {
@@ -377,7 +398,9 @@ class HassAdapter extends adapter_core_1.Adapter {
                 }
                 catch (err) {
                     delete this.hassObjects[obj._id];
-                    this.log.error(err.toString());
+                    if (!this.stopped) {
+                        this.log.error(err.toString());
+                    }
                 }
             }
         }
@@ -404,6 +427,9 @@ class HassAdapter extends adapter_core_1.Adapter {
         }
         let deletedCount = 0;
         for (const id of objectsToDelete) {
+            if (this.stopped) {
+                break;
+            }
             try {
                 // Never auto-delete objects that hold user configuration like
                 // common.custom (history/influxdb/sql adapter settings) — losing
@@ -419,7 +445,9 @@ class HassAdapter extends adapter_core_1.Adapter {
                 deletedCount++;
             }
             catch (err) {
-                this.log.error(`Error deleting object ${id}: ${err}`);
+                if (!this.stopped) {
+                    this.log.error(`Error deleting object ${id}: ${err}`);
+                }
             }
         }
         return deletedCount;
@@ -616,8 +644,17 @@ class HassAdapter extends adapter_core_1.Adapter {
             }
         }
         const deletedCount = await this.deleteStaleObjects(expectedObjects);
+        if (this.stopped) {
+            return;
+        }
         const syncStats = await this.syncObjects(objs);
+        if (this.stopped) {
+            return;
+        }
         await this.syncStates(states);
+        if (this.stopped) {
+            return;
+        }
         if (syncStats.newCount > 0 || deletedCount > 0) {
             const changes = [];
             if (syncStats.newCount > 0) {
@@ -773,7 +810,9 @@ class HassAdapter extends adapter_core_1.Adapter {
                 await this.onHassStateChanged(entity);
             }
             catch (err) {
-                this.log.error(`Cannot apply state change for ${entityId}: ${err}`);
+                if (!this.stopped) {
+                    this.log.error(`Cannot apply state change for ${entityId}: ${err}`);
+                }
             }
         }
     }
@@ -884,6 +923,9 @@ class HassAdapter extends adapter_core_1.Adapter {
         this.hass = new hass_1.default(this.config, this.log);
         this.hass.on('error', err => this.log.error(err));
         this.hass.on('state_changed', async (entity) => {
+            if (this.stopped) {
+                return;
+            }
             this.log.debug(`HASS-Message: State Changed: ${JSON.stringify(entity)}`);
             if (!entity || typeof entity.entity_id !== 'string') {
                 return;
@@ -897,13 +939,24 @@ class HassAdapter extends adapter_core_1.Adapter {
             }
             // This live event supersedes a buffered one that was not replayed yet
             this.pendingStateChanges.delete(entity.entity_id);
-            await this.onHassStateChanged(entity);
+            try {
+                await this.onHassStateChanged(entity);
+            }
+            catch (err) {
+                if (!this.stopped) {
+                    this.log.error(`Cannot apply state change for ${entity.entity_id}: ${err}`);
+                }
+            }
         });
         this.hass.on('connected', () => {
             if (!this.hassConnected) {
                 this.log.debug('Connected');
                 this.hassConnected = true;
-                void this.setState('info.connection', true, true);
+                this.setStateAsync('info.connection', true, true).catch(err => {
+                    if (!this.stopped) {
+                        this.log.warn(`Cannot set connection state: ${err}`);
+                    }
+                });
                 // Events received from now on may be older or newer than the coming snapshot
                 this.beginSync();
                 this.hass.getConfig(err => {
@@ -943,11 +996,26 @@ class HassAdapter extends adapter_core_1.Adapter {
                                     try {
                                         await this.parseStates(states, services);
                                     }
+                                    catch (err) {
+                                        if (!this.stopped) {
+                                            this.log.error(`Cannot synchronize states: ${err}`);
+                                        }
+                                    }
                                     finally {
                                         await this.endSync();
                                     }
+                                    if (this.stopped) {
+                                        return;
+                                    }
                                     this.log.info('Initialization completed');
-                                    await this.subscribeStatesAsync('*');
+                                    try {
+                                        await this.subscribeStatesAsync('*');
+                                    }
+                                    catch (err) {
+                                        if (!this.stopped) {
+                                            this.log.error(`Cannot subscribe states: ${err}`);
+                                        }
+                                    }
                                 });
                             }, 100);
                         });
@@ -959,7 +1027,11 @@ class HassAdapter extends adapter_core_1.Adapter {
             if (this.hassConnected) {
                 this.log.debug('Disconnected');
                 this.hassConnected = false;
-                void this.setState('info.connection', false, true);
+                this.setStateAsync('info.connection', false, true).catch(err => {
+                    if (!this.stopped) {
+                        this.log.warn(`Cannot set connection state: ${err}`);
+                    }
+                });
             }
         });
         this.hass.connect();
