@@ -28,6 +28,7 @@ class HASS extends node_events_1.EventEmitter {
             port: parseInt(String(options.port), 10) || 8123,
             password: options.password,
             secure: options.secure,
+            ignoreCertificateErrors: options.ignoreCertificateErrors,
         };
         this.log = log;
     }
@@ -217,7 +218,10 @@ class HASS extends node_events_1.EventEmitter {
             clearTimeout(this.connectTimeout);
             this.connectTimeout = null;
         }
-        this.socket = new ws_1.default(`ws${this.options.secure ? 's' : ''}://${this.options.host}:${this.options.port}/${this.options.host === 'supervisor' ? 'core' : 'api'}/websocket`, { perMessageDeflate: false });
+        this.socket = new ws_1.default(`ws${this.options.secure ? 's' : ''}://${this.options.host}:${this.options.port}/${this.options.host === 'supervisor' ? 'core' : 'api'}/websocket`, {
+            perMessageDeflate: false,
+            rejectUnauthorized: !(this.options.secure && this.options.ignoreCertificateErrors),
+        });
         this.initSocket(this.socket);
     }
     close() {

@@ -7,6 +7,7 @@ interface HassAdapterConfig {
     port: number;
     password: string;
     secure: boolean;
+    ignoreCertificateErrors: boolean;
     excludePatterns: RegExp[];
     verboseFilterLog: boolean;
     cleanupExcludedOnStart: boolean;
