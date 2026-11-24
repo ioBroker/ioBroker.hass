@@ -5,18 +5,22 @@
         "host": {
             "type": "text",
             "label": "Home assistant IP",
+            "xs": 12,
             "sm": 12,
             "md": 6,
-            "lg": 4
+            "lg": 4,
+            "xl": 4
         },
         "port": {
             "type": "number",
             "label": "Home assistant WS Port",
             "min": 1,
             "max": 65535,
+            "xs": 12,
             "sm": 12,
             "md": 6,
-            "lg": 4
+            "lg": 4,
+            "xl": 4
         },
         "_divider1": {
             "type": "divider"
@@ -26,9 +30,11 @@
             "label": "Password",
             "repeat": true,
             "visible": true,
+            "xs": 12,
             "sm": 12,
             "md": 6,
-            "lg": 4
+            "lg": 4,
+            "xl": 4
         },
         "_divider2": {
             "type": "divider"
@@ -36,9 +42,22 @@
         "secure": {
             "type": "checkbox",
             "label": "Secure",
+            "xs": 12,
             "sm": 12,
             "md": 6,
-            "lg": 4
+            "lg": 4,
+            "xl": 4
+        },
+        "ignoreCertificateErrors": {
+            "type": "checkbox",
+            "label": "Ignore certificate errors",
+            "help": "Accept self-signed or otherwise untrusted certificates of Home Assistant. Use only in trusted networks.",
+            "hidden": "!data.secure",
+            "xs": 12,
+            "sm": 12,
+            "md": 6,
+            "lg": 4,
+            "xl": 4
         },
         "_divider3": {
             "type": "divider"
@@ -48,19 +67,31 @@
             "label": "Exclude patterns (one per line)",
             "help": "Glob patterns, * wildcard. Lines starting with # are comments. Empty = filter off.",
             "minRows": 6,
-            "sm": 12
+            "xs": 12,
+            "sm": 12,
+            "md": 12,
+            "lg": 12,
+            "xl": 12
         },
         "verboseFilterLog": {
             "type": "checkbox",
             "label": "Verbose filter logging",
             "help": "When enabled, log each excluded entity_id individually during the initial adapter sync (requires loglevel info or debug).",
-            "sm": 12
+            "xs": 12,
+            "sm": 12,
+            "md": 12,
+            "lg": 12,
+            "xl": 12
         },
         "cleanupExcludedOnStart": {
             "type": "checkbox",
             "label": "Cleanup excluded entities on adapter start",
             "help": "When enabled, on each adapter start delete existing objects under entities.* whose entity_id matches the exclude patterns. Objects with custom adapter config (history/influxdb/sql) are kept and logged.",
-            "sm": 12
+            "xs": 12,
+            "sm": 12,
+            "md": 12,
+            "lg": 12,
+            "xl": 12
         }
     }
 }

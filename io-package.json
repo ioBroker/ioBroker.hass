@@ -56,30 +56,17 @@
         "zh-cn": "在重新同步期间或重新连接之后收到的状态更改不再被旧的快照所覆盖\n无效的访问令牌会停止连接尝试，而不是每 3 秒重试一次\n连接断开时待处理的请求现在会失败，并显示 “连接丢失”，而不是永远得不到答复"
       },
       "2.1.2": {
-        "en": "Fixed the build: 2.1.1 was not published to npm",
-        "de": "Build behoben: 2.1.1 war nicht auf npm",
-        "ru": "Исправлена сборка: версия 2.1.1 не была опубликована в npm",
-        "pt": "Corrigido o build: 2.1.1 não foi publicado no npm",
-        "nl": "De build is opgelost: 2.1.1 is niet gepubliceerd op npm",
-        "fr": "Build corrigé : 2.1.1 n'a pas été publié sur npm",
-        "it": "Risolto il bug: 2.1.1 non pubblicato su npm",
-        "es": "Se corrigió la versión: 2.1.1 no se publicó en npm",
-        "pl": "Naprawiono kompilację: 2.1.1 nie został opublikowany do npm",
-        "uk": "Виправлено збірку: 2.1.1 не було опубліковано в npm",
-        "zh-cn": "修复了版本：2.1.1 未发布到 npm"
-      },
-      "2.1.1": {
-        "en": "Adapter requires node.js >= 22 now\nExclude patterns starting with `entities.` filter single objects (e.g. `entities.*.*.device_class`) without dropping the entity\nReduced resync noise and raised the default object warning limit to 30000 for large installations\nState changes received during the initial synchronization are applied afterward instead of being lost",
-        "de": "Adapter benötigt jetzt node.js >= 22\nSchließt Muster ab `entities.` aus, filtert einzelne Objekte (z. B. `entities.*.*.device_class`), ohne die Entität zu löschen\nResync-Rauschen reduziert und die Warnungsgrenze für große Anlagen auf 30.000 erhöht\nStatusänderungen bei der ersten Synchronisation werden später übernommen und gehen nicht verloren",
-        "ru": "Теперь для адаптера требуется файл node.js >= 22\nИсключите шаблоны, начинающиеся с `entities.`, фильтруют отдельные объекты (например, `entities.*.*.device_class`), не удаляя объект\nУменьшен шум при повторной синхронизации и увеличено стандартное ограничение предупреждений об объектах до 30000 для больших установок\nИзменения состояния, полученные во время первоначальной синхронизации, применяются позже, а не теряются",
-        "pt": "O adaptador exige node.js >= 2\nExclua padrões começando com `entidades.` filtra objetos únicos (ex. `entities.*.*.device_class`) sem excluir a entidade\nReduziu o ruído de ressincronização e elevou o limite padrão de aviso de objetos para 30.000\nAs mudanças de estado recebidas na sincronização inicial são aplicadas depois, em vez de perdidas",
-        "nl": "Voor de adapter is nu node.js >= 22 nodig\nPatronen uitsluiten die beginnen met `entities.` filter afzonderlijke objecten (bijv. `entities.*.*.device_class`) zonder de entiteit te verwijderen\nMinder hersynchronisatiegeluid en verhoogde de standaardwaarschuwingslimiet voor objecten naar 30.000 voor grote installaties\nStatuswijzigingen die tijdens de eerste synchronisatie zijn ontvangen, worden daarna toegepast in plaats van verloren te gaan",
-        "fr": "Adapter nécessite node.js >= 22\nExcluez les modèles commençant par des « entités ». Filtrez des objets uniques (par exemple, « entities.*.*.device_class ») sans supprimer l'entité\nBruit de resynchronisation réduit et limite d'objets par défaut à 30 000 pour les grandes installations\nLes changements d'état reçus lors de la synchronisation initiale sont appliqués par la suite au lieu d'être perdus",
-        "it": "Adapter richiede node.js =2 ora\nEscluda i pattern che iniziano con `entities.` filtra singoli oggetti (ad es. `entities.*.*.device_class`) senza eliminare l'entità\nRidotto il rumore di risync e aumentato il limite di avviso predefinito a 30.000 per grandi impianti\nLe modifiche di stato ricevute durante la sincronizzazione iniziale vengono applicate dopo e non perse",
-        "es": "El adaptador necesita node.js >= 22 ahora\nExcluir patrones que empiecen por «entidades». Filtre objetos individuales (por ejemplo, `entidades.*.*.device_class`) sin eliminar la entidad\nRedujo el ruido de resincronización y elevó el límite de aviso de objetos por defecto a 30 000 en grandes instalaciones\nLos cambios de estado recibidos durante la sincronización inicial se aplican después en lugar de perderse",
-        "pl": "Adapter wymaga teraz node.js >= 22\nWyklucz wzorce zaczynające się od `entities.` filtruj pojedyncze obiekty (np. `entities.*.*.device_class`) bez upuszczania elementu\nZmniejszono szumy ponownej synchronizacji i podniesiono domyślny limit ostrzegania o obiektach do 30000 dla dużych instalacji\nZmiany stanu otrzymane podczas początkowej synchronizacji są stosowane później, zamiast zostać utracone",
-        "uk": "Адаптер вимагає node.js >= 22 зараз\nВиключити шаблони, що починаються з `entites.` фільтрують окремі об'єкти (наприклад, `entities.*.device_class`), не скидаючи сутність\nЗменшення шуму повторної синхронізації та підвищено обмеження попередження об'єкта за замовчуванням до 30000 для великих установок\nЗміни стану, отримані під час початкової синхронізації, застосовуються згодом, а не втрачаються",
-        "zh-cn": "适配器现在需要 node.js >= 22\n排除以 “实体” 开头的模式在不删除实体的情况下过滤单个对象（例如 “实体。*.*.*.device_class”）\n降低了重新同步噪音，并将大型安装的默认对象警告限制提高到 30000\n初始同步期间收到的状态更改将在之后应用，而不是丢失"
+        "en": "Fixed the build: 2.1.1 was not published to npm\nAdapter requires node.js >= 22 now\nExclude patterns starting with `entities.` filter single objects (e.g. `entities.*.*.device_class`) without dropping the entity\nReduced resync noise and raised the default object warning limit to 30000 for large installations\nState changes received during the initial synchronization are applied afterward instead of being lost",
+        "de": "Build behoben: 2.1.1 war nicht auf npm\nAdapter benötigt jetzt node.js >= 22\nSchließt Muster ab `entities.` aus, filtert einzelne Objekte (z. B. `entities.*.*.device_class`), ohne die Entität zu löschen\nResync-Rauschen reduziert und die Warnungsgrenze für große Anlagen auf 30.000 erhöht\nStatusänderungen bei der ersten Synchronisation werden später übernommen und gehen nicht verloren",
+        "ru": "Исправлена сборка: версия 2.1.1 не была опубликована в npm\nТеперь для адаптера требуется файл node.js >= 22\nИсключите шаблоны, начинающиеся с `entities.`, фильтруют отдельные объекты (например, `entities.*.*.device_class`), не удаляя объект\nУменьшен шум при повторной синхронизации и увеличено стандартное ограничение предупреждений об объектах до 30000 для больших установок\nИзменения состояния, полученные во время первоначальной синхронизации, применяются позже, а не теряются",
+        "pt": "Corrigido o build: 2.1.1 não foi publicado no npm\nO adaptador exige node.js >= 2\nExclua padrões começando com `entidades.` filtra objetos únicos (ex. `entities.*.*.device_class`) sem excluir a entidade\nReduziu o ruído de ressincronização e elevou o limite padrão de aviso de objetos para 30.000\nAs mudanças de estado recebidas na sincronização inicial são aplicadas depois, em vez de perdidas",
+        "nl": "De build is opgelost: 2.1.1 is niet gepubliceerd op npm\nVoor de adapter is nu node.js >= 22 nodig\nPatronen uitsluiten die beginnen met `entities.` filter afzonderlijke objecten (bijv. `entities.*.*.device_class`) zonder de entiteit te verwijderen\nMinder hersynchronisatiegeluid en verhoogde de standaardwaarschuwingslimiet voor objecten naar 30.000 voor grote installaties\nStatuswijzigingen die tijdens de eerste synchronisatie zijn ontvangen, worden daarna toegepast in plaats van verloren te gaan",
+        "fr": "Build corrigé : 2.1.1 n'a pas été publié sur npm\nAdapter nécessite node.js >= 22\nExcluez les modèles commençant par des « entités ». Filtrez des objets uniques (par exemple, « entities.*.*.device_class ») sans supprimer l'entité\nBruit de resynchronisation réduit et limite d'objets par défaut à 30 000 pour les grandes installations\nLes changements d'état reçus lors de la synchronisation initiale sont appliqués par la suite au lieu d'être perdus",
+        "it": "Risolto il bug: 2.1.1 non pubblicato su npm\nAdapter richiede node.js =2 ora\nEscluda i pattern che iniziano con `entities.` filtra singoli oggetti (ad es. `entities.*.*.device_class`) senza eliminare l'entità\nRidotto il rumore di risync e aumentato il limite di avviso predefinito a 30.000 per grandi impianti\nLe modifiche di stato ricevute durante la sincronizzazione iniziale vengono applicate dopo e non perse",
+        "es": "Se corrigió la versión: 2.1.1 no se publicó en npm\nEl adaptador necesita node.js >= 22 ahora\nExcluir patrones que empiecen por «entidades». Filtre objetos individuales (por ejemplo, `entidades.*.*.device_class`) sin eliminar la entidad\nRedujo el ruido de resincronización y elevó el límite de aviso de objetos por defecto a 30 000 en grandes instalaciones\nLos cambios de estado recibidos durante la sincronización inicial se aplican después en lugar de perderse",
+        "pl": "Naprawiono kompilację: 2.1.1 nie został opublikowany do npm\nAdapter wymaga teraz node.js >= 22\nWyklucz wzorce zaczynające się od `entities.` filtruj pojedyncze obiekty (np. `entities.*.*.device_class`) bez upuszczania elementu\nZmniejszono szumy ponownej synchronizacji i podniesiono domyślny limit ostrzegania o obiektach do 30000 dla dużych instalacji\nZmiany stanu otrzymane podczas początkowej synchronizacji są stosowane później, zamiast zostać utracone",
+        "uk": "Виправлено збірку: 2.1.1 не було опубліковано в npm\nАдаптер вимагає node.js >= 22 зараз\nВиключити шаблони, що починаються з `entites.` фільтрують окремі об'єкти (наприклад, `entities.*.device_class`), не скидаючи сутність\nЗменшення шуму повторної синхронізації та підвищено обмеження попередження об'єкта за замовчуванням до 30000 для великих установок\nЗміни стану, отримані під час початкової синхронізації, застосовуються згодом, а не втрачаються",
+        "zh-cn": "修复了版本：2.1.1 未发布到 npm\n适配器现在需要 node.js >= 22\n排除以 “实体” 开头的模式在不删除实体的情况下过滤单个对象（例如 “实体。*.*.*.device_class”）\n降低了重新同步噪音，并将大型安装的默认对象警告限制提高到 30000\n初始同步期间收到的状态更改将在之后应用，而不是丢失"
       },
       "2.1.0": {
         "en": "Added optional entity exclude filter with glob patterns, configurable via the admin UI, plus a verbose-logging toggle for inspecting matches\nUse `/core/` instead of `/api/` when connecting to supervisor directly (e.g., in ha app)\nUse ENV var SUPERVISOR_TOKEN as fallback for password",
@@ -156,7 +143,7 @@
     ],
     "globalDependencies": [
       {
-        "admin": ">=7.6.17"
+        "admin": ">=7.6.20"
       }
     ],
     "plugins": {
@@ -256,6 +243,7 @@
     "port": 8123,
     "password": "",
     "secure": false,
+    "ignoreCertificateErrors": false,
     "excludePatterns": "# Glob patterns, one per line. Lines starting with # are comments.\n# Example: filter out all entities prefixed with `iob_` regardless of domain:\n# *.iob_*",
     "verboseFilterLog": false,
     "cleanupExcludedOnStart": false

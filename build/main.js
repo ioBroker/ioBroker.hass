@@ -322,15 +322,16 @@ class HassAdapter extends adapter_core_1.Adapter {
             }
         }
         const noFields = Object.keys(serviceData).length === 0;
+        const fieldKeys = fields ? Object.keys(fields).filter(f => f !== 'entity_id') : [];
         serviceData.entity_id = this.hassObjects[id].native.entity_id;
         this.log.debug(`Send to HASS for service ${this.hassObjects[id].native.attr} with ${this.hassObjects[id].native.domain || this.hassObjects[id].native.type} and data ${JSON.stringify(serviceData)}`);
         this.hass.callService(this.hassObjects[id].native.attr, this.hassObjects[id].native.domain || this.hassObjects[id].native.type, serviceData, target, err => {
             if (err) {
                 this.log.error(`Cannot control ${id}: ${err}`);
             }
-            if (err && fields && noFields) {
+            if (err && noFields && fieldKeys.length) {
                 this.log.warn(`Please make sure to provide a stringified JSON as value to set relevant fields! Please refer to the Readme for details!`);
-                this.log.warn(`Allowed field keys are: ${Object.keys(fields).join(', ')}`);
+                this.log.warn(`Allowed field keys are: ${fieldKeys.join(', ')}`);
             }
         });
     }

@@ -6,6 +6,8 @@ interface HassOptions {
     port: number;
     password?: string;
     secure?: boolean;
+    /** Accept self-signed or otherwise untrusted TLS certificates (only relevant with secure) */
+    ignoreCertificateErrors?: boolean;
 }
 
 interface HassRequest {
@@ -38,6 +40,7 @@ export default class HASS extends EventEmitter {
             port: parseInt(String(options.port), 10) || 8123,
             password: options.password,
             secure: options.secure,
+            ignoreCertificateErrors: options.ignoreCertificateErrors,
         };
         this.log = log;
     }
@@ -253,7 +256,10 @@ export default class HASS extends EventEmitter {
 
         this.socket = new WebSocket(
             `ws${this.options.secure ? 's' : ''}://${this.options.host}:${this.options.port}/${this.options.host === 'supervisor' ? 'core' : 'api'}/websocket`,
-            { perMessageDeflate: false },
+            {
+                perMessageDeflate: false,
+                rejectUnauthorized: !(this.options.secure && this.options.ignoreCertificateErrors),
+            },
         );
 
         this.initSocket(this.socket);
