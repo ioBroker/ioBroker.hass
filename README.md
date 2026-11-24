@@ -177,7 +177,7 @@ with object path patterns (see above).
 <!--
 	### **WORK IN PROGRESS**
 -->
-### **WORK IN PROGRESS**
+### 2.3.0 (2026-11-24)
 * (GermanBluefox) Do not show the misleading 'Allowed field keys' hint for services without fields (#79)
 * (GermanBluefox) Added the option "Ignore certificate errors" to connect to Home Assistant with a self-signed certificate (#88)
 * (GermanBluefox) Fixed the issues reported by the repository checker (#217)
@@ -198,11 +198,6 @@ with object path patterns (see above).
 - (@rockbaer2007) Exclude patterns starting with `entities.` filter single objects (e.g. `entities.*.*.device_class`) without dropping the entity
 - (@rockbaer2007) Reduced resync noise and raised the default object warning limit to 30000 for large installations
 - (@GermanBluefox) State changes received during the initial synchronization are applied afterward instead of being lost
-
-### 2.1.0 (2026-05-16)
-* (mokusone) Added optional entity exclude filter with glob patterns, configurable via the admin UI, plus a verbose-logging toggle for inspecting matches
-* (@klein0r) Use `/core/` instead of `/api/` when connecting to supervisor directly (e.g., in ha app)
-* (@klein0r) Use ENV var SUPERVISOR_TOKEN as fallback for password
 
 Older changes can be found in [CHANGELOG_OLD.md](CHANGELOG_OLD.md).
 

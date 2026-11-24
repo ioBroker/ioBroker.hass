@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "hass",
-    "version": "2.2.1",
+    "version": "2.3.0",
     "titleLang": {
       "en": "Home Assistant",
       "de": "Home Assistant",
@@ -29,6 +29,19 @@
       "uk": "Підключення Home Assistant для ioBroker"
     },
     "news": {
+      "2.3.0": {
+        "en": "Do not show the misleading 'Allowed field keys' hint for services without fields (#79)\nAdded the option \"Ignore certificate errors\" to connect to Home Assistant with a self-signed certificate (#88)\nFixed the issues reported by the repository checker (#217)",
+        "de": "Für Dienste ohne Felder den Hinweis „Erlaubte Feldtasten“ nicht anzeigen (#79)\nOption „Fehler ignorieren“ hinzugefügt, um Home Assistant mit einem Zertifikat zu verbinden (#88)\nDie vom Repository-Checker gemeldeten Probleme behoben. #217",
+        "ru": "Не показывайте вводящую в заблуждение подсказку «Разрешенные ключи полей» для сервисов без полей (#79)\nДобавлена опция «Игнорировать ошибки сертификата» для подключения к Home Assistant с помощью самозаверенного сертификата (#88)\nИсправлены ошибки, о которых сообщала программа проверки репозитория (#217)",
+        "pt": "Não mostre a dica enganosa de “Allowed Field Keys” para serviços sem campos (#79)\nAdicionou a opção “Ignorar erros” para se conectar ao Home Assistant com um certificado autoassinado (#88)\nProblemas relatados pelo repository checker (#217)",
+        "nl": "Laat de misleidende hint 'Toegestane veldsleutels' niet zien voor diensten zonder velden (#79)\nDe optie „Certificaatfouten negeren” toegevoegd om verbinding te maken met Home Assistant met een zelfondertekend certificaat (#88)\nDe problemen opgelost die door de repository-checker zijn gemeld (#217)",
+        "fr": "N'affichez pas l'indice trompeur « Clés de champ autorisées » pour les services sans champs (#79)\nAjout de l'option « Ignorer les erreurs de certificat » pour se connecter à Home Assistant avec un certificat autosigné (#88)\nLes problèmes signalés par le Repository Checker ont été résolus (#217)",
+        "it": "Non mostri il suggerimento fuorviante «Chiavi consentite» per i servizi senza campi (#79)\nAggiunta l'opzione «Ignora errori» per connettersi a Home Assistant con un certificato autofirmato (#88)\nRisolti i problemi segnalati dal Repository Checker (#217)",
+        "es": "No muestre la engañosa pista de «Claves de campo permitidas» para servicios sin campos (#79)\nSe ha añadido la opción «Ignorar errores de certificado» para conectarse a Home Assistant con un certificado autofirmado (#88)\nSe corrigieron los problemas del comprobador de repositorios (#217)",
+        "pl": "Nie wyświetlaj wprowadzającej w błąd podpowiedzi „Dozwolone klucze pola” dla usług bez pól (#79)\nDodano opcję „Ignoruj błędy certyfikatu”, aby połączyć się z Asystentem domowym za pomocą certyfikatu podpisanego samodzielnie (#88)\nNaprawiono problemy zgłaszane przez moduł sprawdzający repozytorium (#217)",
+        "uk": "Не показувати оманливу підказку «Дозволені ключі поля» для служб без полів (#79)\nДодана опція «Ігнорувати помилки сертифіката» для підключення до домашнього помічника за допомогою самопідписаного сертифіката (#88)\nВиправлені проблеми, про які повідомляє перевірка сховища (#217)",
+        "zh-cn": "不要为没有字段的服务显示误导性的 “允许的字段键” 提示 (#79)\n添加了 “忽略证书错误” 选项，使用自签名证书连接到 Home Assistant (#88)\n修复了仓库检查器报告的问题 (#217)"
+      },
       "2.2.1": {
         "en": "Avoid unhandled promise rejections (DB closed) during shutdown (#184)",
         "de": "Vermeiden Sie unbehandelte Absagen (DB closed) beim Shutdown (#184)",
