@@ -171,6 +171,9 @@ with object path patterns (see above).
 <!--
 	### **WORK IN PROGRESS**
 -->
+### **WORK IN PROGRESS**
+* (GermanBluefox) Do not show the misleading 'Allowed field keys' hint for services without fields (#79)
+
 ### 2.2.1 (2026-11-18)
 * (GermanBluefox) Avoid unhandled promise rejections (DB closed) during shutdown (#184)
 
